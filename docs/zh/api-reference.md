@@ -324,17 +324,11 @@ formatted = message_format(messages, separator="\n", with_num=True)
 
 ## 工具增强
 
-当然可以！以下是**完全根据你提供的代码实现**重写的 API 参考文档，修正了错误参数（如 `interrupt_config`），补充了 `InterrruptParams` 类型定义，并精确描述了函数签名、参数、返回值和用法。
-
----
-
-# API 参考
-
 ## `human_in_the_loop`
 
 为**同步工具函数**添加“人在回路”人工审核能力的装饰器。在工具执行前触发中断，等待人工确认、编辑或响应。
 
-### 函数签名
+**函数签名：**
 
 ```python
 def human_in_the_loop(
@@ -344,7 +338,7 @@ def human_in_the_loop(
 ) -> Union[Callable[[Callable], BaseTool], BaseTool]
 ```
 
-### 参数
+**参数：**
 
 - `func` (Optional[Callable])  
   待装饰的函数。**请勿手动传入 —— 仅用于装饰器语法糖。**
@@ -356,15 +350,15 @@ def human_in_the_loop(
   ```
   若未提供，则使用默认 `default_handler`（支持 `accept` / `edit` / `response`）。
 
-### 返回值
+**返回值：**
 
-返回 `BaseTool` 实例
+- `BaseTool`：装饰后的工具实例
 
 ## `human_in_the_loop_async`
 
 为**异步工具函数**添加“人在回路”人工审核能力的装饰器。支持 `await` 调用。
 
-### 函数签名
+**函数签名：**
 
 ```python
 def human_in_the_loop_async(
@@ -374,7 +368,7 @@ def human_in_the_loop_async(
 ) -> Union[Callable[[Callable], BaseTool], BaseTool]
 ```
 
-### 参数
+**参数：**
 
 - `func` (Optional[Callable])  
   待装饰的异步函数。**请勿手动传入。**
@@ -388,7 +382,7 @@ def human_in_the_loop_async(
 
 **注意**：虽然 handler 必须为异步函数。
 
-### 返回值
+**返回值：**
 
 同 `human_in_the_loop`，返回异步兼容的 `BaseTool` 实例。
 
