@@ -324,17 +324,11 @@ formatted = message_format(messages, separator="\n", with_num=True)
 
 ## Tool Enhancement
 
-Of course! Below is the API reference documentation rewritten **entirely based on the code implementation** you provided, with corrected parameters (like `interrupt_config`), added `InterrruptParams` type definition, and precise descriptions of function signatures, parameters, return values, and usage.
-
----
-
-# API Reference
-
-## `human_in_the_loop`
+### `human_in_the_loop`
 
 Decorator that adds "human-in-the-loop" manual review capability to **synchronous tool functions**. Triggers an interrupt before tool execution, waiting for human confirmation, editing, or response.
 
-### Function signature
+**Function signature:**
 
 ```python
 def human_in_the_loop(
@@ -344,7 +338,7 @@ def human_in_the_loop(
 ) -> Union[Callable[[Callable], BaseTool], BaseTool]
 ```
 
-### Parameters
+**Parameters:**
 
 - `func` (Optional[Callable])  
   The function to be decorated. **Do not pass manually — used only for decorator syntax sugar.**
@@ -356,15 +350,15 @@ def human_in_the_loop(
   ```
   If not provided, uses default `default_handler` (supports `accept` / `edit` / `response`).
 
-### Return value
+**Return value:**
 
 Returns a `BaseTool` instance
 
-## `human_in_the_loop_async`
+### `human_in_the_loop_async`
 
 Decorator that adds "human-in-the-loop" manual review capability to **asynchronous tool functions**. Supports `await` calls.
 
-### Function signature
+**Function signature:**
 
 ```python
 def human_in_the_loop_async(
@@ -374,7 +368,7 @@ def human_in_the_loop_async(
 ) -> Union[Callable[[Callable], BaseTool], BaseTool]
 ```
 
-### Parameters
+**Parameters:**
 
 - `func` (Optional[Callable])  
   The async function to be decorated. **Do not pass manually.**
@@ -388,7 +382,7 @@ def human_in_the_loop_async(
 
 **Note**: Although the handler must be an async function.
 
-### Return value
+**Return value:**
 
 Same as `human_in_the_loop`, returns an async-compatible `BaseTool` instance.
 
