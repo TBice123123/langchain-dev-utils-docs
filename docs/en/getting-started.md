@@ -40,4 +40,3 @@ uv add langchain-dev-utils
 
 - [GitHub Repository](https://github.com/TBice123123/langchain-dev-utils)
 - [Issue Tracker](https://github.com/TBice123123/langchain-dev-utils/issues)
-- [English Documentation](https://github.com/TBice123123/langchain-dev-utils/blob/master/README.md)

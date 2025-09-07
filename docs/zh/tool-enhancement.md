@@ -60,10 +60,10 @@ async def async_get_current_time() -> str:
 
 ```python
 from typing import Any
-from langchain_dev_utils import human_in_the_loop_async
+from langchain_dev_utils import human_in_the_loop_async, InterruptParams
 from langgraph.types import interrupt
 
-async def custom_handler(params: InterrruptParams) -> Any:
+async def custom_handler(params: InterruptParams) -> Any:
     response = interrupt(
         f"我要调用工具 {params['tool_call_name']}，参数为 {params['tool_call_args']}，请确认是否调用"
     )
