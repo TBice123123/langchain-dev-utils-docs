@@ -28,7 +28,7 @@ def register_model_provider(
 
 ```python
 register_model_provider("dashscope", ChatQwen)
-register_model_provider("openrouter", "openai", base_url="https://openrouter.ai/api/v1   ")
+register_model_provider("openrouter", "openai", base_url="https://openrouter.ai/api/v1")
 ```
 
 ### `load_chat_model`
@@ -59,7 +59,6 @@ def load_chat_model(
 
 ```python
 model = load_chat_model("dashscope:qwen-flash")
-model = load_chat_model("gpt-4", model_provider="openai", temperature=0.7)
 ```
 
 ### `register_embeddings_provider`
@@ -116,7 +115,6 @@ def load_embeddings(
 
 ```python
 embeddings = load_embeddings("dashscope:text-embedding-v4")
-embeddings = load_embeddings("text-embedding-3-small", provider="openai")
 ```
 
 ## Message Processing
@@ -208,7 +206,7 @@ async def aconvert_reasoning_content_for_chunk_iterator(
 
 ```python
 async for chunk in aconvert_reasoning_content_for_chunk_iterator(
-    model.astream("Hello"), think_tag=("<!--THINK-->", "<!--/THINK-->")
+    model.astream("Hello"), think_tag=("<think>", "</think>")
 ):
     print(chunk.content, end="", flush=True)
 ```
@@ -346,7 +344,7 @@ def human_in_the_loop(
 - `handler` (Optional[HumanInterruptHandler])  
   Custom interrupt handling function. Type is:
   ```python
-  HumanInterruptHandler = Callable[[InterrruptParams], Any]
+  HumanInterruptHandler = Callable[[InterruptParams], Any]
   ```
   If not provided, uses default `default_handler` (supports `accept` / `edit` / `response`).
 
@@ -376,7 +374,7 @@ def human_in_the_loop_async(
 - `handler` (Optional[HumanInterruptHandler])  
   Custom interrupt handling function. Type is:
   ```python
-  HumanInterruptHandler = Callable[[InterrruptParams], Any]
+  HumanInterruptHandler = Callable[[InterruptParams], Any]
   ```
   If not provided, uses default `default_handler_async` (supports `accept` / `edit` / `response`).
 
@@ -388,16 +386,12 @@ Same as `human_in_the_loop`, returns an async-compatible `BaseTool` instance.
 
 ## Type definitions
 
-### `InterrruptParams`
+### `InterruptParams`
 
 Parameter type passed to the `handler` function, containing tool call context:
 
 ```python
-from typing import Any, Dict, TypedDict
-from langchain_core.runnables import RunnableConfig
-from langchain_core.tools import BaseTool
-
-class InterrruptParams(TypedDict):
+class InterruptParams(TypedDict):
     tool_call_name: str           # Tool name (string)
     tool_call_args: Dict[str, Any] # Tool call arguments (dictionary)
     tool: BaseTool                # Tool object for subsequent invoke/ainvoke
@@ -411,7 +405,7 @@ Type alias for interrupt handler functions:
 ```python
 from typing import Callable, Any
 
-HumanInterruptHandler = Callable[[InterrruptParams], Any]
+HumanInterruptHandler = Callable[[InterruptParams], Any]
 ```
 
 ## Next steps

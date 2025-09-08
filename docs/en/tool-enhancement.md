@@ -8,13 +8,12 @@ This module offers encapsulated helper functions to speed up tool authoring or t
 
 ## Add “Human-in-the-Loop” Review
 
-Decorators that let you inject a human-review step **before** a tool is actually executed.
+Provides decorator functions to add "Human-in-the-Loop" review for tool invocations, enabling human review during tool execution.
 
-### Core decorators
+### Core functions
 
-| Sync                | Async                     |
-| ------------------- | ------------------------- |
-| `human_in_the_loop` | `human_in_the_loop_async` |
+- `human_in_the_loop`：For synchronous tool functions
+- `human_in_the_loop_async`：For asynchronous tool functions
 
 ### Parameters (both decorators)
 
@@ -58,10 +57,10 @@ async def async_get_current_time() -> str:
 
 ```python
 from typing import Any
-from langchain_dev_utils import human_in_the_loop_async
+from langchain_dev_utils import human_in_the_loop_async, InterruptParams
 from langgraph.types import interrupt
 
-async def custom_handler(params: InterrruptParams) -> Any:
+async def custom_handler(params: InterruptParams) -> Any:
     response = await interrupt(
         f"Call {params['tool_call_name']} with args {params['tool_call_args']}?"
     )

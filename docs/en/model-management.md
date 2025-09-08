@@ -20,6 +20,11 @@ LangChain's official `init_chat_model` and `init_embeddings` functions are conve
 - `provider_name`: Provider name; must be a custom name
 - `chat_model`: ChatModel class or string. If it's a string, it must be a provider supported by official `init_chat_model` (e.g., `openai`, `anthropic`). In this case, the `init_chat_model` function will be called.
 - `base_url`: Optional base URL. Recommended when `chat_model` is a string.
+  ::: tip 📌
+  `chat_model` supports specifying the provider through a string parameter. The value should be the name of the provider supported by LangChain's `init_chat_model` (e.g., `"openai"`). This is because many large models currently provide APIs that are compatible with other manufacturers' styles (e.g., OpenAI). If your model does not have a dedicated or suitable integration library, but the provider supports APIs that are compatible with other manufacturers' styles, you can consider passing the corresponding provider string.
+  When using this method, you must simultaneously pass the `base_url` parameter or set the API_BASE environment variable to specify the API endpoint of the custom model.
+  If your model is an reasoning model that follows the DeepSeek calling convention, it is also recommended to pass `"deepseek"` value.
+  :::
 
 #### Loading Chat Models
 
@@ -82,6 +87,10 @@ langgraph-project/
 - `provider_name`: Provider name; must be a custom name
 - `embeddings_model`: Embeddings class or string. If it's a string, it must be a provider supported by official `init_embeddings` (e.g., `openai`, `cohere`). In this case, the `init_embeddings` function will be called.
 - `base_url`: Optional base URL. Recommended when `embeddings_model` is a string.
+  ::: tip 📌
+  `embeddings_model` supports specifying the provider through a string parameter. The value should be the name of the provider supported by LangChain's `init_embeddings` (e.g., `"openai"`). This is because many large models currently provide APIs that are compatible with other manufacturers' styles (e.g., OpenAI). If your model does not have a dedicated or suitable integration library, but the provider supports APIs that are compatible with other manufacturers' styles, you can consider passing the corresponding provider string.  
+  When using this method, you must simultaneously pass the `base_url` parameter to specify the API endpoint of the custom model.
+  :::
 
 ### Loading Embedding Models
 

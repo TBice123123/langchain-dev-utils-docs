@@ -22,7 +22,7 @@ def register_model_provider(
 
 - `provider_name` (str)：自定义提供者名称
 - `chat_model` (Union[Type[BaseChatModel], str])：ChatModel 类或支持的提供者字符串
-- `base_url` (Optional[str])：提供者的基准 URL
+- `base_url` (Optional[str])：提供者的 BaseURL
 
 **示例：**
 
@@ -59,7 +59,6 @@ def load_chat_model(
 
 ```python
 model = load_chat_model("dashscope:qwen-flash")
-model = load_chat_model("gpt-4", model_provider="openai", temperature=0.7)
 ```
 
 ### `register_embeddings_provider`
@@ -80,7 +79,7 @@ def register_embeddings_provider(
 
 - `provider_name` (str)：自定义提供者名称
 - `embeddings_model` (Union[Type[Embeddings], str])：嵌入模型类或支持的提供者字符串
-- `base_url` (Optional[str])：提供者的基准 URL
+- `base_url` (Optional[str])：提供者的 BaseURL
 
 **示例：**
 
@@ -116,7 +115,6 @@ def load_embeddings(
 
 ```python
 embeddings = load_embeddings("dashscope:text-embedding-v4")
-embeddings = load_embeddings("text-embedding-3-small", provider="openai")
 ```
 
 ## 消息处理
@@ -208,7 +206,7 @@ async def aconvert_reasoning_content_for_chunk_iterator(
 
 ```python
 async for chunk in aconvert_reasoning_content_for_chunk_iterator(
-    model.astream("Hello"), think_tag=("<!--THINK-->", "<!--/THINK-->")
+    model.astream("Hello"), think_tag=("<think>", "</think>")
 ):
     print(chunk.content, end="", flush=True)
 ```
@@ -346,7 +344,7 @@ def human_in_the_loop(
 - `handler` (Optional[HumanInterruptHandler])  
   自定义中断处理函数。类型为：
   ```python
-  HumanInterruptHandler = Callable[[InterrruptParams], Any]
+  HumanInterruptHandler = Callable[[InterruptParams], Any]
   ```
   若未提供，则使用默认 `default_handler`（支持 `accept` / `edit` / `response`）。
 
@@ -376,7 +374,7 @@ def human_in_the_loop_async(
 - `handler` (Optional[HumanInterruptHandler])  
   自定义中断处理函数。类型为：
   ```python
-  HumanInterruptHandler = Callable[[InterrruptParams], Any]
+  HumanInterruptHandler = Callable[[InterruptParams], Any]
   ```
   若未提供，则使用默认 `default_handler_async`（支持 `accept` / `edit` / `response`）。
 
@@ -388,16 +386,12 @@ def human_in_the_loop_async(
 
 ## 类型定义
 
-### `InterrruptParams`
+### `InterruptParams`
 
 传递给 `handler` 函数的参数类型，包含工具调用上下文：
 
 ```python
-from typing import Any, Dict, TypedDict
-from langchain_core.runnables import RunnableConfig
-from langchain_core.tools import BaseTool
-
-class InterrruptParams(TypedDict):
+class InterruptParams(TypedDict):
     tool_call_name: str           # 工具名称（字符串）
     tool_call_args: Dict[str, Any] # 工具调用参数（字典）
     tool: BaseTool                # 工具对象，用于后续 invoke/ainvoke
@@ -411,7 +405,7 @@ class InterrruptParams(TypedDict):
 ```python
 from typing import Callable, Any
 
-HumanInterruptHandler = Callable[[InterrruptParams], Any]
+HumanInterruptHandler = Callable[[InterruptParams], Any]
 ```
 
 ## 下一步

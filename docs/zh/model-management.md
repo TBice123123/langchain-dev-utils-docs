@@ -21,6 +21,13 @@ LangChain 官方的 `init_chat_model` 和 `init_embeddings` 函数很方便，�
 - `chat_model`：ChatModel 类或字符串。如果是字符串，必须是官方 `init_chat_model` 支持的提供商（例如 `openai`、`anthropic`）。在这种情况下，将调用 `init_chat_model` 函数。
 - `base_url`：可选的基础 URL。当 `chat_model` 是字符串时推荐使用。
 
+::: tip 📌
+`chat_model` 支持通过字符串参数指定模型提供商，其取值应为 LangChain 中 `init_chat_model` 所支持的提供商名称（例如 `"openai"`）。  
+这是因为目前许多大模型都提供了兼容其他厂商风格（如 OpenAI）的 API。若您的模型没有专用或者合适的集成库，但提供商支持兼容其他厂商的 API 风格，可考虑传递对应提供商字符串。
+使用此方式时必须同时传递 `base_url` 参数或者设置提供商的 API_BASE 环境变量以指定自定义模型的 API 端点。  
+若您的模型为推理模型且遵循 DeepSeek 的调用模式，也推荐传递 `"deepseek"` 值。
+:::
+
 #### 加载聊天模型
 
 #### `load_chat_model` 的参数
@@ -82,6 +89,12 @@ langgraph-project/
 - `provider_name`：提供商名称；必须是自定义名称
 - `embeddings_model`：Embeddings 类或字符串。如果是字符串，必须是官方 `init_embeddings` 支持的提供商（例如 `openai`、`cohere`）。在这种情况下，将调用 `init_embeddings` 函数。
 - `base_url`：可选的基础 URL。当 `embeddings_model` 是字符串时推荐使用。
+
+::: tip 📌
+`embeddings_model` 支持通过字符串参数指定模型提供商，其取值应为 LangChain 中 `init_embeddings` 所支持的提供商名称（例如 `"openai"`）。  
+这是因为目前许多大模型都提供了兼容其他厂商风格（如 OpenAI）的 API。若您的模型没有专用或者适合的集成库，但提供商支持兼容其他厂商的 API 风格，可考虑传递对应提供商字符串。
+使用此方式时必须同时传递 `base_url` 参数以指定自定义模型的 API 端点。  
+:::
 
 ### 加载嵌入模型
 
