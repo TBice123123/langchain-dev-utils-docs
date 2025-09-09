@@ -1,30 +1,30 @@
 # Tool Enhancement
 
-The Tool Enhancement module provides a set of utilities that make it easier to write and extend tools.
+The tool enhancement module provides a series of practical utilities to facilitate the writing of tools.
 
 ## Overview
 
-This module offers encapsulated helper functions to speed up tool authoring or to conveniently augment existing tools with extra capabilities.
+This module aims to offer encapsulated utility functions to speed up tool development and simplify the process of extending tool functionality.
 
-## Add “Human-in-the-Loop” Review
+## Adding "Human-in-the-Loop" Review
 
-Provides decorator functions to add "Human-in-the-Loop" review for tool invocations, enabling human review during tool execution.
+Provides decorator functions to add "Human-in-the-Loop" review support for tool calls, enabling manual review during tool execution.
 
-### Core functions
+### Core Functions
 
-- `human_in_the_loop`：For synchronous tool functions
-- `human_in_the_loop_async`：For asynchronous tool functions
+- `human_in_the_loop`: For synchronous tool functions
+- `human_in_the_loop_async`: For asynchronous tool functions
 
-### Parameters (both decorators)
+### Parameters
 
-- `func` – **DO NOT PASS MANUALLY**, used only for the decorator syntax.
-- `handler` – optional `Callable[[InterrruptParams], Any]`.  
-  – If omitted, the built-in `default_handler` is used.  
-  – For the async decorator the handler itself must be `async`.
+- `func`: The function to be decorated (**Do not pass this parameter manually; it is only for decorator syntax**)
+- `handler`: Optional, type `Callable[[InterrruptParams], Any]`, custom interruption handling logic. If not provided, the built-in `default_handler` is used.
 
-## Usage Examples
+The parameters for the decorator of asynchronous functions are the same as above, but the handler must be an asynchronous function.
 
-### 1. Basic usage (default handler)
+### Usage Examples
+
+#### Basic Usage (Using the Default Handler)
 
 ```python
 from langchain_dev_utils import human_in_the_loop
@@ -34,26 +34,29 @@ import datetime
 @human_in_the_loop
 @tool
 def get_current_time() -> str:
-    """Get current timestamp"""
+    """Get the current timestamp."""
     return str(datetime.datetime.now().timestamp())
 ```
 
-### 2. Async tool
+#### Asynchronous Tool Example
 
 ```python
 from langchain_dev_utils import human_in_the_loop_async
 from langchain_core.tools import tool
-import asyncio, datetime
+import asyncio
+import datetime
 
 @human_in_the_loop_async
 @tool
 async def async_get_current_time() -> str:
-    """Async version"""
+    """Asynchronously get the current timestamp."""
     await asyncio.sleep(1)
     return str(datetime.datetime.now().timestamp())
 ```
 
-### 3. Custom handler (accept / reject only)
+#### Custom Handler Example
+
+You can fully control the interruption behavior, such as only allowing "accept/reject" or customizing the prompt message:
 
 ```python
 from typing import Any
@@ -61,37 +64,36 @@ from langchain_dev_utils import human_in_the_loop_async, InterruptParams
 from langgraph.types import interrupt
 
 async def custom_handler(params: InterruptParams) -> Any:
-    response = await interrupt(
-        f"Call {params['tool_call_name']} with args {params['tool_call_args']}?"
+    response = interrupt(
+        f"I am about to call the tool {params['tool_call_name']} with parameters {params['tool_call_args']}. Please confirm whether to proceed."
     )
     if response["type"] == "accept":
-        return await params["tool"].ainvoke(params["tool_call_args"],
-                                            params["config"])
+        return await params["tool"].ainvoke(params["tool_call_args"], params["config"])
     elif response["type"] == "reject":
-        return "User rejected the call"
-    raise ValueError(f"Unknown response: {response['type']}")
+        return "The user rejected the tool call."
+    else:
+        raise ValueError(f"Unsupported response type: {response['type']}")
 
 @human_in_the_loop_async(handler=custom_handler)
 @tool
 async def get_weather(city: str) -> str:
-    """Get weather for a city"""
-    return f"{city} is sunny"
+    """Get weather information."""
+    return f"The weather in {city} is sunny."
 ```
 
-## Default-handler behaviour
+#### Default Handler Behavior
 
-If you do **not** supply a `handler`, the decorator uses LangGraph’s standard interrupt flow (accept / edit / respond).  
-See the official docs: [Adding human approval](https://docs.langchain.com/oss/python/langgraph/add-human-in-the-loop).
+If no `handler` is provided, the default interruption logic will be used. The default interruption logic can be referenced in the LangGraph official documentation: [Adding Human-in-the-Loop](https://docs.langchain.com/oss/python/langgraph/add-human-in-the-loop)
 
 ## Best Practices
 
-1. **Security first**: For operations involving funds, data deletion, external API calls, etc., enforce manual review.
-2. **Clear prompts**: Provide clear and understandable interrupt messages in custom handlers to assist the reviewer in making quick decisions.
-3. **Timeout and retry**: Currently, the `interrupt()` function has no built-in timeout mechanism. If you need timeout control, you should implement it manually (e.g., using `asyncio.wait_for`).
-4. **Error handling**: Catch and handle `ValueError` or user refusal scenarios to avoid process interruption.
-5. **Logging and auditing**: Record each interrupt request and response in the handler for posterior auditing.
+1.  **Prioritize Security**: Enforce human review for sensitive operations involving funds, data deletion, external API calls, etc.
+2.  **Clear Prompts**: Provide clear and understandable interruption messages in custom handlers to help reviewers make quick decisions.
+3.  **Timeout and Retry**: The current `interrupt()` has no built-in timeout mechanism. If timeout control is needed, implement it yourself within the handler (e.g., using `asyncio.wait_for`).
+4.  **Error Handling**: Catch and handle `ValueError` or user rejection scenarios to avoid process interruption.
+5.  **Logging and Auditing**: Log each interruption request and response within the handler for traceability.
 
-## Next steps
+## Next Steps
 
-- [API Reference](./api-reference.md) – full type signatures
-- [Getting Started](./getting-started.md) – back to overview
+- [API Reference](./api-reference.md) - Complete types and function signatures
+- [Getting Started Guide](./getting-started.md) - Return to Overview

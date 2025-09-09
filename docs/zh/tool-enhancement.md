@@ -22,9 +22,9 @@
 
 对于异步函数的装饰器的参数和上述相同，但是 handler 必须是一个异步函数
 
-## 使用示例
+### 使用示例
 
-### 基础用法（使用默认 handler）
+#### 基础用法（使用默认 handler）
 
 ```python
 from langchain_dev_utils import human_in_the_loop
@@ -38,7 +38,7 @@ def get_current_time() -> str:
     return str(datetime.datetime.now().timestamp())
 ```
 
-### 异步工具示例
+#### 异步工具示例
 
 ```python
 from langchain_dev_utils import human_in_the_loop_async
@@ -54,7 +54,7 @@ async def async_get_current_time() -> str:
     return str(datetime.datetime.now().timestamp())
 ```
 
-### 自定义 Handler 示例
+#### 自定义 Handler 示例
 
 你可以完全控制中断行为，例如只允许“接受/拒绝”，或自定义提示语：
 
@@ -81,7 +81,7 @@ async def get_weather(city: str) -> str:
     return f"{city}天气晴朗"
 ```
 
-## 默认 Handler 行为
+#### 默认 Handler 行为
 
 如果不传入 `handler`，将使用默认中断逻辑。默认的中断逻辑可以参考 langgraph 官方文档：[添加人工审核](https://docs.langchain.com/oss/python/langgraph/add-human-in-the-loop)
 

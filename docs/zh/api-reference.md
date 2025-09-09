@@ -322,7 +322,7 @@ formatted = message_format(messages, separator="\n", with_num=True)
 
 ## 工具增强
 
-## `human_in_the_loop`
+### `human_in_the_loop`
 
 为**同步工具函数**添加“人在回路”人工审核能力的装饰器。在工具执行前触发中断，等待人工确认、编辑或响应。
 
@@ -352,7 +352,7 @@ def human_in_the_loop(
 
 - `BaseTool`：装饰后的工具实例
 
-## `human_in_the_loop_async`
+### `human_in_the_loop_async`
 
 为**异步工具函数**添加“人在回路”人工审核能力的装饰器。支持 `await` 调用。
 
