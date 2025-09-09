@@ -20,14 +20,14 @@
 - [安装](./installation.md) - 设置说明
 - [模型管理](./model-management.md) - 注册和加载模型
 - [消息处理](./message-processing.md) - 处理 AI 消息
-- [工具增强](./tool-enhancement.md) - 为工具添加人工审核
+- [工具增强](./tool-enhancement.md) - 进一步方便工具的定义
 - [API 参考](./api-reference.md) - 完整的 API 文档
 
 ### 🛠️ 主要特性
 
 - **模型管理**：注册任何超出官方支持的模型提供商
 - **消息处理**：处理 AI 消息的高级实用工具
-- **工具增强**：添加人工审核循环功能
+- **工具增强**：进一步方便工具的定义
 
 ### 📖 GitHub 仓库
 

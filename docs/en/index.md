@@ -20,14 +20,14 @@ Follow the [Installation Guide](./installation.md) to set up the library in your
 - [Installation](./installation.md) - Setup instructions
 - [Model Management](./model-management.md) - Register and load models
 - [Message Processing](./message-processing.md) - Handle AI messages
-- [Tool Enhancement](./tool-enhancement.md) - Add human review to tools
+- [Tool Enhancement](./tool-enhancement.md) - Further facilitate the definition of tools
 - [API Reference](./api-reference.md) - Complete API documentation
 
 ### 🛠️ Key Features
 
 - **Model Management**: Register any model provider beyond official support
 - **Message Processing**: Advanced utilities for handling AI messages
-- **Tool Enhancement**: Add human-in-the-loop review capabilities
+- **Tool Enhancement**: Further facilitate the definition of tools
 
 ### 📖 GitHub Repository
 

@@ -33,7 +33,7 @@ uv add langchain-dev-utils
 - [安装指南](./installation.md) - 详细的安装说明
 - [模型管理](./model-management.md) - 了解模型提供商注册
 - [消息处理](./message-processing.md) - 探索消息实用工具
-- [工具增强](./tool-enhancement.md) - 为工具添加人工审核
+- [工具增强](./tool-enhancement.md) - 进一步方便工具的定义
 - [API 参考](./api-reference.md) - 完整的 API 文档
 
 ## 社区
