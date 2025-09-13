@@ -31,6 +31,31 @@ register_model_provider("dashscope", ChatQwen)
 register_model_provider("openrouter", "openai", base_url="https://openrouter.ai/api/v1")
 ```
 
+### `batch_register_model_provider`
+
+Batch register model providers.
+
+**Function signature:**
+
+```python
+def batch_register_model_provider(
+     providers: list[ChatModelProvider],
+) -> None
+```
+
+**Parameters:**
+
+- `providers` (List[ChatModelProvider]): List of providers, each containing `provider`, `chat_model`, and `base_url`.
+
+**Examples:**
+
+```python
+batch_register_model_provider([
+    {"provider": "dashscope", "chat_model": ChatQwen},
+    {"provider": "openrouter", "chat_model": "openai", "base_url": "https://openrouter.ai/api/v1  "},
+])
+```
+
 ### `load_chat_model`
 
 Load a chat model from a registered provider.
@@ -85,6 +110,31 @@ def register_embeddings_provider(
 
 ```python
 register_embeddings_provider("dashscope", "openai", base_url="https://dashscope.aliyuncs.com/compatible-mode/v1   ")
+```
+
+### `batch_register_embeddings_provider`
+
+Batch register embedding model providers.
+**Function signature:**
+
+```python
+def batch_register_embeddings_provider(
+   providers: list[EmbeddingProvider]
+)
+-> None
+```
+
+**Parameters:**
+
+- `providers` (List[EmbeddingProvider]): List of providers, each containing `provider`, `embeddings_model`, and `base_url`.
+
+**Examples:**
+
+```python
+batch_register_embeddings_provider([
+    {"provider": "dashscope", "embeddings_model": "openai", "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1  "},
+    {"provider": "siliconflow", "embeddings_model": SiliconFlowEmbeddings},
+])
 ```
 
 ### `load_embeddings`
@@ -406,6 +456,28 @@ Type alias for interrupt handler functions:
 from typing import Callable, Any
 
 HumanInterruptHandler = Callable[[InterruptParams], Any]
+```
+
+### `ChatModelProvider`
+
+Parameter type passed to `batch_register_model_provider`
+
+```python
+class ChatModelProvider(TypedDict):
+    provider: str
+    chat_model: Union[type[BaseChatModel], str]
+    base_url: NotRequired[str]
+```
+
+### `EmbeddingProvider`
+
+Parameter type passed to `batch_register_embeddings_provider`
+
+```python
+class EmbeddingProvider(TypedDict):
+    provider: str
+    embeddings_model: Union[type[Embeddings], str]
+    base_url: NotRequired[str]
 ```
 
 ## Next steps

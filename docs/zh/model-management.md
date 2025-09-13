@@ -4,13 +4,14 @@
 
 ## 概述
 
-LangChain 官方的 `init_chat_model` 和 `init_embeddings` 函数很方便，但它们支持的模型提供商数量相对有限。该模块提供了 `register_model_provider` 和 `register_embeddings_provider` 函数，使开发者能够通过统一的机制注册任何模型提供商。
+LangChain 官方的 `init_chat_model` 和 `init_embeddings` 函数很方便，但它们支持的模型提供商数量相对有限。该模块提供了 `register_model_provider`(`batch_register_model_provider`) 和 `register_embeddings_provider`(`batch_register_embeddings_provider`) 函数，使开发者能够通过统一的机制注册任何模型提供商。
 
 ## ChatModel 类
 
 ### 核心函数
 
 - `register_model_provider`：注册模型提供商
+- `batch_register_model_provider`：批量注册模型提供商
 - `load_chat_model`：加载聊天模型
 
 ### 注册模型提供商
@@ -21,11 +22,17 @@ LangChain 官方的 `init_chat_model` 和 `init_embeddings` 函数很方便，�
 - `chat_model`：ChatModel 类或字符串。如果是字符串，必须是官方 `init_chat_model` 支持的提供商（例如 `openai`、`anthropic`）。在这种情况下，将调用 `init_chat_model` 函数。
 - `base_url`：可选的基础 URL。当 `chat_model` 是字符串时推荐使用。
 
+#### `batch_register_model_provider` 的参数
+
+- `poviders`: 一个字典的数组，每个字典包含了 `provider`、`chat_model` 和 `base_url`。
+
 ::: tip 📌
 `chat_model` 支持通过字符串参数指定模型提供商，其取值应为 LangChain 中 `init_chat_model` 所支持的提供商名称（例如 `"openai"`）。  
 这是因为目前许多大模型都提供了兼容其他厂商风格（如 OpenAI）的 API。若您的模型没有专用或者合适的集成库，但提供商支持兼容其他厂商的 API 风格，可考虑传递对应提供商字符串。
 使用此方式时必须同时传递 `base_url` 参数或者设置提供商的 API_BASE 环境变量以指定自定义模型的 API 端点。  
 若您的模型为推理模型且遵循 DeepSeek 的调用模式，也推荐传递 `"deepseek"` 值。
+
+这个功能的实现思路可以参考: [配置 BASEURL 参数](https://docs.langchain.com/oss/python/langchain/models#base-url-or-proxy)
 :::
 
 #### 加载聊天模型
@@ -57,6 +64,29 @@ model = load_chat_model(model="openrouter:moonshotai/kimi-k2-0905")
 print(model.invoke("Hello"))
 ```
 
+当然你也可以使用批量注册：
+
+```python
+from langchain_dev_utils import batch_register_model_provider
+
+batch_register_model_provider([
+    {
+        "provider": "dashscope",
+        "chat_model": ChatQwen,
+    },
+    {
+        "provider": "openrouter",
+        "chat_model": "openai",
+        "base_url": "https://openrouter.ai/api/v1",
+    },
+])
+model = load_chat_model(model="dashscope:qwen-flash")
+print(model.invoke("Hello"))
+
+model = load_chat_model(model="openrouter:moonshotai/kimi-k2-0905")
+print(model.invoke("Hello"))
+```
+
 ### 重要说明
 
 - **全局注册**：由于底层实现使用全局字典，**所有模型提供商必须在应用程序启动时注册**。
@@ -80,6 +110,7 @@ langgraph-project/
 ### 核心函数
 
 - `register_embeddings_provider`：注册嵌入模型提供商
+- `batch_register_embeddings_provider`：批量注册嵌入模型提供商
 - `load_embeddings`：加载嵌入模型
 
 ### 注册嵌入提供商
@@ -89,6 +120,10 @@ langgraph-project/
 - `provider_name`：提供商名称；必须是自定义名称
 - `embeddings_model`：Embeddings 类或字符串。如果是字符串，必须是官方 `init_embeddings` 支持的提供商（例如 `openai`、`cohere`）。在这种情况下，将调用 `init_embeddings` 函数。
 - `base_url`：可选的基础 URL。当 `embeddings_model` 是字符串时推荐使用。
+
+#### `batch_register_embeddings_provider` 的参数
+
+- `poviders`: 一个字典的数组，每个字典包含了 `provider`、`embeddings_model` 和 `base_url`。
 
 ::: tip 📌
 `embeddings_model` 支持通过字符串参数指定模型提供商，其取值应为 LangChain 中 `init_embeddings` 所支持的提供商名称（例如 `"openai"`）。  
@@ -108,13 +143,37 @@ langgraph-project/
 
 ```python
 from langchain_dev_utils import register_embeddings_provider, load_embeddings
+from langchain_siliconflow import SiliconFlowEmbeddings
 
 register_embeddings_provider(
     "dashscope", "openai", base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
 
+register_embeddings_provider(
+    "siliconflow", SiliconFlowEmbeddings
+)
+
 embeddings = load_embeddings("dashscope:text-embedding-v4")
 
+print(embeddings.embed_query("hello world"))
+
+embeddings = load_embeddings("siliconflow:text-embedding-v4")
+print(embeddings.embed_query("hello world"))
+```
+
+也可以使用批量注册
+
+```python
+from langchain_dev_utils import batch_register_embeddings_provider
+batch_register_embeddings_provider(
+    [
+        {"provider": "dashscope", "embeddings_model": "openai"},
+        {"provider": "siliconflow", "embeddings_model": SiliconFlowEmbeddings},
+    ]
+)
+embeddings = load_embeddings("dashscope:text-embedding-v4")
+print(embeddings.embed_query("hello world"))
+embeddings = load_embeddings("siliconflow:text-embedding-v4")
 print(embeddings.embed_query("hello world"))
 ```
 

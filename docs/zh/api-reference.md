@@ -31,6 +31,31 @@ register_model_provider("dashscope", ChatQwen)
 register_model_provider("openrouter", "openai", base_url="https://openrouter.ai/api/v1  ")
 ```
 
+### `batch_register_model_provider`
+
+批量注册模型提供者。
+
+**函数签名：**
+
+```python
+def batch_register_model_provider(
+     providers: list[ChatModelProvider],
+) -> None
+```
+
+**参数：**
+
+- `providers` (List[ChatModelProvider])：提供者列表，每个提供者包含 `provider`、`chat_model` 和 `base_url`。
+
+**示例：**
+
+```python
+batch_register_model_provider([
+    {"provider": "dashscope", "chat_model": ChatQwen},
+    {"provider": "openrouter", "chat_model": "openai", "base_url": "https://openrouter.ai/api/v1  "},
+])
+```
+
 ### `load_chat_model`
 
 从已注册的提供者加载聊天模型。
@@ -85,6 +110,31 @@ def register_embeddings_provider(
 
 ```python
 register_embeddings_provider("dashscope", "openai", base_url="https://dashscope.aliyuncs.com/compatible-mode/v1  ")
+```
+
+### `batch_register_embeddings_provider`
+
+批量注册嵌入模型提供者。
+**函数签名：**
+
+```python
+def batch_register_embeddings_provider(
+   providers: list[EmbeddingProvider]
+)
+-> None
+```
+
+**参数：**
+
+- `providers` (List[EmbeddingProvider])：提供者列表，每个提供者包含 `provider`、`embeddings_model` 和 `base_url`。
+
+**示例：**
+
+```python
+batch_register_embeddings_provider([
+    {"provider": "dashscope", "embeddings_model": "openai", "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1  "},
+    {"provider": "siliconflow", "embeddings_model": SiliconFlowEmbeddings},
+])
 ```
 
 ### `load_embeddings`
@@ -406,6 +456,28 @@ class InterruptParams(TypedDict):
 from typing import Callable, Any
 
 HumanInterruptHandler = Callable[[InterruptParams], Any]
+```
+
+### `ChatModelProvider`
+
+传递给`batch_register_model_provider`的参数类型
+
+```python
+class ChatModelProvider(TypedDict):
+    provider: str
+    chat_model: Union[type[BaseChatModel], str]
+    base_url: NotRequired[str]
+```
+
+### `EmbeddingProvider`
+
+传递给`batch_register_embeddings_provider`的参数类型
+
+```python
+class EmbeddingProvider(TypedDict):
+    provider: str
+    embeddings_model: Union[type[Embeddings], str]
+    base_url: NotRequired[str]
 ```
 
 ## 下一步

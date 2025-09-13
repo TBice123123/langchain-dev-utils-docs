@@ -33,7 +33,7 @@ uv add langchain-dev-utils
 - [Installation Guide](./installation.md) - Detailed installation instructions
 - [Model Management](./model-management.md) - Learn about model provider registration
 - [Message Processing](./message-processing.md) - Explore message utilities
-- [Tool Enhancement](./tool-enhancement.md) - Add human review to tools
+- [Tool Enhancement](./tool-enhancement.md) - Further facilitate the definition of tools
 - [API Reference](./api-reference.md) - Complete API documentation
 
 ## Community
