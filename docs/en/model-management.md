@@ -20,7 +20,7 @@ LangChain's official `init_chat_model` and `init_embeddings` functions are conve
 
 - `provider_name`: Provider name; must be a custom name
 - `chat_model`: ChatModel class or string. If a string, it must be a provider supported by the official `init_chat_model` (e.g., `openai`, `anthropic`). In this case, the `init_chat_model` function will be invoked.
-- `base_url`: Optional base URL. Recommended when `chat_model` is a string.
+- `base_url`: Optional base URL. Only effective when `chat_model` is a string.
 
 #### Parameters for `batch_register_model_provider`
 

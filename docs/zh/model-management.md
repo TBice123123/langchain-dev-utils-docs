@@ -20,7 +20,7 @@ LangChain 官方的 `init_chat_model` 和 `init_embeddings` 函数很方便，�
 
 - `provider_name`：提供商名称；必须是自定义名称
 - `chat_model`：ChatModel 类或字符串。如果是字符串，必须是官方 `init_chat_model` 支持的提供商（例如 `openai`、`anthropic`）。在这种情况下，将调用 `init_chat_model` 函数。
-- `base_url`：可选的基础 URL。当 `chat_model` 是字符串时推荐使用。
+- `base_url`：可选的基础 URL。当 `chat_model` 是字符串时才有效。
 
 #### `batch_register_model_provider` 的参数
 
