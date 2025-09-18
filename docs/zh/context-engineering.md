@@ -19,6 +19,7 @@
 
 - `name`：自定义工具名称，如果不传则 create_write_plan_tool 默认为`write_plan`，create_update_plan_tool 默认为`update_plan`
 - `description`：工具描述,如果不传则采用默认的工具描述
+- `message_key`：用于更新 messages 的键，若不传入则使用默认的`messages`
 
 ### 使用示例
 
@@ -57,6 +58,7 @@ class State(PlanStateMixin):
 
 - `name`：自定义工具名称，如果不传则 create_write_note_tool 默认为`write_note`，create_ls_tool 默认为`ls`，create_query_note_tool 默认为`query_note`
 - `description`：工具描述,如果不传则采用默认的工具描述
+- `message_key`：用于更新 messages 的键，若不传入则使用默认的`messages` （仅`create_write_note_tool` 可以传入）
 
 ### 使用示例
 

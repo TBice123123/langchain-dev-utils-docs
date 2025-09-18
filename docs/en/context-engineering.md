@@ -19,6 +19,7 @@ This section provides tools to assist large models in creating or updating plans
 
 - `name`: Custom tool name; if not provided, `create_write_plan_tool` defaults to `write_plan`, and `create_update_plan_tool` defaults to `update_plan`
 - `description`: Tool description; if not provided, the default description will be used
+- `message_key`: Key for updating messages. Defaults to `messages` if not provided.
 
 ### Usage Example
 
@@ -57,6 +58,7 @@ This section provides tools to assist large models in recording notes, along wit
 
 - `name`: Custom tool name; if not provided, `create_write_note_tool` defaults to `write_note`, `create_ls_tool` defaults to `ls`, and `create_query_note_tool` defaults to `query_note`
 - `description`: Tool description; if not provided, the default description will be used
+- `message_key`: Key for updating messages. Defaults to `messages` if not provided. (Only `create_write_note_tool` can be provided)
 
 ### Usage Example
 

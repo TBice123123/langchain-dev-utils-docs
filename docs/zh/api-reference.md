@@ -444,6 +444,8 @@ def human_in_the_loop_async(
 def create_write_plan_tool(
     name: Optional[str] = None,
     description: Optional[str] = None,
+    message_key: Optional[str] = None,
+
 ) -> BaseTool:
 ```
 
@@ -451,6 +453,7 @@ def create_write_plan_tool(
 
 - `name` (Optional[str])：工具名称
 - `description` (Optional[str])：工具描述
+- `message_key` (Optional[str]): 用于更新 messages 的键，若不传入则使用默认的`messages`
 
 **返回值：**
 
@@ -466,6 +469,7 @@ def create_write_plan_tool(
 def create_update_plan_tool(
     name: Optional[str] = None,
     description: Optional[str] = None,
+    message_key: Optional[str] = None,
 ) -> BaseTool:
 ```
 
@@ -473,6 +477,7 @@ def create_update_plan_tool(
 
 - `name` (Optional[str])：工具名称
 - `description` (Optional[str])：工具描述
+- `message_key` (Optional[str])：用于更新 messages 的键，若不传入则使用默认的`messages`
 
 **返回值：**
 
@@ -488,6 +493,7 @@ def create_update_plan_tool(
 def create_write_note_tool(
     name: Optional[str] = None,
     description: Optional[str] = None,
+    message_key: Optional[str] = None,
 ) -> BaseTool:
 ```
 
@@ -495,6 +501,7 @@ def create_write_note_tool(
 
 - `name` (Optional[str])：工具名称
 - `description` (Optional[str])：工具描述
+- `message_key` (Optional[str])：用于更新 messages 的键，若不传入则使用默认的`messages`
 
 **返回值：**
 

@@ -444,6 +444,7 @@ Creates a tool for writing plans.
 def create_write_plan_tool(
     name: Optional[str] = None,
     description: Optional[str] = None,
+    message_key: Optional[str] = None,
 ) -> BaseTool:
 ```
 
@@ -451,6 +452,7 @@ def create_write_plan_tool(
 
 - `name` (Optional[str]): Name of the tool
 - `description` (Optional[str]): Description of the tool
+- `message_key` (Optional[str]): Key for updating messages. Defaults to `messages` if not provided.
 
 **Returns:**
 
@@ -468,6 +470,7 @@ Creates a tool for updating plans.
 def create_update_plan_tool(
     name: Optional[str] = None,
     description: Optional[str] = None,
+    message_key: Optional[str] = None,
 ) -> BaseTool:
 ```
 
@@ -475,6 +478,7 @@ def create_update_plan_tool(
 
 - `name` (Optional[str]): Name of the tool
 - `description` (Optional[str]): Description of the tool
+- `message_key` (Optional[str]): Key for updating messages. Defaults to `messages` if not provided.
 
 **Returns:**
 
@@ -492,6 +496,7 @@ Creates a tool for writing notes.
 def create_write_note_tool(
     name: Optional[str] = None,
     description: Optional[str] = None,
+    message_key: Optional[str] = None,
 ) -> BaseTool:
 ```
 
@@ -499,6 +504,7 @@ def create_write_note_tool(
 
 - `name` (Optional[str]): Name of the tool
 - `description` (Optional[str]): Description of the tool
+- `message_key` (Optional[str]): Key for updating messages. Defaults to `messages` if not provided.
 
 **Returns:**
 
