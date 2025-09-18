@@ -434,6 +434,124 @@ def human_in_the_loop_async(
 
 Same as `human_in_the_loop`, returns an async-compatible `BaseTool` instance.
 
+### `create_write_plan_tool`
+
+Creates a tool for writing plans.
+
+**Function Signature:**
+
+```python
+def create_write_plan_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> BaseTool:
+```
+
+**Parameters:**
+
+- `name` (Optional[str]): Name of the tool
+- `description` (Optional[str]): Description of the tool
+
+**Returns:**
+
+- `BaseTool`: The created tool instance
+
+---
+
+### `create_update_plan_tool`
+
+Creates a tool for updating plans.
+
+**Function Signature:**
+
+```python
+def create_update_plan_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> BaseTool:
+```
+
+**Parameters:**
+
+- `name` (Optional[str]): Name of the tool
+- `description` (Optional[str]): Description of the tool
+
+**Returns:**
+
+- `BaseTool`: The created tool instance
+
+---
+
+### `create_write_note_tool`
+
+Creates a tool for writing notes.
+
+**Function Signature:**
+
+```python
+def create_write_note_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> BaseTool:
+```
+
+**Parameters:**
+
+- `name` (Optional[str]): Name of the tool
+- `description` (Optional[str]): Description of the tool
+
+**Returns:**
+
+- `BaseTool`: The created tool instance
+
+---
+
+### `create_ls_tool`
+
+Creates a tool for listing notes.
+
+**Function Signature:**
+
+```python
+def create_ls_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> BaseTool:
+```
+
+**Parameters:**
+
+- `name` (Optional[str]): Name of the tool
+- `description` (Optional[str]): Description of the tool
+
+**Returns:**
+
+- `BaseTool`: The created tool instance
+
+---
+
+### `create_query_note_tool`
+
+Creates a tool for querying notes.
+
+**Function Signature:**
+
+```python
+def create_query_note_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> BaseTool:
+```
+
+**Parameters:**
+
+- `name` (Optional[str]): Name of the tool
+- `description` (Optional[str]): Description of the tool
+
+**Returns:**
+
+- `BaseTool`: The created tool instance
+
 ## Type definitions
 
 ### `InterruptParams`
@@ -478,6 +596,29 @@ class EmbeddingProvider(TypedDict):
     provider: str
     embeddings_model: Union[type[Embeddings], str]
     base_url: NotRequired[str]
+```
+
+### `PlanStateMixin`
+
+Plan State Mixin Class
+
+```python
+class Plan(TypedDict):
+    content: str
+    status: Literal["pending", "in_progress", "done"]
+
+
+class PlanStateMixin(TypedDict):
+    plan: list[Plan]
+```
+
+### `NoteStateMixin`
+
+Note State Mixin Class
+
+```python
+class NoteStateMixin(TypedDict):
+    note: Annotated[dict[str, str], note_reducer]
 ```
 
 ## Next steps

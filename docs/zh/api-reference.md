@@ -434,6 +434,116 @@ def human_in_the_loop_async(
 
 同 `human_in_the_loop`，返回异步兼容的 `BaseTool` 实例。
 
+### `create_write_plan_tool`
+
+创建一个用于写计划的工具。
+
+**函数签名：**
+
+```python
+def create_write_plan_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> BaseTool:
+```
+
+**参数：**
+
+- `name` (Optional[str])：工具名称
+- `description` (Optional[str])：工具描述
+
+**返回值：**
+
+- `BaseTool`：创建的工具实例
+
+### `create_update_plan_tool`
+
+创建一个用于更新计划的工具。
+
+**函数签名：**
+
+```python
+def create_update_plan_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> BaseTool:
+```
+
+**参数：**
+
+- `name` (Optional[str])：工具名称
+- `description` (Optional[str])：工具描述
+
+**返回值：**
+
+- `BaseTool`：创建的工具实例
+
+### `create_write_note_tool`
+
+创建一个用于写笔记的工具。
+
+**函数签名：**
+
+```python
+def create_write_note_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> BaseTool:
+```
+
+**参数：**
+
+- `name` (Optional[str])：工具名称
+- `description` (Optional[str])：工具描述
+
+**返回值：**
+
+- `BaseTool`：创建的工具实例
+
+### `create_ls_tool`
+
+创建一个用于列出笔记的工具。
+
+**函数签名：**
+
+```python
+def create_ls_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> BaseTool:
+```
+
+**参数：**
+
+- `name` (Optional[str])：工具名称
+- `description` (Optional[str])：工具描述
+
+**返回值：**
+
+- `BaseTool`：创建的工具实例
+
+### `create_query_note_tool`
+
+创建一个用于查询笔记的工具。
+
+**函数签名：**
+
+```python
+def create_query_note_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> BaseTool:
+```
+
+**参数：**
+
+- `name` (Optional[str])：工具名称
+- `description` (Optional[str])：工具描述
+
+**返回值：**
+
+- `BaseTool`：创建的工具实例
+
 ## 类型定义
 
 ### `InterruptParams`
@@ -478,6 +588,29 @@ class EmbeddingProvider(TypedDict):
     provider: str
     embeddings_model: Union[type[Embeddings], str]
     base_url: NotRequired[str]
+```
+
+### `PlanStateMixin`
+
+计划状态混入类
+
+```python
+class Plan(TypedDict):
+    content: str
+    status: Literal["pending", "in_progress", "done"]
+
+
+class PlanStateMixin(TypedDict):
+    plan: list[Plan]
+```
+
+### `NoteStateMixin`
+
+笔记状态混入类
+
+```python
+class NoteStateMixin(TypedDict):
+    note: Annotated[dict[str, str], note_reducer]
 ```
 
 ## 下一步

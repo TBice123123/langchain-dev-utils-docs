@@ -28,6 +28,7 @@ export default defineConfig({
               { text: 'Model Management', link: '/en/model-management' },
               { text: 'Message Processing', link: '/en/message-processing' },
               { text: 'Tool Enhancement', link: '/en/tool-enhancement' },
+              { text: 'Context Engineering', link: '/en/context-engineering' },
               { text: 'API Reference', link: '/en/api-reference' },
             ]
           }
@@ -58,6 +59,7 @@ export default defineConfig({
               { text: '模型管理', link: '/zh/model-management' },
               { text: '消息处理', link: '/zh/message-processing' },
               { text: '工具增强', link: '/zh/tool-enhancement' },
+              { text: '上下文工程', link: '/zh/context-engineering' },
               { text: 'API 参考', link: '/zh/api-reference' },
             ]
           }

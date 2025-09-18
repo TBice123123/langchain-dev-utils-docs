@@ -9,12 +9,14 @@ Welcome to `langchain-dev-utils`! This comprehensive utility library is designed
 1. **Model Management** - Flexible model provider registration and loading system
 2. **Message Processing** - Utilities for handling AI messages and reasoning content
 3. **Tool Enhancement** - Enhanced support for tool definitions
+4. **Context Engineering** - Advanced utilities for AI context management
 
 ## Key Features
 
 - **Extensible Model Support**: Register any model provider not officially supported
 - **Message Processing**: Efficiently handle reasoning content and message chunks
 - **Tool Enhancement**: Further facilitate the definition of tools
+- **Context Engineering**: Advanced utilities for AI context management
 
 ## Quick Start
 
@@ -34,6 +36,7 @@ uv add langchain-dev-utils
 - [Model Management](./model-management.md) - Learn about model provider registration
 - [Message Processing](./message-processing.md) - Explore message utilities
 - [Tool Enhancement](./tool-enhancement.md) - Further facilitate the definition of tools
+- [Context Engineering](./context-engineering.md) - Explore AI context management utilities
 - [API Reference](./api-reference.md) - Complete API documentation
 
 ## Community
