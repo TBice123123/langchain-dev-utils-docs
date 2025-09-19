@@ -1,8 +1,8 @@
 # Installation
 
-`LangChain-Dev-Utils` can be installed with a variety of package managers. Pick the one that best fits your workflow.
+`LangChain-Dev-Utils` can be installed using various package managers. Choose the one that best fits your workflow.
 
-## Package managers
+## Package Managers
 
 ### Using pip
 
@@ -22,13 +22,13 @@ poetry add langchain-dev-utils
 uv add langchain-dev-utils
 ```
 
-## System requirements
+## System Requirements
 
 - Python 3.11 or higher
 
 ## Dependencies
 
-The package automatically installs the following dependencies:
+The package will automatically install the following dependencies:
 
 - `langchain`
 - `langgraph`
@@ -42,9 +42,9 @@ import langchain_dev_utils
 print(langchain_dev_utils.__version__)
 ```
 
-## Development install
+## Development Installation
 
-If you want to contribute to the project or run the tests:
+If you’d like to contribute to the project or run tests locally:
 
 ```bash
 git clone https://github.com/TBice123123/langchain-dev-utils.git
@@ -53,10 +53,12 @@ uv sync --group test
 uv run pytest .
 ```
 
-## Next steps
+## Next Steps
 
-Once installed, you can move on to:
+After installation, you can proceed to:
 
-- [Model Management](./model-management.md) – learn how to register and load models
-- [Message Processing](./message-processing.md) – explore message utilities
-- [Tool Enhancement](./tool-enhancement.md) – add human review to tools
+- [Model Management](./model-management.md) — Unified interface for easily using chat and embeddings models
+- [Message Processing](./message-processing.md) — Utility functions for Message objects, including chunk merging and more
+- [Tool Enhancement](./tool-enhancement.md) — Simplifies defining and developing LangChain tools
+- [Context Engineering](./context-engineering.md) — Advanced tools and state mixin classes for context management
+- [API Reference](./api-reference.md) — Complete API documentation

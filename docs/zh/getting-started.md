@@ -1,45 +1,53 @@
-# 入门指南
+# 🚀 入门指南
 
-欢迎使用`langchain-dev-utils`！这个综合实用工具库旨在为使用 LangChain 和 LangGraph 构建大型语言模型应用程序的开发者提供封装的实用函数，帮助开发者更高效地工作。
+欢迎使用 **`langchain-dev-utils`** —— 专为 LangChain 与 LangGraph 开发者打造的高效实用工具库。我们封装了常用功能模块，助你更轻松地构建、调试和优化大型语言模型（LLM）应用，提升开发效率与工程体验。
 
-## 概述
+## 📌 核心功能模块
 
-`langchain-dev-utils`目前分为三个主要功能模块：
+目前，`langchain-dev-utils` 提供四大核心模块：
 
-1. **模型管理** - 灵活的模型提供商注册和加载系统
-2. **消息处理** - 用于处理 AI 消息和推理内容的实用工具
-3. **工具增强** - 工具定义的增强支持
-4. **上下文工程** - AI 上下文管理的高级实用工具
+1. **模型管理**  
+   统一注册与管理任何的模型提供商，一个函数调用 chat 与 embeddings 模型，告别重复导入第三方集成库。
 
-## 主要特性
+2. **消息处理**  
+   提供灵活的消息处理工具：支持 chunks 合并、推理内容合并、工具调用解析等。
 
-- **可扩展的模型支持**：注册非官方支持的任何模型提供商
-- **消息处理**：高效处理推理内容和消息块
-- **工具增强**：进一步方便工具的定义
-- **上下文工程**：进一步加强 AI 上下文管理
+3. **工具增强**  
+   简化 LangChain Tools 的开发流程，内置装饰器，轻松实现 tools 的编写或修改。
 
-## 快速开始
+4. **上下文工程**  
+   提供上下文工程的高级 tools 与状态混合类，帮助开发者轻松实现上下文管理。
+
+## 🛠️ 快速开始
+
+只需一行命令即可安装：
 
 ```bash
-# 安装包
+# 使用 pip
 pip install -U langchain-dev-utils
 
-# 或使用其他包管理器
+# 使用 poetry
 poetry add langchain-dev-utils
-# 或
+
+# 使用 uv（推荐，极速安装）
 uv add langchain-dev-utils
 ```
 
-## 后续步骤
+安装完成后，即可在项目中导入使用。
 
-- [安装指南](./installation.md) - 详细的安装说明
-- [模型管理](./model-management.md) - 了解模型提供商注册
-- [消息处理](./message-processing.md) - 探索消息实用工具
-- [工具增强](./tool-enhancement.md) - 进一步方便工具的定义
-- [上下文工程](./context-engineering.md) - 进一步加强 AI 上下文管理
-- [API 参考](./api-reference.md) - 完整的 API 文档
+## 📘 下一步学习路径
 
-## 社区
+- [安装](./installation.md) - 如何安装本库
+- [模型管理](./model-management.md) - 提供统一的管理方式，方便开发者使用 chat 和 embeddings 模型。
+- [消息处理](./message-processing.md) - 提供针对 Message 类的一系列工具函数，涵盖 chunk 合并等内容。
+- [工具增强](./tool-enhancement.md) - 进一步的方便开发者定义和开发 langchain 的 tools。
+- [上下文工程](./context-engineering.md) - 提供上下文工程的高级 tools 和对应的状态混合类。
+- [API 参考](./api-reference.md) - API 参考文档
 
-- [GitHub 仓库](https://github.com/TBice123123/langchain-dev-utils)
-- [问题反馈](https://github.com/TBice123123/langchain-dev-utils/issues)
+---
+
+## 💬 加入社区
+
+- 🐙 [GitHub 仓库](https://github.com/TBice123123/langchain-dev-utils) —— 查看源码、提交 PR
+- 🐞 [问题反馈](https://github.com/TBice123123/langchain-dev-utils/issues) —— 报告 Bug 或提出建议
+- 💡 欢迎贡献代码、文档或使用案例，共建更强大的 LangChain 实用开发工具生态。

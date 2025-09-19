@@ -95,5 +95,5 @@ async def get_weather(city: str) -> str:
 
 ## 下一步
 
-- [API 参考](./api-reference.md) - 完整类型与函数签名
-- [入门指南](./getting-started.md) - 返回概览
+- [上下文工程](./context-engineering.md) - 提供上下文工程的高级 tools 和对应的状态混合类。
+- [API 参考](./api-reference.md) - API 参考文档

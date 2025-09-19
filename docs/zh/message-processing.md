@@ -44,9 +44,9 @@ for chunk in convert_reasoning_content_for_chunk_iterator(
     print(chunk.content, end="", flush=True)
 ```
 
-## 合并 AI 消息块
+## 合并 AI Chunks
 
-提供将多个 AI 消息块合并为单个 AI 消息的工具函数。
+提供将多个 AI Chunks 合并为单个 AIMessage 的工具函数。
 
 ### 核心函数
 
@@ -135,7 +135,7 @@ if has_tool_calling(cast(AIMessage, response)):
     print(name, args)
 ```
 
-## 格式化消息
+## 内容拼接
 
 将由文档、消息或字符串组成的列表格式化为单个字符串。
 
@@ -173,9 +173,10 @@ print(formatted_messages)
 1. **类型安全**：处理消息对象时始终使用类型转换
 2. **流式处理**：根据使用场景选择合适的流式处理函数（同步/异步）
 3. **工具调用**：在尝试解析工具调用前始终先检查是否存在工具调用
-4. **消息格式化**：根据使用场景选择合适的分隔符和编号方式
+4. **内容拼接**：根据使用场景选择合适的分隔符和编号方式
 
 ## 下一步
 
-- [工具增强](./tool-enhancement.md) - 学习如何为工具添加人工审核
-- [API 参考](./api-reference.md) - 完整的 API 文档
+- [工具增强](./tool-enhancement.md) - 进一步的方便开发者定义和开发 langchain 的 tools。
+- [上下文工程](./context-engineering.md) - 提供上下文工程的高级 tools 和对应的状态混合类。
+- [API 参考](./api-reference.md) - API 参考文档
