@@ -622,5 +622,4 @@ class NoteStateMixin(TypedDict):
 
 ## 下一步
 
-- [入门指南](./getting-started.md) - 返回概览
-- [安装指南](./installation.md) - 安装说明
+- [使用示例](./example.md) - 介绍本库的使用示例

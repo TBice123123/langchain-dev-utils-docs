@@ -180,3 +180,4 @@ print(formatted_messages)
 - [工具增强](./tool-enhancement.md) - 进一步的方便开发者定义和开发 langchain 的 tools。
 - [上下文工程](./context-engineering.md) - 提供上下文工程的高级 tools 和对应的状态混合类。
 - [API 参考](./api-reference.md) - API 参考文档
+- [使用示例](./example.md) - 介绍本库的使用示例

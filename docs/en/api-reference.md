@@ -629,5 +629,4 @@ class NoteStateMixin(TypedDict):
 
 ## Next steps
 
-- [Getting Started](./getting-started.md) - Return to overview
-- [Installation Guide](./installation.md) - Installation instructions
+- [Example](./example.md) - Example of using the library

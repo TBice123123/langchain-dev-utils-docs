@@ -96,3 +96,4 @@ class State(NoteStateMixin, PlanStateMixin, MessageState):
 ## Next Steps
 
 - [API Reference](./api-reference.md) — API reference documentation
+- [Example](./example.md) — Example of using the library

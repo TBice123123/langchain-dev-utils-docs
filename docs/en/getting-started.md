@@ -43,6 +43,7 @@ Once installed, you can import and start using it in your project immediately.
 - [Tool Enhancement](./tool-enhancement.md) — Further simplifies defining and developing LangChain tools
 - [Context Engineering](./context-engineering.md) — Advanced tools and corresponding state mixin classes for context engineering
 - [API Reference](./api-reference.md) — API reference documentation
+- [Example](./example.md) — Example of using the library
 
 ---
 

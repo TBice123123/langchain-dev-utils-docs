@@ -219,3 +219,4 @@ print(embeddings.embed_query("hello world"))
 - [Tool Enhancement](./tool-enhancement.md) - Further facilitates developers in defining and developing LangChain tools.
 - [Context Engineering](./context-engineering.md) - Offers advanced tools for context engineering and corresponding state-mixing classes.
 - [API Reference](./api-reference.md) - API documentation reference.
+- [Example](./example.md) - Example of using the library

@@ -23,6 +23,7 @@ Follow the [Installation Guide](./installation.md) to set up the library in your
 - [Tool Enhancement](./tool-enhancement.md) — Simplifies and accelerates the development of LangChain tools
 - [Context Engineering](./context-engineering.md) — Advanced tools and state mixin classes for context management
 - [API Reference](./api-reference.md) — Complete API documentation
+- [Example](./example.md) — Example of using the library
 
 ### 🛠️ Key Features
 

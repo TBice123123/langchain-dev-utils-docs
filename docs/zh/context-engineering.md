@@ -98,3 +98,4 @@ class State(NoteStateMixin, PlanStateMixin, MessageState):
 ## 下一步
 
 - [API 参考](./api-reference.md) - API 参考文档
+- [使用示例](./example.md) - 介绍本库的使用示例

@@ -62,3 +62,4 @@ After installation, you can proceed to:
 - [Tool Enhancement](./tool-enhancement.md) — Simplifies defining and developing LangChain tools
 - [Context Engineering](./context-engineering.md) — Advanced tools and state mixin classes for context management
 - [API Reference](./api-reference.md) — Complete API documentation
+- [Example](./example.md) — Example of using the library
