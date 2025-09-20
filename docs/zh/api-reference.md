@@ -509,7 +509,7 @@ def create_write_note_tool(
 
 ### `create_ls_tool`
 
-创建一个用于列出笔记的工具。
+创建一个用于列出已有的笔记的工具。
 
 **函数签名：**
 

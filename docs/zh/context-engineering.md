@@ -51,7 +51,7 @@ class State(PlanStateMixin):
 ### 核心函数
 
 - `create_write_note_tool`：创建一个用于写笔记的工具
-- `create_ls_tool`：创建一个用于更新笔记的工具
+- `create_ls_tool`：创建一个用于列出已有的笔记的工具
 - `create_query_note_tool`：创建一个用于查询笔记的工具
 
 ### 参数
