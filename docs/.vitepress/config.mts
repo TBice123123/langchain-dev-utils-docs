@@ -30,6 +30,10 @@ export default defineConfig({
               { text: "Message Processing", link: "/en/message-processing" },
               { text: "Tool Enhancement", link: "/en/tool-enhancement" },
               { text: "Context Engineering", link: "/en/context-engineering" },
+              {
+                text: "Subgraph Composition",
+                link: "/en/graph_pipeline",
+              },
               { text: "API Reference", link: "/en/api-reference" },
               { text: "Example", link: "/en/example" },
             ],
@@ -65,6 +69,10 @@ export default defineConfig({
               { text: "消息处理", link: "/zh/message-processing" },
               { text: "工具增强", link: "/zh/tool-enhancement" },
               { text: "上下文工程", link: "/zh/context-engineering" },
+              {
+                text: "子图编排",
+                link: "/zh/graph_pipeline",
+              },
               { text: "API 参考", link: "/zh/api-reference" },
               { text: "使用示例", link: "/zh/example" },
             ],
@@ -81,48 +89,6 @@ export default defineConfig({
     },
   },
 
-  themeConfig: {
-    // Global search configuration with i18n support
-    search: {
-      provider: "local",
-      options: {
-        locales: {
-          zh: {
-            translations: {
-              button: {
-                buttonText: "搜索文档",
-                buttonAriaLabel: "搜索文档",
-              },
-              modal: {
-                displayDetails: "显示详细列表",
-                resetButtonTitle: "重置搜索",
-                backButtonTitle: "关闭搜索",
-                noResultsText: "无法找到相关结果",
-                footer: {
-                  selectText: "选择",
-                  selectKeyAriaLabel: "输入",
-                  navigateText: "导航",
-                  navigateUpKeyAriaLabel: "上箭头",
-                  navigateDownKeyAriaLabel: "下箭头",
-                  closeText: "关闭",
-                  closeKeyAriaLabel: "esc",
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-
-    // Global social links
-    socialLinks: [
-      {
-        icon: "github",
-        link: "https://github.com/TBice123123/langchain-dev-utils",
-      },
-    ],
-  },
-
   // Markdown container labels for Chinese
   markdown: {
     container: {
@@ -133,4 +99,9 @@ export default defineConfig({
       detailsLabel: "详细信息",
     },
   },
+
+  // 添加自定义主题配置
+  srcDir: ".", // 指定源目录
+  srcExclude: [], // 排除的文件
+  outDir: "../.vitepress/dist", // 输出目录
 });

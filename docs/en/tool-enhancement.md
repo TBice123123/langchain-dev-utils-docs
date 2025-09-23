@@ -96,5 +96,6 @@ If no `handler` is provided, the default interruption logic is used. The default
 ## Next Steps
 
 - [Context Engineering](./context-engineering.md) - Advanced tools and state-mixing classes for context engineering.
+- [Subgraph Composition](./graph_pipeline.md) - A suite of utility functions for Message objects, including chunk merging and more
 - [API Reference](./api-reference.md) - Comprehensive API documentation.
 - [Example](./example.md) - Example of using the library

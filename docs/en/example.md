@@ -163,10 +163,10 @@ Current plan list:
     {"content":"Plan 2", "status":"in_progress"},
     {"content":"Plan 3", "status":"pending"}
 ]
-After completing Plan 1 and starting Plan 2, send:
+After completing Plan 2 and starting Plan 3, send:
 [
-    {"content":"Plan 1", "status":"done"},
-    {"content":"Plan 2", "status":"in_progress"}
+    {"content":"Plan 2", "status":"done"},
+    {"content":"Plan 3", "status":"in_progress"}
 ]
 """,
 )

@@ -159,10 +159,10 @@ update_plan = create_update_plan_tool(
         {"content":"计划2"，"status":"in_progress"}
         {"content":"计划3"，"status":"pending"}
     ]
-    当完成"计划1"并准备开始"计划2"时，应传入：
+    当完成"计划2"并准备开始"计划3"时，应传入：
     [
-        {"content":"计划1", "status":"done"},
-        {"content":"计划2", "status":"in_progress"}
+        {"content":"计划2", "status":"done"},
+        {"content":"计划3", "status":"in_progress"}
     ]
     """,
 )

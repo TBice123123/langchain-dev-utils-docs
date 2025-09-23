@@ -61,5 +61,6 @@ uv run pytest .
 - [消息处理](./message-processing.md) - 提供针对 Message 类的一系列工具函数，涵盖 chunk 合并等内容。
 - [工具增强](./tool-enhancement.md) - 进一步的方便开发者定义和开发 langchain 的 tools。
 - [上下文工程](./context-engineering.md) - 提供上下文工程的高级 tools 和对应的状态混合类。
+- [子图编排](./graph_pipeline.md) - 提供将多个状态相同的子图以并行或者串行的方式组合在一起的功能。
 - [API 参考](./api-reference.md) - API 参考文档
 - [使用示例](./example.md) - 介绍本库的使用示例

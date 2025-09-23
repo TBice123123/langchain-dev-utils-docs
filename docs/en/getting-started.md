@@ -18,6 +18,9 @@ Currently, `langchain-dev-utils` provides four core modules:
 4. **Context Engineering**  
    Provides advanced tools and state mixin classes for context engineering, helping developers easily implement context management.
 
+5. **Subgraph Composition**  
+   A suite of utility functions for Message objects, including chunk merging and more
+
 ## 🛠️ Quick Start
 
 Install with just one command:
@@ -42,6 +45,7 @@ Once installed, you can import and start using it in your project immediately.
 - [Message Processing](./message-processing.md) — A series of utility functions for Message objects, including chunk merging and more
 - [Tool Enhancement](./tool-enhancement.md) — Further simplifies defining and developing LangChain tools
 - [Context Engineering](./context-engineering.md) — Advanced tools and corresponding state mixin classes for context engineering
+- [Subgraph Composition](./graph_pipeline.md) — A suite of utility functions for Message objects, including chunk merging and more
 - [API Reference](./api-reference.md) — API reference documentation
 - [Example](./example.md) — Example of using the library
 

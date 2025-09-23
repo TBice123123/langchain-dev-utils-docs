@@ -22,6 +22,7 @@ Follow the [Installation Guide](./installation.md) to set up the library in your
 - [Message Processing](./message-processing.md) — A suite of utility functions for Message objects, including chunk merging and more
 - [Tool Enhancement](./tool-enhancement.md) — Simplifies and accelerates the development of LangChain tools
 - [Context Engineering](./context-engineering.md) — Advanced tools and state mixin classes for context management
+- [Subgraph Composition](./graph_pipeline.md) — A suite of utility functions for Message objects, including chunk merging and more
 - [API Reference](./api-reference.md) — Complete API documentation
 - [Example](./example.md) — Example of using the library
 
@@ -31,6 +32,7 @@ Follow the [Installation Guide](./installation.md) to set up the library in your
 - **Message Processing**: Multiple utility functions for handling messages — including chunk merging, message transformation, and more.
 - **Tool Enhancement**: Accelerates and simplifies the creation and customization of LangChain tools.
 - **Context Engineering**: Provides advanced tools and state mixins tailored for context engineering and management.
+- **Subgraph Composition**: A suite of utility functions for Message objects, including chunk merging and more
 
 ### 📖 GitHub Repository
 

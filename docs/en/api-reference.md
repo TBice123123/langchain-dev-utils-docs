@@ -434,6 +434,8 @@ def human_in_the_loop_async(
 
 Same as `human_in_the_loop`, returns an async-compatible `BaseTool` instance.
 
+## Context Engineering
+
 ### `create_write_plan_tool`
 
 Creates a tool for writing plans.
@@ -557,6 +559,98 @@ def create_query_note_tool(
 **Returns:**
 
 - `BaseTool`: The created tool instance
+
+---
+
+### `create_update_note_tool`
+
+Create a tool for updating notes.
+
+**Function Signature:**
+
+```python
+def create_update_note_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    message_key: Optional[str] = None,
+) -> BaseTool:
+```
+
+**Parameters:**
+
+- `name` (Optional[str]): Name of the tool
+- `description` (Optional[str]): Description of the tool
+- `message_key` (Optional[str]): Key for updating messages. Defaults to `messages` if not provided.
+
+**Returns:**
+
+- `BaseTool`: The created tool instance
+
+## Subgraph Composition
+
+### `sequential_pipeline`
+
+Combines multiple subgraphs with identical state schemas in a serial (sequential) manner.
+
+**Function Signature:**
+
+```python
+def sequential_pipeline(
+    sub_graphs: list[SubGraph],
+    state_schema: type[StateT],
+    graph_name: Optional[str] = None,
+    context_schema: type[ContextT] | None = None,
+    input_schema: type[InputT] | None = None,
+    output_schema: type[OutputT] | None = None,
+) -> CompiledStateGraph[StateT, ContextT, InputT, OutputT]:
+```
+
+**Parameters:**
+
+- `sub_graphs` (list[SubGraph]): List of subgraphs to combine.
+- `state_schema` (type[StateT]): Shared state schema for all subgraphs.
+- `graph_name` (Optional[str]): Name of the final assembled graph.
+- `context_schema` (type[ContextT] | None): Shared context schema for all subgraphs.
+- `input_schema` (type[InputT] | None): Input schema for the final graph.
+- `output_schema` (type[OutputT] | None): Output schema for the final graph.
+
+**Returns:**
+
+- `CompiledStateGraph`: The assembled graph instance.
+
+---
+
+### `parallel_pipeline`
+
+Combines multiple subgraphs with identical state schemas in a parallel manner.
+
+**Function Signature:**
+
+```python
+def parallel_pipeline(
+    sub_graphs: list[SubGraph],
+    state_schema: type[StateT],
+    graph_name: Optional[str] = None,
+    parallel_entry_node: Optional[str] = None,
+    context_schema: type[ContextT] | None = None,
+    input_schema: type[InputT] | None = None,
+    output_schema: type[OutputT] | None = None,
+) -> CompiledStateGraph[StateT, ContextT, InputT, OutputT]:
+```
+
+**Parameters:**
+
+- `sub_graphs` (list[SubGraph]): List of subgraphs to combine.
+- `state_schema` (type[StateT]): Shared state schema for all subgraphs.
+- `graph_name` (Optional[str]): Name of the final assembled graph.
+- `parallel_entry_node` (Optional[str]): Entry node name for parallel execution (this node is excluded from the parallel section).
+- `context_schema` (type[ContextT] | None): Shared context schema for all subgraphs.
+- `input_schema` (type[InputT] | None): Input schema for the final graph.
+- `output_schema` (type[OutputT] | None): Output schema for the final graph.
+
+**Returns:**
+
+- `CompiledStateGraph`: The assembled graph instance.
 
 ## Type definitions
 

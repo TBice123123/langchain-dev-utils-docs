@@ -218,5 +218,6 @@ print(embeddings.embed_query("hello world"))
 - [Message Processing](./message-processing.md) - Provides a suite of utility functions for the Message class, including chunk merging and more.
 - [Tool Enhancement](./tool-enhancement.md) - Further facilitates developers in defining and developing LangChain tools.
 - [Context Engineering](./context-engineering.md) - Offers advanced tools for context engineering and corresponding state-mixing classes.
+- [Subgraph Composition](./graph_pipeline.md) - A suite of utility functions for Message objects, including chunk merging and more
 - [API Reference](./api-reference.md) - API documentation reference.
 - [Example](./example.md) - Example of using the library

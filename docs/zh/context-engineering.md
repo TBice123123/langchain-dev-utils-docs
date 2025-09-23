@@ -53,19 +53,20 @@ class State(PlanStateMixin):
 - `create_write_note_tool`：创建一个用于写笔记的工具
 - `create_ls_tool`：创建一个用于列出已有的笔记的工具
 - `create_query_note_tool`：创建一个用于查询笔记的工具
+- `create_update_note_tool`：创建一个用于更新笔记的工具
 
 ### 参数
 
-- `name`：自定义工具名称，如果不传则 create_write_note_tool 默认为`write_note`，create_ls_tool 默认为`ls`，create_query_note_tool 默认为`query_note`
+- `name`：自定义工具名称，如果不传则 create_write_note_tool 默认为`write_note`，create_ls_tool 默认为`ls`，create_query_note_tool 默认为`query_note`，create_update_note_tool 默认为`update_note`
 - `description`：工具描述,如果不传则采用默认的工具描述
-- `message_key`：用于更新 messages 的键，若不传入则使用默认的`messages` （仅`create_write_note_tool` 可以传入）
+- `message_key`：用于更新 messages 的键，若不传入则使用默认的`messages` （仅`create_write_note_tool` 、`create_update_note_tool`可以传入）
 
 ### 使用示例
 
 ```python
-from langchain_dev_utils import create_write_note_tool, create_ls_tool, create_query_note_tool
+from langchain_dev_utils import create_write_note_tool, create_ls_tool, create_query_note_tool, create_update_note_tool
 
-tools=[create_write_note_tool(), create_ls_tool(), create_query_note_tool()] # 创建笔记工具
+tools=[create_write_note_tool(), create_ls_tool(), create_query_note_tool(), create_update_note_tool()] # 创建笔记工具
 ```
 
 ### Note 状态混合类
@@ -97,5 +98,6 @@ class State(NoteStateMixin, PlanStateMixin, MessageState):
 
 ## 下一步
 
+- [子图编排](./graph_pipeline.md) - 提供将多个状态相同的子图以并行或者串行的方式组合在一起的功能。
 - [API 参考](./api-reference.md) - API 参考文档
 - [使用示例](./example.md) - 介绍本库的使用示例

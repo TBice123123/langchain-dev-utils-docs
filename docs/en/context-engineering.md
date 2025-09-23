@@ -52,19 +52,20 @@ This section provides tools to assist large models in recording notes, along wit
 - `create_write_note_tool`: Creates a tool for writing notes.
 - `create_ls_tool`: Creates a tool for listing notes.
 - `create_query_note_tool`: Creates a tool for querying notes.
+- `create_update_note_tool`: Creates a tool for updating notes.
 
 ### Parameters
 
-- `name`: Custom tool name. If not provided, `create_write_note_tool` defaults to `write_note`, `create_ls_tool` defaults to `ls`, and `create_query_note_tool` defaults to `query_note`.
+- `name`: Custom tool name. If not provided, `create_write_note_tool` defaults to `write_note`, `create_ls_tool` defaults to `ls`, and `create_query_note_tool` defaults to `query_note`，`create_update_note_tool` defaults to `update_note`.
 - `description`: Tool description. If not provided, the default description will be used.
-- `message_key`: The key used to update messages. If not provided, the default `messages` will be used. (Only applicable to `create_write_note_tool`.)
+- `message_key`: The key used to update messages. If not provided, the default `messages` will be used. (Only applicable to `create_write_note_tool`、`create_update_note_tool`.)
 
 ### Usage Example
 
 ```python
-from langchain_dev_utils import create_write_note_tool, create_ls_tool, create_query_note_tool
+from langchain_dev_utils import create_write_note_tool, create_ls_tool, create_query_note_tool, create_update_note_tool
 
-tools = [create_write_note_tool(), create_ls_tool(), create_query_note_tool()]  # Create note tools
+tools = [create_write_note_tool(), create_ls_tool(), create_query_note_tool(), create_update_note_tool()]  # Create note tools
 ```
 
 ### Note State Mixin Class
@@ -95,5 +96,6 @@ class State(NoteStateMixin, PlanStateMixin, MessageState):
 
 ## Next Steps
 
+- [Subgraph Composition](./graph_pipeline.md) - A suite of utility functions for Message objects, including chunk merging and more
 - [API Reference](./api-reference.md) — API reference documentation
 - [Example](./example.md) — Example of using the library

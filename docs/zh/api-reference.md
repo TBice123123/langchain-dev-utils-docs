@@ -31,6 +31,8 @@ register_model_provider("dashscope", ChatQwen)
 register_model_provider("openrouter", "openai", base_url="https://openrouter.ai/api/v1  ")
 ```
 
+---
+
 ### `batch_register_model_provider`
 
 批量注册模型提供者。
@@ -55,6 +57,8 @@ batch_register_model_provider([
     {"provider": "openrouter", "chat_model": "openai", "base_url": "https://openrouter.ai/api/v1  "},
 ])
 ```
+
+---
 
 ### `load_chat_model`
 
@@ -86,6 +90,8 @@ def load_chat_model(
 model = load_chat_model("dashscope:qwen-flash")
 ```
 
+---
+
 ### `register_embeddings_provider`
 
 注册一个用于嵌入模型的提供者。
@@ -112,6 +118,8 @@ def register_embeddings_provider(
 register_embeddings_provider("dashscope", "openai", base_url="https://dashscope.aliyuncs.com/compatible-mode/v1  ")
 ```
 
+---
+
 ### `batch_register_embeddings_provider`
 
 批量注册嵌入模型提供者。
@@ -136,6 +144,8 @@ batch_register_embeddings_provider([
     {"provider": "siliconflow", "embeddings_model": SiliconFlowEmbeddings},
 ])
 ```
+
+---
 
 ### `load_embeddings`
 
@@ -166,6 +176,8 @@ def load_embeddings(
 ```python
 embeddings = load_embeddings("dashscope:text-embedding-v4")
 ```
+
+---
 
 ## 消息处理
 
@@ -199,6 +211,8 @@ response = convert_reasoning_content_for_ai_message(
 )
 ```
 
+---
+
 ### `convert_reasoning_content_for_chunk_iterator`
 
 为流式消息块合并推理内容。
@@ -229,6 +243,8 @@ for chunk in convert_reasoning_content_for_chunk_iterator(
 ):
     print(chunk.content, end="", flush=True)
 ```
+
+---
 
 ### `aconvert_reasoning_content_for_chunk_iterator`
 
@@ -261,6 +277,8 @@ async for chunk in aconvert_reasoning_content_for_chunk_iterator(
     print(chunk.content, end="", flush=True)
 ```
 
+---
+
 ### `merge_ai_message_chunk`
 
 将多个 AI 消息块合并为单个消息。
@@ -285,6 +303,8 @@ def merge_ai_message_chunk(chunks: Sequence[AIMessageChunk]) -> AIMessage
 chunks = list(model.stream("Hello"))
 merged = merge_ai_message_chunk(chunks)
 ```
+
+---
 
 ### `has_tool_calling`
 
@@ -311,6 +331,8 @@ if has_tool_calling(response):
     # 处理工具调用
     pass
 ```
+
+---
 
 ### `parse_tool_calling`
 
@@ -339,6 +361,8 @@ def parse_tool_calling(
 ```python
 name, args = parse_tool_calling(response, first_tool_call_only=True)
 ```
+
+---
 
 ### `message_format`
 
@@ -369,6 +393,8 @@ def message_format(
 ```python
 formatted = message_format(messages, separator="\n", with_num=True)
 ```
+
+---
 
 ## 工具增强
 
@@ -402,6 +428,8 @@ def human_in_the_loop(
 
 - `BaseTool`：装饰后的工具实例
 
+---
+
 ### `human_in_the_loop_async`
 
 为**异步工具函数**添加“人在回路”人工审核能力的装饰器。支持 `await` 调用。
@@ -434,6 +462,10 @@ def human_in_the_loop_async(
 
 同 `human_in_the_loop`，返回异步兼容的 `BaseTool` 实例。
 
+---
+
+## 上下文工程
+
 ### `create_write_plan_tool`
 
 创建一个用于写计划的工具。
@@ -459,6 +491,8 @@ def create_write_plan_tool(
 
 - `BaseTool`：创建的工具实例
 
+---
+
 ### `create_update_plan_tool`
 
 创建一个用于更新计划的工具。
@@ -482,6 +516,8 @@ def create_update_plan_tool(
 **返回值：**
 
 - `BaseTool`：创建的工具实例
+
+---
 
 ### `create_write_note_tool`
 
@@ -507,6 +543,8 @@ def create_write_note_tool(
 
 - `BaseTool`：创建的工具实例
 
+---
+
 ### `create_ls_tool`
 
 创建一个用于列出已有的笔记的工具。
@@ -529,6 +567,8 @@ def create_ls_tool(
 
 - `BaseTool`：创建的工具实例
 
+---
+
 ### `create_query_note_tool`
 
 创建一个用于查询笔记的工具。
@@ -550,6 +590,100 @@ def create_query_note_tool(
 **返回值：**
 
 - `BaseTool`：创建的工具实例
+
+---
+
+### `create_update_note_tool`
+
+创建一个用于更新笔记的工具。
+
+**函数签名：**
+
+```python
+def create_update_note_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    message_key: Optional[str] = None,
+) -> BaseTool:
+```
+
+**参数：**
+
+- `name` (Optional[str])：工具名称
+- `description` (Optional[str])：工具描述
+- `message_key` (Optional[str])：用于更新 messages 的键，若不传入则使用默认的`messages`
+
+**返回值：**
+
+- `BaseTool`：创建的工具实例
+
+---
+
+## 子图编排
+
+### `sequential_pipeline`
+
+将多个状态相同的子图以串行的方式组合在一起。
+
+**函数签名：**
+
+```python
+def sequential_pipeline(
+    sub_graphs: list[SubGraph],
+    state_schema: type[StateT],
+    graph_name: Optional[str] = None,
+    context_schema: type[ContextT] | None = None,
+    input_schema: type[InputT] | None = None,
+    output_schema: type[OutputT] | None = None,
+) -> CompiledStateGraph[StateT, ContextT, InputT, OutputT]:
+```
+
+**参数：**
+
+- `sub_graphs` (list[SubGraph])：子图列表
+- `state_schema` (type[StateT]): 共同的状态 Schema
+- `graph_name` (Optional[str]): 最终构建的图的名称
+- `context_schema` (type[ContextT] | None): 共同的 Context Schema
+- `input_schema` (type[InputT] | None): 共同的输入 Schema
+- `output_schema` (type[OutputT] | None): 共同的输出 Schema
+
+**返回值：**
+
+- `CompiledStateGraph`: 创建的图
+
+---
+
+### `parallel_pipeline`
+
+将多个状态相同的子图以并行的方式组合在一起。
+
+**函数签名：**
+
+```python
+def parallel_pipeline(
+    sub_graphs: list[SubGraph],
+    state_schema: type[StateT],
+    graph_name: Optional[str] = None,
+    parallel_entry_node: Optional[str] = None,
+    context_schema: type[ContextT] | None = None,
+    input_schema: type[InputT] | None = None,
+    output_schema: type[OutputT] | None = None,
+) -> CompiledStateGraph[StateT, ContextT, InputT, OutputT]:
+```
+
+**参数：**
+
+- `sub_graphs` (list[SubGraph])：子图列表
+- `state_schema` (type[StateT]): 共同的状态 Schema
+- `graph_name` (Optional[str]): 最终构建的图的名称
+- `parallel_entry_node` (Optional[str]): 并行入口节点
+- `context_schema` (type[ContextT] | None): 共同的 Context Schema
+- `input_schema` (type[InputT] | None): 共同的输入 Schema
+- `output_schema` (type[OutputT] | None): 共同的输出 Schema
+
+**返回值：**
+
+- `CompiledStateGraph`: 创建的图
 
 ## 类型定义
 
