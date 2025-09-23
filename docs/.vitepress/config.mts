@@ -99,9 +99,4 @@ export default defineConfig({
       detailsLabel: "详细信息",
     },
   },
-
-  // 添加自定义主题配置
-  srcDir: ".", // 指定源目录
-  srcExclude: [], // 排除的文件
-  outDir: "../.vitepress/dist", // 输出目录
 });
