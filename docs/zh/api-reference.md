@@ -619,7 +619,7 @@ def create_update_note_tool(
 
 ---
 
-## 子图编排
+## 状态图编排
 
 ### `sequential_pipeline`
 
@@ -665,6 +665,7 @@ def parallel_pipeline(
     state_schema: type[StateT],
     graph_name: Optional[str] = None,
     parallel_entry_node: Optional[str] = None,
+    branches_fn: Optional[Callable[[StateT], list[Send]]] = None,
     context_schema: type[ContextT] | None = None,
     input_schema: type[InputT] | None = None,
     output_schema: type[OutputT] | None = None,
@@ -677,6 +678,7 @@ def parallel_pipeline(
 - `state_schema` (type[StateT]): 共同的状态 Schema
 - `graph_name` (Optional[str]): 最终构建的图的名称
 - `parallel_entry_node` (Optional[str]): 并行入口节点
+- `branches_fn` (Optional[Callable[[StateT], list[Send]]]): 用于确定并行执行哪些子图的函数
 - `context_schema` (type[ContextT] | None): 共同的 Context Schema
 - `input_schema` (type[InputT] | None): 共同的输入 Schema
 - `output_schema` (type[OutputT] | None): 共同的输出 Schema

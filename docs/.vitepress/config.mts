@@ -31,8 +31,8 @@ export default defineConfig({
               { text: "Tool Enhancement", link: "/en/tool-enhancement" },
               { text: "Context Engineering", link: "/en/context-engineering" },
               {
-                text: "Subgraph Composition",
-                link: "/en/graph_pipeline",
+                text: "StateGraph Orchestration",
+                link: "/en/graph-orchestration",
               },
               { text: "API Reference", link: "/en/api-reference" },
               { text: "Example", link: "/en/example" },
@@ -70,8 +70,8 @@ export default defineConfig({
               { text: "工具增强", link: "/zh/tool-enhancement" },
               { text: "上下文工程", link: "/zh/context-engineering" },
               {
-                text: "子图编排",
-                link: "/zh/graph_pipeline",
+                text: "状态图编排",
+                link: "/zh/graph-orchestration",
               },
               { text: "API 参考", link: "/zh/api-reference" },
               { text: "使用示例", link: "/zh/example" },

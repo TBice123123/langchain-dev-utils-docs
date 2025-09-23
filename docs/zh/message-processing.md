@@ -1,10 +1,10 @@
 # 消息处理
 
-消息处理模块提供了一系列用于处理 AI 消息的实用工具，包括推理内容合并、消息块处理以及工具调用检测等功能。
+消息处理模块提供了一系列 Message 相关的实用工具，包括推理内容合并、消息块处理以及工具调用检测等功能。
 
 ## 概述
 
-本模块提供了处理各种类型 AI 消息的全面功能，特别适用于处理推理模型、流式响应和工具调用的场景。
+本模块提供了处理各种类型 AI 消息的全面功能，适用于处理推理模型返回的内容、大模型流式返回和工具调用等场景。
 
 ## 合并推理内容
 
@@ -12,9 +12,9 @@
 
 ### 核心函数
 
-- `convert_reasoning_content_for_ai_message`：将 AIMessage 中的推理内容合并到内容字段
-- `convert_reasoning_content_for_chunk_iterator`：为流式响应中的消息块迭代器合并推理内容
-- `aconvert_reasoning_content_for_chunk_iterator`：`convert_reasoning_content_for_chunk_iterator` 的异步版本，用于异步流式处理
+- `convert_reasoning_content_for_ai_message`：将 AIMessage 中的推理内容合并到内容字段（用于模型的 invoke 和 ainvoke）
+- `convert_reasoning_content_for_chunk_iterator`：将流式响应中的推理内容合并到内容字段 (用于模型的 stream)
+- `aconvert_reasoning_content_for_chunk_iterator`：`convert_reasoning_content_for_chunk_iterator` 的异步版本，用于异步流式处理(用于模型的 astream)
 
 ### 参数
 
@@ -24,13 +24,9 @@
 ### 使用示例
 
 ```python
-# 同步处理推理内容
 from typing import cast
-from langchain_dev_utils import convert_reasoning_content_for_ai_message
+from langchain_dev_utils import convert_reasoning_content_for_ai_message, convert_reasoning_content_for_chunk_iterator
 from langchain_core.messages import AIMessage
-
-# 流式处理推理内容
-from langchain_dev_utils import convert_reasoning_content_for_chunk_iterator
 
 response = model.invoke("你好")
 converted_response = convert_reasoning_content_for_ai_message(
@@ -135,9 +131,9 @@ if has_tool_calling(cast(AIMessage, response)):
     print(name, args)
 ```
 
-## 内容拼接
+## 格式化列表内容
 
-将由文档、消息或字符串组成的列表格式化为单个字符串。
+将由 Document、Message 或字符串组成的列表格式化为单个文本字符串。
 
 ### 核心函数
 
@@ -168,17 +164,10 @@ formatted_messages = message_format(messages, separator="\n", with_num=True)
 print(formatted_messages)
 ```
 
-## 最佳实践
-
-1. **类型安全**：处理消息对象时始终使用类型转换
-2. **流式处理**：根据使用场景选择合适的流式处理函数（同步/异步）
-3. **工具调用**：在尝试解析工具调用前始终先检查是否存在工具调用
-4. **内容拼接**：根据使用场景选择合适的分隔符和编号方式
-
 ## 下一步
 
-- [工具增强](./tool-enhancement.md) - 进一步的方便开发者定义和开发 langchain 的 tools。
-- [上下文工程](./context-engineering.md) - 提供上下文工程的高级 tools 和对应的状态混合类。
-- [子图编排](./graph_pipeline.md) - 提供将多个状态相同的子图以并行或者串行的方式组合在一起的功能。
+- [工具增强](./tool-enhancement.md) - 在已定义的 tools 中添加新的功能。
+- [上下文工程](./context-engineering.md) - 提供用于帮助上下文工程管理的实用性 tools 以及相关的状态 Schema。
+- [状态图编排](./graph-orchestration.md) - 将多个状态图(StateGraph)以并行或者串行的方式组合在一起。
 - [API 参考](./api-reference.md) - API 参考文档
 - [使用示例](./example.md) - 介绍本库的使用示例

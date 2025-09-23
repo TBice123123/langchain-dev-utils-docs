@@ -1,4 +1,4 @@
-# API Reference
+# API Reference Documentation
 
 This section provides complete documentation for all functions and classes in LangChain Dev Utils.
 
@@ -6,9 +6,9 @@ This section provides complete documentation for all functions and classes in La
 
 ### `register_model_provider`
 
-Register a model provider for chat models.
+Registers a model provider for chat models.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def register_model_provider(
@@ -24,18 +24,20 @@ def register_model_provider(
 - `chat_model` (Union[Type[BaseChatModel], str]): ChatModel class or supported provider string
 - `base_url` (Optional[str]): Base URL for the provider
 
-**Examples:**
+**Example:**
 
 ```python
 register_model_provider("dashscope", ChatQwen)
 register_model_provider("openrouter", "openai", base_url="https://openrouter.ai/api/v1")
 ```
 
+---
+
 ### `batch_register_model_provider`
 
-Batch register model providers.
+Batch-register model providers.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def batch_register_model_provider(
@@ -47,20 +49,22 @@ def batch_register_model_provider(
 
 - `providers` (List[ChatModelProvider]): List of providers, each containing `provider`, `chat_model`, and `base_url`.
 
-**Examples:**
+**Example:**
 
 ```python
 batch_register_model_provider([
     {"provider": "dashscope", "chat_model": ChatQwen},
-    {"provider": "openrouter", "chat_model": "openai", "base_url": "https://openrouter.ai/api/v1  "},
+    {"provider": "openrouter", "chat_model": "openai", "base_url": "https://openrouter.ai/api/v1"},
 ])
 ```
 
+---
+
 ### `load_chat_model`
 
-Load a chat model from a registered provider.
+Loads a chat model from a registered provider.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def load_chat_model(
@@ -72,25 +76,27 @@ def load_chat_model(
 
 **Parameters:**
 
-- `model` (str): Model name, format as `model_name` or `provider_name:model_name`
+- `model` (str): Model name, in format `model_name` or `provider_name:model_name`
 - `model_provider` (Optional[str]): Model provider name
 - `**kwargs`: Additional model parameters
 
-**Return value:**
+**Returns:**
 
 - `BaseChatModel`: Loaded chat model instance
 
-**Examples:**
+**Example:**
 
 ```python
 model = load_chat_model("dashscope:qwen-flash")
 ```
 
+---
+
 ### `register_embeddings_provider`
 
-Register a provider for embedding models.
+Registers a provider for embedding models.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def register_embeddings_provider(
@@ -106,42 +112,46 @@ def register_embeddings_provider(
 - `embeddings_model` (Union[Type[Embeddings], str]): Embedding model class or supported provider string
 - `base_url` (Optional[str]): Base URL for the provider
 
-**Examples:**
+**Example:**
 
 ```python
-register_embeddings_provider("dashscope", "openai", base_url="https://dashscope.aliyuncs.com/compatible-mode/v1   ")
+register_embeddings_provider("dashscope", "openai", base_url="https://dashscope.aliyuncs.com/compatible-mode/v1")
 ```
+
+---
 
 ### `batch_register_embeddings_provider`
 
-Batch register embedding model providers.
-**Function signature:**
+Batch-register embedding model providers.
+
+**Function Signature:**
 
 ```python
 def batch_register_embeddings_provider(
    providers: list[EmbeddingProvider]
-)
--> None
+) -> None
 ```
 
 **Parameters:**
 
 - `providers` (List[EmbeddingProvider]): List of providers, each containing `provider`, `embeddings_model`, and `base_url`.
 
-**Examples:**
+**Example:**
 
 ```python
 batch_register_embeddings_provider([
-    {"provider": "dashscope", "embeddings_model": "openai", "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1  "},
+    {"provider": "dashscope", "embeddings_model": "openai", "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"},
     {"provider": "siliconflow", "embeddings_model": SiliconFlowEmbeddings},
 ])
 ```
 
+---
+
 ### `load_embeddings`
 
-Load an embedding model from a registered provider.
+Loads an embedding model from a registered provider.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def load_embeddings(
@@ -153,27 +163,29 @@ def load_embeddings(
 
 **Parameters:**
 
-- `model` (str): Model name, format as `model_name` or `provider_name:model_name`
+- `model` (str): Model name, in format `model_name` or `provider_name:model_name`
 - `provider` (Optional[str]): Model provider name
 - `**kwargs`: Additional model parameters
 
-**Return value:**
+**Returns:**
 
 - `Embeddings`: Loaded embedding model instance
 
-**Examples:**
+**Example:**
 
 ```python
 embeddings = load_embeddings("dashscope:text-embedding-v4")
 ```
 
+---
+
 ## Message Processing
 
 ### `convert_reasoning_content_for_ai_message`
 
-Merge reasoning content in AIMessage into the content field.
+Merges reasoning content into the content field of an AIMessage.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def convert_reasoning_content_for_ai_message(
@@ -185,13 +197,13 @@ def convert_reasoning_content_for_ai_message(
 **Parameters:**
 
 - `model_response` (AIMessage): AI message response
-- `think_tag` (Tuple[str, str]): Start and end tags for reasoning content, default is <think></think>
+- `think_tag` (Tuple[str, str]): Start and end tags for reasoning content, default is `<think></think>`
 
-**Return value:**
+**Returns:**
 
 - `AIMessage`: Message with merged reasoning content
 
-**Examples:**
+**Example:**
 
 ```python
 response = convert_reasoning_content_for_ai_message(
@@ -199,11 +211,13 @@ response = convert_reasoning_content_for_ai_message(
 )
 ```
 
+---
+
 ### `convert_reasoning_content_for_chunk_iterator`
 
-Merge reasoning content for streaming message chunks.
+Merges reasoning content for streaming message chunks.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def convert_reasoning_content_for_chunk_iterator(
@@ -215,13 +229,13 @@ def convert_reasoning_content_for_chunk_iterator(
 **Parameters:**
 
 - `model_response` (Iterator[BaseMessageChunk]): Iterator of message chunks
-- `think_tag` (Tuple[str, str]): Start and end tags for reasoning content, default is <think></think>
+- `think_tag` (Tuple[str, str]): Start and end tags for reasoning content, default is `<think></think>`
 
-**Return value:**
+**Returns:**
 
 - `Iterator[BaseMessageChunk]`: Processed chunk iterator
 
-**Examples:**
+**Example:**
 
 ```python
 for chunk in convert_reasoning_content_for_chunk_iterator(
@@ -230,11 +244,13 @@ for chunk in convert_reasoning_content_for_chunk_iterator(
     print(chunk.content, end="", flush=True)
 ```
 
+---
+
 ### `aconvert_reasoning_content_for_chunk_iterator`
 
-Asynchronous version of reasoning content conversion for streaming.
+Asynchronous version for streaming reasoning content processing.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 async def aconvert_reasoning_content_for_chunk_iterator(
@@ -245,14 +261,14 @@ async def aconvert_reasoning_content_for_chunk_iterator(
 
 **Parameters:**
 
-- `model_response` (AsyncIterator[BaseMessageChunk]): Async iterator of message chunks
-- `think_tag` (Tuple[str, str]): Start and end tags for reasoning content, default is <think></think>
+- `model_response` (AsyncIterator[BaseMessageChunk]): Asynchronous iterator of message chunks
+- `think_tag` (Tuple[str, str]): Start and end tags for reasoning content, default is `<think></think>`
 
-**Return value:**
+**Returns:**
 
-- `AsyncIterator[BaseMessageChunk]`: Processed async chunk iterator
+- `AsyncIterator[BaseMessageChunk]`: Processed asynchronous chunk iterator
 
-**Examples:**
+**Example:**
 
 ```python
 async for chunk in aconvert_reasoning_content_for_chunk_iterator(
@@ -261,11 +277,13 @@ async for chunk in aconvert_reasoning_content_for_chunk_iterator(
     print(chunk.content, end="", flush=True)
 ```
 
+---
+
 ### `merge_ai_message_chunk`
 
-Merge multiple AI message chunks into a single message.
+Merges multiple AI message chunks into a single message.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def merge_ai_message_chunk(chunks: Sequence[AIMessageChunk]) -> AIMessage
@@ -275,22 +293,24 @@ def merge_ai_message_chunk(chunks: Sequence[AIMessageChunk]) -> AIMessage
 
 - `chunks` (Sequence[AIMessageChunk]): List of message chunks to merge
 
-**Return value:**
+**Returns:**
 
 - `AIMessage`: Merged message
 
-**Examples:**
+**Example:**
 
 ```python
 chunks = list(model.stream("Hello"))
 merged = merge_ai_message_chunk(chunks)
 ```
 
+---
+
 ### `has_tool_calling`
 
-Check if a message contains tool calls.
+Checks whether a message contains tool calls.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def has_tool_calling(message: AIMessage) -> bool
@@ -300,29 +320,31 @@ def has_tool_calling(message: AIMessage) -> bool
 
 - `message` (AIMessage): Message to check
 
-**Return value:**
+**Returns:**
 
-- `bool`: Returns True if the message contains tool calls
+- `bool`: True if message contains tool calls
 
-**Examples:**
+**Example:**
 
 ```python
 if has_tool_calling(response):
-    # Handle tool call
+    # Handle tool calls
     pass
 ```
 
+---
+
 ### `parse_tool_calling`
 
-Parse tool call arguments from a message.
+Parses tool call parameters from a message.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def parse_tool_calling(
     message: AIMessage,
     first_tool_call_only: bool = False
-) -> Union[Tuple[str, Dict[str, Any]], List[Tuple[str, Dict[str, Any]]]]
+) -> Union[Tuple[str, Dict[str, Any]], List[Tuple[str, Dict[str, Any]]]
 ```
 
 **Parameters:**
@@ -330,21 +352,23 @@ def parse_tool_calling(
 - `message` (AIMessage): Message to parse
 - `first_tool_call_only` (bool): Whether to return only the first tool call
 
-**Return value:**
+**Returns:**
 
-- `Union[Tuple[str, Dict[str, Any]], List[Tuple[str, Dict[str, Any]]]]`: Tool call name and arguments
+- `Union[Tuple[str, Dict[str, Any]], List[Tuple[str, Dict[str, Any]]]`: Tool call name and parameters
 
-**Examples:**
+**Example:**
 
 ```python
 name, args = parse_tool_calling(response, first_tool_call_only=True)
 ```
 
+---
+
 ### `message_format`
 
-Format messages, documents, or string lists into a single string.
+Formats a list of messages, documents, or strings into a single string.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def message_format(
@@ -358,25 +382,27 @@ def message_format(
 
 - `inputs` (List[Union[BaseMessage, Document, str]]): List of items to format
 - `separator` (str): Separator string
-- `with_num` (bool): Whether to add numeric prefix
+- `with_num` (bool): Whether to add numeric prefixes
 
-**Return value:**
+**Returns:**
 
 - `str`: Formatted string
 
-**Examples:**
+**Example:**
 
 ```python
 formatted = message_format(messages, separator="\n", with_num=True)
 ```
 
+---
+
 ## Tool Enhancement
 
 ### `human_in_the_loop`
 
-Decorator that adds "human-in-the-loop" manual review capability to **synchronous tool functions**. Triggers an interrupt before tool execution, waiting for human confirmation, editing, or response.
+Decorator that adds "human-in-the-loop" manual review capability to **synchronous tool functions**. Triggers an interruption before tool execution, awaiting human confirmation, editing, or response.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def human_in_the_loop(
@@ -388,25 +414,27 @@ def human_in_the_loop(
 
 **Parameters:**
 
-- `func` (Optional[Callable])  
-  The function to be decorated. **Do not pass manually — used only for decorator syntax sugar.**
+- `func` (Optional[Callable]):  
+  Function to decorate. **Do not manually pass — used only for decorator syntax sugar.**
 
-- `handler` (Optional[HumanInterruptHandler])  
-  Custom interrupt handling function. Type is:
+- `handler` (Optional[HumanInterruptHandler]):  
+  Custom interrupt handler function. Type:
   ```python
   HumanInterruptHandler = Callable[[InterruptParams], Any]
   ```
   If not provided, uses default `default_handler` (supports `accept` / `edit` / `response`).
 
-**Return value:**
+**Returns:**
 
-Returns a `BaseTool` instance
+- `BaseTool`: Decorated tool instance
+
+---
 
 ### `human_in_the_loop_async`
 
 Decorator that adds "human-in-the-loop" manual review capability to **asynchronous tool functions**. Supports `await` calls.
 
-**Function signature:**
+**Function Signature:**
 
 ```python
 def human_in_the_loop_async(
@@ -418,21 +446,23 @@ def human_in_the_loop_async(
 
 **Parameters:**
 
-- `func` (Optional[Callable])  
-  The async function to be decorated. **Do not pass manually.**
+- `func` (Optional[Callable]):  
+  Asynchronous function to decorate. **Do not manually pass.**
 
-- `handler` (Optional[HumanInterruptHandler])  
-  Custom interrupt handling function. Type is:
+- `handler` (Optional[HumanInterruptHandler]):  
+  Custom interrupt handler function. Type:
   ```python
   HumanInterruptHandler = Callable[[InterruptParams], Any]
   ```
   If not provided, uses default `default_handler_async` (supports `accept` / `edit` / `response`).
 
-**Note**: Although the handler must be an async function.
+**Note**: The handler must be an asynchronous function.
 
-**Return value:**
+**Returns:**
 
 Same as `human_in_the_loop`, returns an async-compatible `BaseTool` instance.
+
+---
 
 ## Context Engineering
 
@@ -447,18 +477,19 @@ def create_write_plan_tool(
     name: Optional[str] = None,
     description: Optional[str] = None,
     message_key: Optional[str] = None,
+
 ) -> BaseTool:
 ```
 
 **Parameters:**
 
-- `name` (Optional[str]): Name of the tool
-- `description` (Optional[str]): Description of the tool
-- `message_key` (Optional[str]): Key for updating messages. Defaults to `messages` if not provided.
+- `name` (Optional[str]): Tool name
+- `description` (Optional[str]): Tool description
+- `message_key` (Optional[str]): Key to update messages; if not provided, defaults to `messages`
 
 **Returns:**
 
-- `BaseTool`: The created tool instance
+- `BaseTool`: Created tool instance
 
 ---
 
@@ -478,13 +509,13 @@ def create_update_plan_tool(
 
 **Parameters:**
 
-- `name` (Optional[str]): Name of the tool
-- `description` (Optional[str]): Description of the tool
-- `message_key` (Optional[str]): Key for updating messages. Defaults to `messages` if not provided.
+- `name` (Optional[str]): Tool name
+- `description` (Optional[str]): Tool description
+- `message_key` (Optional[str]): Key to update messages; if not provided, defaults to `messages`
 
 **Returns:**
 
-- `BaseTool`: The created tool instance
+- `BaseTool`: Created tool instance
 
 ---
 
@@ -504,19 +535,19 @@ def create_write_note_tool(
 
 **Parameters:**
 
-- `name` (Optional[str]): Name of the tool
-- `description` (Optional[str]): Description of the tool
-- `message_key` (Optional[str]): Key for updating messages. Defaults to `messages` if not provided.
+- `name` (Optional[str]): Tool name
+- `description` (Optional[str]): Tool description
+- `message_key` (Optional[str]): Key to update messages; if not provided, defaults to `messages`
 
 **Returns:**
 
-- `BaseTool`: The created tool instance
+- `BaseTool`: Created tool instance
 
 ---
 
 ### `create_ls_tool`
 
-Creates a tool for listing notes.
+Creates a tool for listing existing notes.
 
 **Function Signature:**
 
@@ -529,12 +560,12 @@ def create_ls_tool(
 
 **Parameters:**
 
-- `name` (Optional[str]): Name of the tool
-- `description` (Optional[str]): Description of the tool
+- `name` (Optional[str]): Tool name
+- `description` (Optional[str]): Tool description
 
 **Returns:**
 
-- `BaseTool`: The created tool instance
+- `BaseTool`: Created tool instance
 
 ---
 
@@ -553,18 +584,18 @@ def create_query_note_tool(
 
 **Parameters:**
 
-- `name` (Optional[str]): Name of the tool
-- `description` (Optional[str]): Description of the tool
+- `name` (Optional[str]): Tool name
+- `description` (Optional[str]): Tool description
 
 **Returns:**
 
-- `BaseTool`: The created tool instance
+- `BaseTool`: Created tool instance
 
 ---
 
 ### `create_update_note_tool`
 
-Create a tool for updating notes.
+Creates a tool for updating notes.
 
 **Function Signature:**
 
@@ -578,19 +609,21 @@ def create_update_note_tool(
 
 **Parameters:**
 
-- `name` (Optional[str]): Name of the tool
-- `description` (Optional[str]): Description of the tool
-- `message_key` (Optional[str]): Key for updating messages. Defaults to `messages` if not provided.
+- `name` (Optional[str]): Tool name
+- `description` (Optional[str]): Tool description
+- `message_key` (Optional[str]): Key to update messages; if not provided, defaults to `messages`
 
 **Returns:**
 
-- `BaseTool`: The created tool instance
+- `BaseTool`: Created tool instance
 
-## Subgraph Composition
+---
+
+## State Graph Orchestration
 
 ### `sequential_pipeline`
 
-Combines multiple subgraphs with identical state schemas in a serial (sequential) manner.
+Combines multiple sub-graphs with the same state schema in serial order.
 
 **Function Signature:**
 
@@ -607,22 +640,22 @@ def sequential_pipeline(
 
 **Parameters:**
 
-- `sub_graphs` (list[SubGraph]): List of subgraphs to combine.
-- `state_schema` (type[StateT]): Shared state schema for all subgraphs.
-- `graph_name` (Optional[str]): Name of the final assembled graph.
-- `context_schema` (type[ContextT] | None): Shared context schema for all subgraphs.
-- `input_schema` (type[InputT] | None): Input schema for the final graph.
-- `output_schema` (type[OutputT] | None): Output schema for the final graph.
+- `sub_graphs` (list[SubGraph]): List of sub-graphs
+- `state_schema` (type[StateT]): Common state schema
+- `graph_name` (Optional[str]): Name of the final constructed graph
+- `context_schema` (type[ContextT] | None): Common context schema
+- `input_schema` (type[InputT] | None): Common input schema
+- `output_schema` (type[OutputT] | None): Common output schema
 
 **Returns:**
 
-- `CompiledStateGraph`: The assembled graph instance.
+- `CompiledStateGraph`: Created graph
 
 ---
 
 ### `parallel_pipeline`
 
-Combines multiple subgraphs with identical state schemas in a parallel manner.
+Combines multiple sub-graphs with the same state schema in parallel.
 
 **Function Signature:**
 
@@ -632,6 +665,7 @@ def parallel_pipeline(
     state_schema: type[StateT],
     graph_name: Optional[str] = None,
     parallel_entry_node: Optional[str] = None,
+    branches_fn: Optional[Callable[[StateT], list[Send]]] = None,
     context_schema: type[ContextT] | None = None,
     input_schema: type[InputT] | None = None,
     output_schema: type[OutputT] | None = None,
@@ -640,28 +674,29 @@ def parallel_pipeline(
 
 **Parameters:**
 
-- `sub_graphs` (list[SubGraph]): List of subgraphs to combine.
-- `state_schema` (type[StateT]): Shared state schema for all subgraphs.
-- `graph_name` (Optional[str]): Name of the final assembled graph.
-- `parallel_entry_node` (Optional[str]): Entry node name for parallel execution (this node is excluded from the parallel section).
-- `context_schema` (type[ContextT] | None): Shared context schema for all subgraphs.
-- `input_schema` (type[InputT] | None): Input schema for the final graph.
-- `output_schema` (type[OutputT] | None): Output schema for the final graph.
+- `sub_graphs` (list[SubGraph]): List of sub-graphs
+- `state_schema` (type[StateT]): Common state schema
+- `graph_name` (Optional[str]): Name of the final constructed graph
+- `parallel_entry_node` (Optional[str]): Parallel entry node
+- `branches_fn` (Optional[Callable[[StateT], list[Send]]]): Function to determine which sub-graphs to execute in parallel
+- `context_schema` (type[ContextT] | None): Common context schema
+- `input_schema` (type[InputT] | None): Common input schema
+- `output_schema` (type[OutputT] | None): Common output schema
 
 **Returns:**
 
-- `CompiledStateGraph`: The assembled graph instance.
+- `CompiledStateGraph`: Created graph
 
-## Type definitions
+## Type Definitions
 
 ### `InterruptParams`
 
-Parameter type passed to the `handler` function, containing tool call context:
+Parameter type passed to `handler` functions, containing tool call context:
 
 ```python
 class InterruptParams(TypedDict):
     tool_call_name: str           # Tool name (string)
-    tool_call_args: Dict[str, Any] # Tool call arguments (dictionary)
+    tool_call_args: Dict[str, Any] # Tool call parameters (dictionary)
     tool: BaseTool                # Tool object for subsequent invoke/ainvoke
     config: RunnableConfig        # LangChain runtime configuration
 ```
@@ -678,7 +713,7 @@ HumanInterruptHandler = Callable[[InterruptParams], Any]
 
 ### `ChatModelProvider`
 
-Parameter type passed to `batch_register_model_provider`
+Parameter type for `batch_register_model_provider`
 
 ```python
 class ChatModelProvider(TypedDict):
@@ -689,7 +724,7 @@ class ChatModelProvider(TypedDict):
 
 ### `EmbeddingProvider`
 
-Parameter type passed to `batch_register_embeddings_provider`
+Parameter type for `batch_register_embeddings_provider`
 
 ```python
 class EmbeddingProvider(TypedDict):
@@ -700,7 +735,7 @@ class EmbeddingProvider(TypedDict):
 
 ### `PlanStateMixin`
 
-Plan State Mixin Class
+Plan state mixin class
 
 ```python
 class Plan(TypedDict):
@@ -714,13 +749,13 @@ class PlanStateMixin(TypedDict):
 
 ### `NoteStateMixin`
 
-Note State Mixin Class
+Note state mixin class
 
 ```python
 class NoteStateMixin(TypedDict):
     note: Annotated[dict[str, str], note_reducer]
 ```
 
-## Next steps
+## Next Steps
 
-- [Example](./example.md) - Example of using the library
+- [Usage Examples](./example.md) - Demonstrates practical usage examples of this library

@@ -1,25 +1,25 @@
-# 🚀 Getting Started Guide
+# 🚀 Getting Started
 
-Welcome to **`langchain-dev-utils`** — a high-efficiency utility library designed specifically for LangChain and LangGraph developers. We’ve encapsulated commonly used functional modules to help you build, debug, and optimize Large Language Model (LLM) applications more easily—boosting your development efficiency and engineering experience.
+Welcome to **`langchain-dev-utils`** — a powerful, practical utility library designed specifically for developers building applications with LangChain and LangGraph. We’ve encapsulated commonly used modules to help you build, debug, and optimize large language model (LLM) applications with greater ease, boosting both development efficiency and engineering experience.
 
-## 📌 Core Functional Modules
+## 📌 Core Modules
 
-Currently, `langchain-dev-utils` provides four core modules:
+`langchain-dev-utils` currently offers five core modules:
 
 1. **Model Management**  
-   Unified registration and management of any model provider. Invoke chat and embeddings models with just one function call—no more repetitive imports of third-party integration libraries.
+   Uniformly register and manage any model provider — call chat and embeddings models with a single function, eliminating the need to repeatedly import third-party integrations.
 
 2. **Message Processing**  
-   Flexible message handling tools: supports chunk merging, reasoning content consolidation, tool call parsing, and more.
+   Flexible message handling utilities: support chunk merging, inference content consolidation, and tool call result parsing.
 
 3. **Tool Enhancement**  
-   Simplifies the LangChain Tools development workflow with built-in decorators, making it effortless to write or modify tools.
+   Extend existing tools with new capabilities (e.g., adding human-in-the-loop support during tool calls).
 
 4. **Context Engineering**  
-   Provides advanced tools and state mixin classes for context engineering, helping developers easily implement context management.
+   Practical tools and corresponding state schemas to simplify context engineering management.
 
-5. **Subgraph Composition**  
-   A suite of utility functions for Message objects, including chunk merging and more
+5. **Graph Orchestration**  
+   Combine multiple StateGraphs in parallel or serial configurations.
 
 ## 🛠️ Quick Start
 
@@ -36,23 +36,23 @@ poetry add langchain-dev-utils
 uv add langchain-dev-utils
 ```
 
-Once installed, you can import and start using it in your project immediately.
+Once installed, simply import and use it in your project.
 
-## 📘 Next Learning Steps
+## 📘 Next Steps
 
-- [Installation](./installation.md) — How to install this library
-- [Model Management](./model-management.md) — Unified management interface for easily using chat and embeddings models
-- [Message Processing](./message-processing.md) — A series of utility functions for Message objects, including chunk merging and more
-- [Tool Enhancement](./tool-enhancement.md) — Further simplifies defining and developing LangChain tools
-- [Context Engineering](./context-engineering.md) — Advanced tools and corresponding state mixin classes for context engineering
-- [Subgraph Composition](./graph_pipeline.md) — A suite of utility functions for Message objects, including chunk merging and more
-- [API Reference](./api-reference.md) — API reference documentation
-- [Example](./example.md) — Example of using the library
+- [Installation](./installation.md) - How to install this library
+- [Model Management](./model-management.md) - Provides a unified registration and management system for easy use of chat and embeddings models.
+- [Message Processing](./message-processing.md) - Provides utility functions related to Message handling, such as chunk concatenation.
+- [Tool Enhancement](./tool-enhancement.md) - Adds new functionality to already defined tools.
+- [Context Engineering](./context-engineering.md) - Provides practical tools and associated state schemas for assisting context engineering management.
+- [Graph Orchestration](./graph-orchestration.md) - Combines multiple StateGraphs in parallel or sequential configurations.
+- [API Reference](./api-reference.md) - API reference documentation
+- [Usage Examples](./example.md) - Demonstrates practical usage examples of this library
 
 ---
 
-## 💬 Join Our Community
+## 💬 Join the Community
 
-- 🐙 [GitHub Repository](https://github.com/TBice123123/langchain-dev-utils) — View source code and submit PRs
-- 🐞 [Issue Tracker](https://github.com/TBice123123/langchain-dev-utils/issues) — Report bugs or suggest features
-- 💡 Contributions of code, documentation, or use cases are warmly welcomed — let’s build together a more powerful LangChain utility ecosystem!
+- 🐙 [GitHub Repository](https://github.com/TBice123123/langchain-dev-utils) — View source code, submit PRs
+- 🐞 [Issues](https://github.com/TBice123123/langchain-dev-utils/issues) — Report bugs or suggest improvements
+- 💡 We welcome contributions — code, documentation, or usage examples — to help build a stronger ecosystem of practical LangChain development tools.

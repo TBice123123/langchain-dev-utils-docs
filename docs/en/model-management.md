@@ -1,50 +1,47 @@
 # Model Management
 
-The model management module provides a flexible system for registering and loading model providers.
+The Model Management module provides a flexible system for registering and loading model providers.
 
 ## Overview
 
-LangChain's official `init_chat_model` and `init_embeddings` functions are convenient, but they support a relatively limited number of model providers. This module provides the `register_model_provider` (`batch_register_model_provider`) and `register_embeddings_provider` (`batch_register_embeddings_provider`) functions, enabling developers to register any model provider through a unified mechanism.
+While LangChain's official `init_chat_model` and `init_embeddings` functions are convenient, they support a limited set of model providers. This module introduces `register_model_provider` (`batch_register_model_provider`) and `register_embeddings_provider` (`batch_register_embeddings_provider`) functions, enabling developers to register any model provider through a unified interface.
 
 ## ChatModel Class
 
 ### Core Functions
 
-- `register_model_provider`: Register a single model provider
-- `batch_register_model_provider`: Register multiple model providers in bulk
-- `load_chat_model`: Load and instantiate a chat model for use
+- `register_model_provider`: Register a model provider
+- `batch_register_model_provider`: Batch-register multiple model providers
+- `load_chat_model`: Load a chat model
 
 ### Registering Model Providers
 
-#### Parameters for `register_model_provider`
+#### `register_model_provider` Parameters
 
-- `provider_name`: A custom, unique identifier for the provider (e.g., `"dashscope"`, `"my_custom_provider"`).
-- `chat_model`: Either a LangChain-compatible ChatModel class (e.g., `ChatQwen`) or a string representing a provider natively supported by LangChain’s `init_chat_model` (e.g., `"openai"`, `"anthropic"`).
-- `base_url` (Optional): The API endpoint URL. **Required** if `chat_model` is passed as a string (e.g., `"openai"`) to point to a compatible API server.
+- `provider_name`: The name of the provider; must be a custom identifier
+- `chat_model`: Either a ChatModel class or a string. If a string is provided, it must correspond to a provider natively supported by LangChain’s `init_chat_model` (e.g., `openai`, `anthropic`), in which case `init_chat_model` will be invoked internally.
+- `base_url`: Optional base URL. Only applicable when `chat_model` is a string.
 
-#### Parameters for `batch_register_model_provider`
+#### `batch_register_model_provider` Parameters
 
-- `providers`: A list of dictionaries. Each dictionary must contain the keys `provider`, `chat_model`, and optionally `base_url`, corresponding to the parameters of `register_model_provider`.
+- `providers`: A list of dictionaries, each containing `provider`, `chat_model`, and optionally `base_url`.
 
 ::: tip 📌
-The `chat_model` parameter supports specifying the model provider via a string value (e.g., `"openai"`, `"deepseek"`), which should be one of the provider names supported by LangChain’s `init_chat_model`.
+The `chat_model` parameter supports passing a string representing a provider name compatible with LangChain’s `init_chat_model` (e.g., `"openai"`).  
+This is because many large models offer APIs compatible with established formats like OpenAI’s. If your model lacks a dedicated integration but supports an OpenAI-style API, you can pass the corresponding provider string.  
+In this case, you **must** provide the `base_url` parameter or set the provider’s `API_BASE` environment variable to specify the custom API endpoint.  
+For models following DeepSeek’s invocation pattern, we recommend passing `"deepseek"` as the provider string.
 
-This feature is designed for models that offer APIs compatible with popular vendor styles (like OpenAI's API). If your model lacks a dedicated LangChain integration but supports, for example, the OpenAI API format, you can pass `"openai"` as the `chat_model` and provide the `base_url` to point to your model's endpoint.
-
-For models following the DeepSeek calling pattern, passing `"deepseek"` is recommended.
-
-This implementation leverages the same underlying concept as LangChain's [Base URL or Proxy configuration](https://docs.langchain.com/oss/python/langchain/models#base-url-or-proxy).
+Implementation details can be referenced here: [Configuring BASE_URL](https://docs.langchain.com/oss/python/langchain/models#base-url-or-proxy)
 :::
 
 ### Loading Chat Models
 
-#### Parameters for `load_chat_model`
+#### `load_chat_model` Parameters
 
-- `model`: The model identifier. Can be in two formats:
-  - `model_name`: Uses the default registered provider.
-  - `provider_name:model_name`: Explicitly specifies which registered provider to use.
-- `model_provider` (Optional): If not provided, the provider must be specified within the `model` string (e.g., `dashscope:qwen-flash`).
-- `kwargs`: Additional optional parameters to configure the model, such as `temperature`, `api_key`, `max_tokens`, `stop`, etc.
+- `model`: The model identifier, in format `model_name` or `provider_name:model_name`
+- `model_provider`: Optional provider name. If not provided, the provider must be included in the `model` parameter.
+- `kwargs`: Optional additional model parameters such as `temperature`, `api_key`, `stop`, etc.
 
 ### Usage Examples
 
@@ -59,7 +56,7 @@ load_dotenv()
 register_model_provider("dashscope", ChatQwen)
 register_model_provider("openrouter", "openai", base_url="https://openrouter.ai/api/v1")
 
-# Load and use models
+# Load models
 model = load_chat_model(model="dashscope:qwen-flash")
 print(model.invoke("Hello"))
 
@@ -67,7 +64,7 @@ model = load_chat_model(model="openrouter:moonshotai/kimi-k2-0905")
 print(model.invoke("Hello"))
 ```
 
-You can also use batch registration for efficiency:
+You can also use batch registration:
 
 ```python
 from langchain_dev_utils import batch_register_model_provider
@@ -84,7 +81,6 @@ batch_register_model_provider([
     },
 ])
 
-# Load models after batch registration
 model = load_chat_model(model="dashscope:qwen-flash")
 print(model.invoke("Hello"))
 
@@ -94,55 +90,55 @@ print(model.invoke("Hello"))
 
 ### Important Notes
 
-- **Global Registration**: Registrations are stored in a global dictionary. **All providers must be registered before any `load_chat_model` calls are made**, ideally at application startup.
-- **Thread Safety**: Avoid calling `register_model_provider` after the application has started serving requests in a multi-threaded environment to prevent race conditions.
-- **Initialization Best Practice**: Place your registration calls in your application’s main `__init__.py` file or a dedicated initialization module.
+- **Global Registration**: Due to internal use of a global registry, **all model providers must be registered at application startup**.
+- **Thread Safety**: Avoid modifying registered providers at runtime to prevent race conditions in multi-threaded environments.
+- **Initialization Recommendation**: We recommend placing `register_model_provider` calls in your application’s `__init__.py` file.
 
 ### Project Structure Example
 
 ```text
 langgraph-project/
 ├── src
-│   ├── __init__.py                 # Place global registrations here
+│   ├── __init__.py
 │   └── graphs
-│       ├── __init__.py             # Or here, if graph-specific
-│       ├── graph1/
-│       └── graph2/
+│       ├── __init__.py # Call register_model_provider here
+│       ├── graph1
+│       └── graph2
 ```
 
 ## Embeddings Class
 
 ### Core Functions
 
-- `register_embeddings_provider`: Register a single embeddings provider
-- `batch_register_embeddings_provider`: Register multiple embeddings providers in bulk
-- `load_embeddings`: Load and instantiate an embeddings model
+- `register_embeddings_provider`: Register an embeddings provider
+- `batch_register_embeddings_provider`: Batch-register multiple embeddings providers
+- `load_embeddings`: Load an embeddings model
 
 ### Registering Embeddings Providers
 
-#### Parameters for `register_embeddings_provider`
+#### `register_embeddings_provider` Parameters
 
-- `provider_name`: A custom, unique identifier for the embeddings provider.
-- `embeddings_model`: Either a LangChain-compatible Embeddings class (e.g., `SiliconFlowEmbeddings`) or a string representing a provider natively supported by LangChain’s `init_embeddings` (e.g., `"openai"`, `"cohere"`).
-- `base_url` (Optional): The API endpoint URL. **Highly recommended** if `embeddings_model` is passed as a string.
+- `provider_name`: The name of the provider; must be a custom identifier
+- `embeddings_model`: Either an Embeddings class or a string. If a string is provided, it must correspond to a provider natively supported by LangChain’s `init_embeddings` (e.g., `openai`, `cohere`), in which case `init_embeddings` will be invoked internally.
+- `base_url`: Optional base URL. Recommended when `embeddings_model` is a string.
 
-#### Parameters for `batch_register_embeddings_provider`
+#### `batch_register_embeddings_provider` Parameters
 
-- `providers`: A list of dictionaries. Each dictionary must contain the keys `provider`, `embeddings_model`, and optionally `base_url`.
+- `providers`: A list of dictionaries, each containing `provider`, `embeddings_model`, and optionally `base_url`.
 
 ::: tip 📌
-Similar to chat models, you can use strings like `"openai"` for `embeddings_model` if your embedding service has a compatible API. Always provide the `base_url` to direct requests to your custom endpoint.
+The `embeddings_model` parameter supports passing a string representing a provider name compatible with LangChain’s `init_embeddings` (e.g., `"openai"`).  
+This is useful when your model lacks a dedicated integration but supports an OpenAI-style API.  
+In this case, you **must** provide the `base_url` parameter to specify the custom API endpoint.
 :::
 
 ### Loading Embeddings Models
 
-#### Parameters for `load_embeddings`
+#### `load_embeddings` Parameters
 
-- `model`: The model identifier. Can be in two formats:
-  - `model_name`: Uses the default registered provider.
-  - `provider_name:model_name`: Explicitly specifies which registered provider to use.
-- `provider` (Optional): If not provided, the provider must be specified within the `model` string.
-- `kwargs`: Additional optional parameters, such as `chunk_size`, `api_key`, `dimensions`, etc.
+- `model`: The model identifier, in format `model_name` or `provider_name:model_name`
+- `provider`: Optional provider name. If not provided, the provider must be included in the `model` parameter.
+- `kwargs`: Optional additional parameters such as `chunk_size`, `api_key`, `dimensions`, etc.
 
 ### Usage Examples
 
@@ -150,7 +146,6 @@ Similar to chat models, you can use strings like `"openai"` for `embeddings_mode
 from langchain_dev_utils import register_embeddings_provider, load_embeddings
 from langchain_siliconflow import SiliconFlowEmbeddings
 
-# Register providers
 register_embeddings_provider(
     "dashscope", "openai", base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
@@ -159,7 +154,6 @@ register_embeddings_provider(
     "siliconflow", SiliconFlowEmbeddings
 )
 
-# Load and use embeddings models
 embeddings = load_embeddings("dashscope:text-embedding-v4")
 print(embeddings.embed_query("hello world"))
 
@@ -167,14 +161,14 @@ embeddings = load_embeddings("siliconflow:text-embedding-v4")
 print(embeddings.embed_query("hello world"))
 ```
 
-Batch registration example:
+You can also use batch registration:
 
 ```python
 from langchain_dev_utils import batch_register_embeddings_provider
 
 batch_register_embeddings_provider(
     [
-        {"provider": "dashscope", "embeddings_model": "openai", "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"},
+        {"provider": "dashscope", "embeddings_model": "openai"},
         {"provider": "siliconflow", "embeddings_model": SiliconFlowEmbeddings},
     ]
 )
@@ -188,36 +182,24 @@ print(embeddings.embed_query("hello world"))
 
 ### Important Notes
 
-- **Global Registration**: Like chat models, all embeddings providers must be registered at startup.
-- **Thread Safety**: Do not modify the registry after initialization.
-- **Initialization**: Place `register_embeddings_provider` calls in `__init__.py`.
+- **Global Registration**: All embeddings providers must be registered at application startup.
+- **Thread Safety**: Avoid modifying registered providers after initialization to prevent concurrency issues.
+- **Initialization Recommendation**: Place `register_embeddings_provider` calls in your application’s `__init__.py` file.
 
 ## Supported Model Formats
 
-### Chat Models
+The utility functions `load_chat_model` and `load_embeddings` support the following input formats:
 
-- `model_name`: Load from the default provider (if one is set or inferred).
-- `provider_name:model_name`: Load from a specific, pre-registered provider.
+1. **Only model name**: Format must be `provider_name:model_name`
+2. **Separate provider and model name**: Pass `provider` and `model` as distinct parameters
 
-### Embedding Models
-
-- `model_name`: Load from the default provider.
-- `provider_name:model_name`: Load from a specific, pre-registered provider.
-
-## Best Practices
-
-1. **Register Early**: Always register providers at application startup.
-2. **Use Descriptive Names**: Choose meaningful provider names.
-3. **Handle Dependencies**: Ensure all required packages are installed.
-4. **Test Registration**: Verify that provider registration is valid before using the model.
-
-**Note**: The `load_chat_model` function is also a drop-in replacement for LangChain's `init_chat_model`. You can use it to load any model that `init_chat_model` supports **without** needing to register it first. The same applies to `load_embeddings` for `init_embeddings`. This module extends functionality for _unsupported_ or _custom_ providers.
+**Note**: `load_chat_model` can also be used to load models natively supported by `init_chat_model` without prior registration. The same applies to `load_embeddings`.
 
 ## Next Steps
 
-- [Message Processing](./message-processing.md) - Provides a suite of utility functions for the Message class, including chunk merging and more.
-- [Tool Enhancement](./tool-enhancement.md) - Further facilitates developers in defining and developing LangChain tools.
-- [Context Engineering](./context-engineering.md) - Offers advanced tools for context engineering and corresponding state-mixing classes.
-- [Subgraph Composition](./graph_pipeline.md) - A suite of utility functions for Message objects, including chunk merging and more
-- [API Reference](./api-reference.md) - API documentation reference.
-- [Example](./example.md) - Example of using the library
+- [Message Processing](./message-processing.md) - Provides utility functions related to Message handling, such as chunk concatenation.
+- [Tool Enhancement](./tool-enhancement.md) - Adds new functionality to already defined tools.
+- [Context Engineering](./context-engineering.md) - Provides practical tools and associated state schemas for assisting context engineering management.
+- [Graph Orchestration](./graph-orchestration.md) - Combines multiple StateGraphs in parallel or sequential configurations.
+- [API Reference](./api-reference.md) - API reference documentation
+- [Usage Examples](./example.md) - Demonstrates practical usage examples of this library

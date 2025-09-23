@@ -185,30 +185,19 @@ print(embeddings.embed_query("hello world"))
 
 ## 支持的模型格式
 
-### 聊天模型
+工具函数`load_chat_model`和`load_embeddings`支持以下格式的参数：
 
-- `model_name` - 从默认提供商加载
-- `provider_name:model_name` - 从特定提供商加载
+（1）仅提供模型名称：此时模型名称的格式必须是`provider_name:model_name`
 
-### 嵌入模型
+（2）提供提供商名称和模型名称。
 
-- `model_name` - 从默认提供商加载
-- `provider_name:model_name` - 从特定提供商加载
-
-## 最佳实践
-
-1. **提前注册**：始终在应用程序启动时注册提供商
-2. **使用描述性名称**：选择有意义的提供商名称
-3. **处理依赖项**：确保安装了所有必需的包
-4. **测试注册**：在使用模型之前验证提供商注册是否有效
-
-**注意**：load_chat_model 也可以用于加载`init_chat_model`支持的模型，使用方式与上文一样，且无需注册。同样的也适用于 load_embeddings。
+**注意**：`load_chat_model` 也可以用于加载`init_chat_model`支持的模型，使用方式与上文一样，且无需调用`register_chat_model`注册。`load_embeddings`也是如此。
 
 ## 后续步骤
 
-- [消息处理](./message-processing.md) - 提供针对 Message 类的一系列工具函数，涵盖 chunk 合并等内容。
-- [工具增强](./tool-enhancement.md) - 进一步的方便开发者定义和开发 langchain 的 tools。
-- [上下文工程](./context-engineering.md) - 提供上下文工程的高级 tools 和对应的状态混合类。
-- [子图编排](./graph_pipeline.md) - 提供将多个状态相同的子图以并行或者串行的方式组合在一起的功能。
+- [消息处理](./message-processing.md) - 提供与 Message 相关的工具函数，例如 chunk 拼接。
+- [工具增强](./tool-enhancement.md) - 在已定义的 tools 中添加新的功能。
+- [上下文工程](./context-engineering.md) - 提供用于帮助上下文工程管理的实用性 tools 以及相关的状态 Schema。
+- [状态图编排](./graph-orchestration.md) - 将多个状态图(StateGraph)以并行或者串行的方式组合在一起。
 - [API 参考](./api-reference.md) - API 参考文档
 - [使用示例](./example.md) - 介绍本库的使用示例

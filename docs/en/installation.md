@@ -28,14 +28,14 @@ uv add langchain-dev-utils
 
 ## Dependencies
 
-The package will automatically install the following dependencies:
+This package automatically installs the following dependencies:
 
 - `langchain`
 - `langgraph`
 
 ## Verification
 
-After installation, verify that the package is correctly installed:
+After installation, verify that the package was installed correctly:
 
 ```python
 import langchain_dev_utils
@@ -44,7 +44,7 @@ print(langchain_dev_utils.__version__)
 
 ## Development Installation
 
-If you’d like to contribute to the project or run tests locally:
+If you’d like to contribute to the project or run tests:
 
 ```bash
 git clone https://github.com/TBice123123/langchain-dev-utils.git
@@ -55,12 +55,12 @@ uv run pytest .
 
 ## Next Steps
 
-After installation, you can proceed to:
+After installation, continue with:
 
-- [Model Management](./model-management.md) — Unified interface for easily using chat and embeddings models
-- [Message Processing](./message-processing.md) — Utility functions for Message objects, including chunk merging and more
-- [Tool Enhancement](./tool-enhancement.md) — Simplifies defining and developing LangChain tools
-- [Context Engineering](./context-engineering.md) — Advanced tools and state mixin classes for context management
-- [Subgraph Composition](./graph_pipeline.md) — A suite of utility functions for Message objects, including chunk merging and more
-- [API Reference](./api-reference.md) — Complete API documentation
-- [Example](./example.md) — Example of using the library
+- [Model Management](./model-management.md) - Provides a unified registration and management system for easy use of chat and embeddings models.
+- [Message Processing](./message-processing.md) - Provides utility functions related to Message handling, such as chunk concatenation.
+- [Tool Enhancement](./tool-enhancement.md) - Adds new functionality to already defined tools.
+- [Context Engineering](./context-engineering.md) - Provides practical tools and associated state schemas for assisting context engineering management.
+- [Graph Orchestration](./graph-orchestration.md) - Combines multiple StateGraphs in parallel or sequential configurations.
+- [API Reference](./api-reference.md) - API reference documentation
+- [Usage Examples](./example.md) - Demonstrates practical usage examples of this library

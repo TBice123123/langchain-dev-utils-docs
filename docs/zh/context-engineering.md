@@ -1,14 +1,14 @@
 # 上下文工程
 
-上下文工程模块提供了一系列用于处理 AI 上下文的实用工具，包括 plan 管理工具、note 管理工具等。
+上下文工程模块提供了一系列较为高级且常见的大模型上下文管理的工具。
 
 ## 概述
 
-本模块主要用于 AI 的上下文管理功能目前提供了 plan（计划）管理和 note（笔记）管理工具。
+本模块主要用于 AI 的上下文管理。目前针对任务规划实现了 Plan 管理，以及 上下文写出与写入实现了 Note 管理。
 
 ## Plan 管理
 
-该部分提供了一些用于帮助大模型制定计划或者更新计划的工具，以及对应的状态混合类。
+该部分提供了一些用于帮助大模型制定计划或者更新计划的工具，以及对应的状态 Schema。
 
 ### 核心函数
 
@@ -29,7 +29,7 @@ from langchain_dev_utils import create_write_plan_tool, create_update_plan_tool
 tools=[create_write_plan_tool(), create_update_plan_tool()] # 创建计划工具
 ```
 
-### Plan 状态混合类
+### Plan 状态 Schema
 
 ```python
 class PlanStateMixin(TypedDict):
@@ -46,7 +46,7 @@ class State(PlanStateMixin):
 
 ## Note 管理
 
-该部分提供了一些用于帮助大模型记录笔记的工具，以及对应的状态混合类。
+该部分提供了一些用于帮助大模型记录笔记的工具，以及对应的状态 Schema。
 
 ### 核心函数
 
@@ -69,7 +69,7 @@ from langchain_dev_utils import create_write_note_tool, create_ls_tool, create_q
 tools=[create_write_note_tool(), create_ls_tool(), create_query_note_tool(), create_update_note_tool()] # 创建笔记工具
 ```
 
-### Note 状态混合类
+### Note 状态
 
 ```python
 class NoteStateMixin(TypedDict):
@@ -98,6 +98,6 @@ class State(NoteStateMixin, PlanStateMixin, MessageState):
 
 ## 下一步
 
-- [子图编排](./graph_pipeline.md) - 提供将多个状态相同的子图以并行或者串行的方式组合在一起的功能。
+- [状态图编排](./graph-orchestration.md) - 将多个状态图(StateGraph)以并行或者串行的方式组合在一起。
 - [API 参考](./api-reference.md) - API 参考文档
 - [使用示例](./example.md) - 介绍本库的使用示例

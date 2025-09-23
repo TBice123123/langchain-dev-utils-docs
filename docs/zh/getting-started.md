@@ -4,7 +4,7 @@
 
 ## 📌 核心功能模块
 
-目前，`langchain-dev-utils` 提供四大核心模块：
+目前，`langchain-dev-utils` 提供五大核心模块：
 
 1. **模型管理**  
    统一注册与管理任何的模型提供商，一个函数调用 chat 与 embeddings 模型，告别重复导入第三方集成库。
@@ -13,13 +13,13 @@
    提供灵活的消息处理工具：支持 chunks 合并、推理内容合并、工具调用解析等。
 
 3. **工具增强**  
-   简化 LangChain Tools 的开发流程，内置装饰器，轻松实现 tools 的编写或修改。
+   在已有的 tools 中添加新的功能（例如增加工具调用中的人在回路支持）。
 
 4. **上下文工程**  
-   提供上下文工程的高级 tools 与状态混合类，帮助开发者轻松实现上下文管理。
+   提供方便上下文工程管理的实用性工具以及对应的状态 Schema。
 
-5. **子图编排**  
-   提供将多个状态相同的子图以并行或者串行的方式组合在一起的功能。
+5. **状态图编排**  
+   将多个状态图（StateGraph）以并行或者串行的方式组合在一起。
 
 ## 🛠️ 快速开始
 
@@ -41,11 +41,11 @@ uv add langchain-dev-utils
 ## 📘 下一步学习路径
 
 - [安装](./installation.md) - 如何安装本库
-- [模型管理](./model-management.md) - 提供统一的管理方式，方便开发者使用 chat 和 embeddings 模型。
-- [消息处理](./message-processing.md) - 提供针对 Message 类的一系列工具函数，涵盖 chunk 合并等内容。
-- [工具增强](./tool-enhancement.md) - 进一步的方便开发者定义和开发 langchain 的 tools。
-- [上下文工程](./context-engineering.md) - 提供上下文工程的高级 tools 和对应的状态混合类。
-- [子图编排](./graph_pipeline.md) - 提供将多个状态相同的子图以并行或者串行的方式组合在一起的功能。
+- [模型管理](./model-management.md) - 提供统一的注册管理方式，方便开发者使用 chat 和 embeddings 模型。
+- [消息处理](./message-processing.md) - 提供与 Message 相关的工具函数，例如 chunk 拼接。
+- [工具增强](./tool-enhancement.md) - 在已定义的 tools 中添加新的功能。
+- [上下文工程](./context-engineering.md) - 提供用于帮助上下文工程管理的实用性 tools 以及相关的状态 Schema。
+- [状态图编排](./graph-orchestration.md) - 将多个状态图(StateGraph)以并行或者串行的方式组合在一起。
 - [API 参考](./api-reference.md) - API 参考文档
 - [使用示例](./example.md) - 介绍本库的使用示例
 
