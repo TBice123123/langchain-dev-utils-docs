@@ -7,6 +7,15 @@ export default defineConfig({
   title: "LangChain Dev Utils",
   description:
     "A comprehensive utility library for developers building applications with LangChain and LangGraph",
+  
+  // Enable dark mode with user preference as default
+  appearance: true,
+
+  themeConfig: {
+    outline: {
+      level: [2, 3]
+    }
+  },
 
   locales: {
     en: {

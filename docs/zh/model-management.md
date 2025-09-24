@@ -40,7 +40,7 @@ LangChain 官方的 `init_chat_model` 和 `init_embeddings` 函数很方便，�
 #### `load_chat_model` 的参数
 
 - `model`：模型名称，格式为 `model_name` 或 `provider_name:model_name`
-- `model_provider`：可选的模型提供商名称。如果未提供，提供商名称必须包含在 `model` 参数中。
+- `model_provider`：可选的模型提供商名称。如果未提供， `model`参数的格式必须是`provider_name:model_name`。
 - `kwargs`：可选的额外模型参数，如 `temperature`、`api_key`、`stop` 等。
 
 ### 使用示例
@@ -119,7 +119,7 @@ langgraph-project/
 
 - `provider_name`：提供商名称；必须是自定义名称
 - `embeddings_model`：Embeddings 类或字符串。如果是字符串，必须是官方 `init_embeddings` 支持的提供商（例如 `openai`、`cohere`）。在这种情况下，将调用 `init_embeddings` 函数。
-- `base_url`：可选的基础 URL。当 `embeddings_model` 是字符串时推荐使用。
+- `base_url`：可选的基础 URL。当 `embeddings_model` 是字符串时才有效。
 
 #### `batch_register_embeddings_provider` 的参数
 
@@ -136,7 +136,7 @@ langgraph-project/
 #### `load_embeddings` 的参数
 
 - `model`：模型名称，格式为 `model_name` 或 `provider_name:model_name`
-- `provider`：可选的模型提供商名称。如果未提供，提供商名称必须包含在 `model` 参数中。
+- `provider`：可选的模型提供商名称。如果未提供，`model`参数的格式必须是`provider_name:model_name`。
 - `kwargs`：可选的额外模型参数，如 `chunk_size`、`api_key`、`dimensions` 等。
 
 ### 使用示例
@@ -182,14 +182,6 @@ print(embeddings.embed_query("hello world"))
 - **全局注册**：同样，所有嵌入模型提供商必须在应用程序启动时注册。
 - **线程安全**：注册后不应进行修改，以避免多线程并发问题。
 - **初始化**：我们建议将 `register_embeddings_provider` 放在应用程序的 `__init__.py` 文件中。
-
-## 支持的模型格式
-
-工具函数`load_chat_model`和`load_embeddings`支持以下格式的参数：
-
-（1）仅提供模型名称：此时模型名称的格式必须是`provider_name:model_name`
-
-（2）提供提供商名称和模型名称。
 
 **注意**：`load_chat_model` 也可以用于加载`init_chat_model`支持的模型，使用方式与上文一样，且无需调用`register_chat_model`注册。`load_embeddings`也是如此。
 

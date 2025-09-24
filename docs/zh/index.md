@@ -2,7 +2,7 @@
 
 欢迎使用`langChain-dev-utils`文档！
 
-`langChain-dev-utils` 是一个专为使用 `LangChain` 和 `LangGraph` 构建大模型应用的开发者打造的综合性工具库，集成了高效实用的开发帮助函数。
+`langChain-dev-utils` 是一个专为使用 `LangChain` 和 `LangGraph` 构建大模型应用的开发者打造的综合性工具库，集成了高效实用的开发工具函数。
 
 ## 快速开始
 
