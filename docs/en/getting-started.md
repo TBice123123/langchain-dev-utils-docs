@@ -49,6 +49,8 @@ Once installed, simply import and use it in your project.
 - [API Reference](./api-reference.md) - API reference documentation
 - [Usage Examples](./example.md) - Demonstrates practical usage examples of this library
 
+  > If you are building a simple LLM application, you may only need model management and message processing. If you are building a complex agent system, you may need to use tool enhancement, context engineering, graph orchestration, and other modules in addition to the previous ones.
+
 ---
 
 ## 💬 Join the Community

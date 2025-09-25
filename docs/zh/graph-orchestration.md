@@ -17,9 +17,9 @@
 ### 参数
 
 - `sub_graphs`: 用于组合的状态图列表（必须是状态图，即 StateGraph 的实例）。
-- `state_schema`: 子图共同的 State Schema。
+- `state_schema`: 最后构建的图的 State Schema。
 - `graph_name`: 最后构建的图的名称。
-- `context_schema`: 子图共同的 Context Schema。
+- `context_schema`: 最后构建的图的 Context Schema。
 - `input_schema`: 最后构建的图的输入 Schema。
 - `output_schema`: 最后构建的图的输出 Schema。
 
@@ -75,11 +75,11 @@ graph = sequential_pipeline(
 ### 参数
 
 - `sub_graphs`: 用于组合的状态图列表。
-- `state_schema`: 子图共同的 State Schema。
+- `state_schema`: 最后构建的图的 State Schema。
 - `parallel_entry_node`: 并行入口节点(默认为 `__start__`）（注意节点不包含在并行节点中）。
 - `branches_fn`: 并行分支函数，返回一个列表，每一个列表都是 Send 类型，用于描述本次执行需要并行执行的状态图节点。
 - `graph_name`: 最后构建的图的名称。
-- `context_schema`: 子图共同的 Context Schema。
+- `context_schema`: 最后构建的图的 Context Schema。
 - `input_schema`: 最后构建的图的输入 Schema。
 - `output_schema`: 最后构建的图的输出 Schema。
 

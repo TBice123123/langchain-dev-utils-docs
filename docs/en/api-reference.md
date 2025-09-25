@@ -641,11 +641,11 @@ def sequential_pipeline(
 **Parameters:**
 
 - `sub_graphs` (list[SubGraph]): List of sub-graphs
-- `state_schema` (type[StateT]): Common state schema
+- `state_schema` (type[StateT]): state schema of the final constructed graph
 - `graph_name` (Optional[str]): Name of the final constructed graph
-- `context_schema` (type[ContextT] | None): Common context schema
-- `input_schema` (type[InputT] | None): Common input schema
-- `output_schema` (type[OutputT] | None): Common output schema
+- `context_schema` (type[ContextT] | None): context schema of the final constructed graph
+- `input_schema` (type[InputT] | None): input schema of the final constructed graph
+- `output_schema` (type[OutputT] | None): output schema of the final constructed graph
 
 **Returns:**
 
@@ -675,13 +675,13 @@ def parallel_pipeline(
 **Parameters:**
 
 - `sub_graphs` (list[SubGraph]): List of sub-graphs
-- `state_schema` (type[StateT]): Common state schema
+- `state_schema` (type[StateT]): state schema of the final constructed graph
 - `graph_name` (Optional[str]): Name of the final constructed graph
 - `parallel_entry_node` (Optional[str]): Parallel entry node
 - `branches_fn` (Optional[Callable[[StateT], list[Send]]]): Function to determine which sub-graphs to execute in parallel
-- `context_schema` (type[ContextT] | None): Common context schema
-- `input_schema` (type[InputT] | None): Common input schema
-- `output_schema` (type[OutputT] | None): Common output schema
+- `context_schema` (type[ContextT] | None): context schema of the final constructed graph
+- `input_schema` (type[InputT] | None): input schema of the final constructed graph
+- `output_schema` (type[OutputT] | None): output schema of the final constructed graph
 
 **Returns:**
 

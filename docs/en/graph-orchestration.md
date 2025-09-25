@@ -17,11 +17,11 @@ Provides functionality to combine StateGraphs in a sequential pipeline.
 ### Parameters
 
 - `sub_graphs`: A list of state graphs to be combined (must be instances of StateGraph).
-- `state_schema`: The shared State Schema among all sub-graphs.
+- `state_schema`: The state schema of the final constructed graph.
 - `graph_name`: The name of the final constructed graph.
-- `context_schema`: The shared Context Schema among all sub-graphs.
-- `input_schema`: The input Schema of the final constructed graph.
-- `output_schema`: The output Schema of the final constructed graph.
+- `context_schema`: The context schema of the final constructed graph.
+- `input_schema`: The input schema of the final constructed graph.
+- `output_schema`: The output schema of the final constructed graph.
 
 ### Usage Example
 
@@ -75,13 +75,13 @@ Provides functionality to combine StateGraphs in a parallel pipeline.
 ### Parameters
 
 - `sub_graphs`: A list of state graphs to be combined.
-- `state_schema`: The shared State Schema among all sub-graphs.
+- `state_schema`: The state schema of the final constructed graph.
 - `parallel_entry_node`: The parallel entry node (default: `__start__`) (note: this node is not included in the parallel nodes).
 - `branches_fn`: A branching function that returns a list of `Send` objects, each describing which sub-graph nodes should be executed in parallel during this step.
 - `graph_name`: The name of the final constructed graph.
-- `context_schema`: The shared Context Schema among all sub-graphs.
-- `input_schema`: The input Schema of the final constructed graph.
-- `output_schema`: The output Schema of the final constructed graph.
+- `context_schema`: The context schema of the final constructed graph.
+- `input_schema`: The input schema of the final constructed graph.
+- `output_schema`: The output schema of the final constructed graph.
 
 ### Usage Example
 

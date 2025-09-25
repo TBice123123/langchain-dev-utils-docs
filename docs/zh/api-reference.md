@@ -641,11 +641,11 @@ def sequential_pipeline(
 **参数：**
 
 - `sub_graphs` (list[SubGraph])：子图列表
-- `state_schema` (type[StateT]): 共同的状态 Schema
+- `state_schema` (type[StateT]): 最终构建的图的 State Schema
 - `graph_name` (Optional[str]): 最终构建的图的名称
-- `context_schema` (type[ContextT] | None): 共同的 Context Schema
-- `input_schema` (type[InputT] | None): 共同的输入 Schema
-- `output_schema` (type[OutputT] | None): 共同的输出 Schema
+- `context_schema` (type[ContextT] | None): 最终构建的图的 Context Schema
+- `input_schema` (type[InputT] | None): 最终构建的图的输入 Schema
+- `output_schema` (type[OutputT] | None): 最终构建的图的输出 Schema
 
 **返回值：**
 
@@ -675,13 +675,13 @@ def parallel_pipeline(
 **参数：**
 
 - `sub_graphs` (list[SubGraph])：子图列表
-- `state_schema` (type[StateT]): 共同的状态 Schema
+- `state_schema` (type[StateT]): 最终构建的图的 State Schema
 - `graph_name` (Optional[str]): 最终构建的图的名称
 - `parallel_entry_node` (Optional[str]): 并行入口节点
 - `branches_fn` (Optional[Callable[[StateT], list[Send]]]): 用于确定并行执行哪些子图的函数
-- `context_schema` (type[ContextT] | None): 共同的 Context Schema
-- `input_schema` (type[InputT] | None): 共同的输入 Schema
-- `output_schema` (type[OutputT] | None): 共同的输出 Schema
+- `context_schema` (type[ContextT] | None): 最终构建的图的 Context Schema
+- `input_schema` (type[InputT] | None): 最终构建的图的输入 Schema
+- `output_schema` (type[OutputT] | None): 最终构建的图的输出 Schema
 
 **返回值：**
 
