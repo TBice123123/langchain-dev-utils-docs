@@ -1,6 +1,6 @@
 # API 参考文档
 
-本节提供了 LangChain Dev Utils 中所有函数和类的完整文档。
+本节提供了`langchain-dev-utils` 中所有函数和类的完整文档。
 
 ## 模型管理
 
@@ -640,12 +640,12 @@ def sequential_pipeline(
 
 **参数：**
 
-- `sub_graphs` (list[SubGraph])：子图列表
-- `state_schema` (type[StateT]): 最终构建的图的 State Schema
-- `graph_name` (Optional[str]): 最终构建的图的名称
-- `context_schema` (type[ContextT] | None): 最终构建的图的 Context Schema
-- `input_schema` (type[InputT] | None): 最终构建的图的输入 Schema
-- `output_schema` (type[OutputT] | None): 最终构建的图的输出 Schema
+- `sub_graphs` (list[SubGraph]): 要组合的状态图列表
+- `state_schema` (type[StateT]): 最终生成的图的 State Schema
+- `graph_name` (Optional[str]): 最终生成的图的名称
+- `context_schema` (type[ContextT] | None): 最终生成的图的 Context Schema
+- `input_schema` (type[InputT] | None): 最终生成的图的输入 Schema
+- `output_schema` (type[OutputT] | None): 最终生成的图的输出 Schema
 
 **返回值：**
 
@@ -664,7 +664,7 @@ def parallel_pipeline(
     sub_graphs: list[SubGraph],
     state_schema: type[StateT],
     graph_name: Optional[str] = None,
-    parallel_entry_node: Optional[str] = None,
+    parallel_entry_graph: Optional[str] = None,
     branches_fn: Optional[Callable[[StateT], list[Send]]] = None,
     context_schema: type[ContextT] | None = None,
     input_schema: type[InputT] | None = None,
@@ -674,14 +674,14 @@ def parallel_pipeline(
 
 **参数：**
 
-- `sub_graphs` (list[SubGraph])：子图列表
-- `state_schema` (type[StateT]): 最终构建的图的 State Schema
-- `graph_name` (Optional[str]): 最终构建的图的名称
-- `parallel_entry_node` (Optional[str]): 并行入口节点
-- `branches_fn` (Optional[Callable[[StateT], list[Send]]]): 用于确定并行执行哪些子图的函数
-- `context_schema` (type[ContextT] | None): 最终构建的图的 Context Schema
-- `input_schema` (type[InputT] | None): 最终构建的图的输入 Schema
-- `output_schema` (type[OutputT] | None): 最终构建的图的输出 Schema
+- `sub_graphs` (list[SubGraph]): 要组合的状态图列表
+- `state_schema` (type[StateT]): 最终生成图的 State Schema
+- `graph_name` (Optional[str]): 最终生成图的名称
+- `parallel_entry_graph` (Optional[str]): 并行入口图（默认为 `__start__`，指定后该图不参与并行）
+- `branches_fn` (Optional[Callable[[StateT], list[Send]]]): 并行分支函数，返回 Send 列表控制并行执行
+- `context_schema` (type[ContextT] | None): 最终生成图的 Context Schema
+- `input_schema` (type[InputT] | None): 最终生成图的输入 Schema
+- `output_schema` (type[OutputT] | None): 最终生成图的输出 Schema
 
 **返回值：**
 
@@ -695,10 +695,10 @@ def parallel_pipeline(
 
 ```python
 class InterruptParams(TypedDict):
-    tool_call_name: str           # 工具名称（字符串）
-    tool_call_args: Dict[str, Any] # 工具调用参数（字典）
-    tool: BaseTool                # 工具对象，用于后续 invoke/ainvoke
-    config: RunnableConfig        # LangChain 运行时配置
+    tool_call_name: str
+    tool_call_args: Dict[str, Any]
+    tool: BaseTool
+    config: RunnableConfig
 ```
 
 ### `HumanInterruptHandler`

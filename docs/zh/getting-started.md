@@ -1,6 +1,6 @@
 # 🚀 入门指南
 
-欢迎使用 **`langchain-dev-utils`** —— 专为 LangChain 与 LangGraph 开发者打造的高效实用工具库。我们封装了常用功能模块，助你更轻松地构建、调试和优化大型语言模型（LLM）应用，提升开发效率与工程体验。
+欢迎使用 **`langchain-dev-utils`** —— 专为 langchain 与 langgraph 开发者打造的高效实用工具库。我们封装了常用功能模块，助你更轻松地构建、调试和优化大型语言模型（LLM）应用，提升开发效率与工程体验。
 
 ## 📌 核心功能模块
 
@@ -57,4 +57,4 @@ uv add langchain-dev-utils
 
 - 🐙 [GitHub 仓库](https://github.com/TBice123123/langchain-dev-utils) —— 查看源码、提交 PR
 - 🐞 [问题反馈](https://github.com/TBice123123/langchain-dev-utils/issues) —— 报告 Bug 或提出建议
-- 💡 欢迎贡献代码、文档或使用案例，共建更强大的 LangChain 实用开发工具生态。
+- 💡 欢迎贡献代码、文档或使用案例，共建更强大的 langchain 实用开发工具生态。

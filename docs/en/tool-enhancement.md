@@ -83,11 +83,11 @@ async def get_weather(city: str) -> str:
 
 #### Default Handler Behavior
 
-If no `handler` is provided, the default interrupt logic is used. The default logic follows the implementation in the official LangGraph documentation: [Add Human-in-the-Loop](https://docs.langchain.com/oss/python/langgraph/add-human-in-the-loop).
+If no `handler` is provided, the default interrupt logic is used. The default logic follows the implementation in the official langgraph documentation: [Add Human-in-the-Loop](https://docs.langchain.com/oss/python/langgraph/add-human-in-the-loop).
 
 ## Next Steps
 
-- [Context Engineering](./context-engineering.md) - Provides practical tools and associated state schemas for assisting context engineering management.
-- [Graph Orchestration](./graph-orchestration.md) - Combines multiple StateGraphs in parallel or sequential configurations.
-- [API Reference](./api-reference.md) - API reference documentation
-- [Usage Examples](./example.md) - Demonstrates practical usage examples of this library
+- [Context Engineering](./context-engineering.md) — Practical tools and State Schemas for context management
+- [Graph Orchestration](./graph-orchestration.md) — Combine multiple StateGraphs in parallel or serial workflows
+- [API Reference](./api-reference.md) — Complete API documentation
+- [Usage Examples](./example.md) — Practical code examples demonstrating real-world usage

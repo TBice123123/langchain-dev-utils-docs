@@ -1,14 +1,14 @@
-# LangChain Dev Utils
+# Langchain Dev Utils
 
-Welcome to the `langChain-dev-utils` documentation!
+Welcome to the `langchain-dev-utils` documentation!
 
-`langChain-dev-utils` is a comprehensive utility library designed specifically for developers building large language model applications with `LangChain` and `LangGraph`, integrating efficient and practical development helper functions.
+`langchain-dev-utils` is a comprehensive utility library designed specifically for developers building large language model applications using `langchain` and `langgraph`. It integrates a suite of efficient, practical development tools.
 
 ## Quick Start
 
 ### 🚀 Getting Started
 
-Begin with the [Getting Started Guide](./getting-started.md) to understand the library’s features and capabilities.
+Begin with the [Getting Started Guide](./getting-started.md) to explore the library’s features and capabilities.
 
 ### 📦 Installation
 
@@ -18,21 +18,21 @@ Follow the [Installation Guide](./installation.md) to set up the library in your
 
 - [Getting Started](./getting-started.md) - Overview and quick start
 - [Installation](./installation.md) - How to install this library
-- [Model Management](./model-management.md) - Provides a unified registration and management system for easy use of chat and embeddings models.
-- [Message Processing](./message-processing.md) - Provides utility functions related to Message handling, such as chunk concatenation.
-- [Tool Enhancement](./tool-enhancement.md) - Adds new functionality to already defined tools.
-- [Context Engineering](./context-engineering.md) - Provides practical tools and associated state schemas for assisting context engineering management.
-- [Graph Orchestration](./graph-orchestration.md) - Combines multiple StateGraphs in parallel or sequential configurations.
-- [API Reference](./api-reference.md) - API reference documentation
-- [Usage Examples](./example.md) - Demonstrates practical usage examples of this library
+- [Model Management](./model-management.md) - Provides a unified registration and management system for chat and embedding models.
+- [Message Processing](./message-processing.md) - Offers utility functions related to Message handling, such as chunk concatenation.
+- [Tool Enhancement](./tool-enhancement.md) - Adds new functionality to existing tools dynamically.
+- [Context Engineering](./context-engineering.md) - Provides practical tools and associated State Schemas to help manage context engineering.
+- [Graph Orchestration](./graph-orchestration.md) - Combines multiple StateGraphs in parallel or sequential workflows.
+- [API Reference](./api-reference.md) - Complete API documentation
+- [Usage Examples](./example.md) - Practical examples demonstrating how to use this library
 
 ### 🛠️ Key Features
 
-- **Unified Model Management**: Provides a centralized registration and invocation mechanism for chat and embeddings models, simplifying multi-model integration and switching, improving development efficiency and consistency.
-- **Efficient Message Processing**: Offers utility functions for message handling, including tool call detection and result parsing, support for streaming responses from large models, and more.
-- **Extensible Tool Enhancement**: Flexibly extends existing tools with new functionality, enabling dynamic expansion and customization to meet diverse business needs.
-- **Advanced Context Engineering**: Delivers advanced tools with state mixing and context-aware capabilities, enhancing the model’s understanding and utilization of multi-turn dialogues, historical context, and external information.
-- **Flexible Graph Orchestration**: Supports combining multiple StateGraphs in parallel or sequential configurations to enable flexible orchestration of complex workflows.
+- **Unified Model Management**: Centralized registration and invocation mechanism for chat and embedding models, simplifying multi-model integration and switching, improving development efficiency and consistency.
+- **Efficient Message Processing**: Utility functions for handling messages, including tool call detection, result parsing, and streaming response processing from large models.
+- **Extensible Tool Enhancement**: Dynamically extend and customize existing tools with new capabilities to meet diverse business requirements.
+- **Advanced Context Engineering**: Provides context-aware tools and corresponding State Schemas to enhance the model’s understanding and utilization of multi-turn conversations, historical context, and external information.
+- **Flexible Graph Orchestration**: Supports combining multiple StateGraphs in parallel or serial patterns to enable flexible orchestration of complex workflows.
 
 ### 📖 GitHub Repository
 
@@ -40,4 +40,4 @@ Visit the [GitHub Repository](https://github.com/TBice123123/langchain-dev-utils
 
 ---
 
-Document last updated: September 24, 2025
+Last updated: 2025-09-26

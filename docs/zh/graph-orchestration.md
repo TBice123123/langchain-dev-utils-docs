@@ -1,27 +1,27 @@
 # 状态图编排
 
-本模块提供了两个工具函数（管道）让你可以将多个状态图 StateGraph 以并行或者串行的方式组合在一起。
+本模块提供了两个工具函数（管道），用于将多个 StateGraph 状态图以并行或串行的方式进行组合，实现复杂的多智能体编排。
 
 ## 概述
 
-将多个状态图 StateGraph 以并行或者串行的方式组合在一起。以实现较为复杂的多智能体编排。
+通过并行或串行的方式组合多个 StateGraph 状态图，构建更复杂的多智能体工作流。
 
 ## 串行管道
 
-提供将状态图以串行的方式组合在一起的功能。
+将状态图按照顺序依次连接，形成串行执行流程。
 
 ### 核心函数
 
-- `sequential_pipeline`：将状态图以串行管道的方式组合在一起。
+- `sequential_pipeline` - 以串行方式组合多个状态图
 
-### 参数
+### 参数说明
 
-- `sub_graphs`: 用于组合的状态图列表（必须是状态图，即 StateGraph 的实例）。
-- `state_schema`: 最后构建的图的 State Schema。
-- `graph_name`: 最后构建的图的名称。
-- `context_schema`: 最后构建的图的 Context Schema。
-- `input_schema`: 最后构建的图的输入 Schema。
-- `output_schema`: 最后构建的图的输出 Schema。
+- `sub_graphs`: 要组合的状态图列表（必须是 StateGraph 实例）
+- `state_schema`: 最终生成图的 State Schema
+- `graph_name`: 最终生成图的名称（可选）
+- `context_schema`: 最终生成图的 Context Schema（可选）
+- `input_schema`: 最终生成图的输入 Schema（可选）
+- `output_schema`: 最终生成图的输出 Schema（可选）
 
 ### 使用示例
 
@@ -30,27 +30,24 @@ from langgraph.graph import StateGraph
 from typing import Annotated, TypedDict
 from langchain_dev_utils import sequential_pipeline
 
-
 def replace(a: int, b: int):
     return b
 
-
 class State(TypedDict):
     a: Annotated[int, replace]
-
 
 def add(state: State):
     print(state)
     return {"a": state["a"] + 1}
 
-
 def make_graph(name: str):
+    """创建简单的状态图"""
     sub_graph = StateGraph(State)
     sub_graph.add_node("add", add)
     sub_graph.add_edge("__start__", "add")
     return sub_graph.compile(name=name)
 
-
+# 构建串行管道
 graph = sequential_pipeline(
     sub_graphs=[
         make_graph("graph1"),
@@ -61,47 +58,45 @@ graph = sequential_pipeline(
 )
 ```
 
-最终构建的图如下：
-![alt text](/img/sequential.png)
+最终生成的流程图如下：
+![串行管道示意图](/img/sequential.png)
 
 ## 并行管道
 
-提供将状态图以并行的方式组合在一起的功能。
+将多个状态图并行组合，支持灵活的并行执行策略。
 
 ### 核心函数
 
-- `parallel_pipeline`：将状态图以并行管道的方式组合在一起。
+- `parallel_pipeline` - 以并行方式组合多个状态图
 
-### 参数
+### 参数说明
 
-- `sub_graphs`: 用于组合的状态图列表。
-- `state_schema`: 最后构建的图的 State Schema。
-- `parallel_entry_node`: 并行入口节点(默认为 `__start__`）（注意节点不包含在并行节点中）。
-- `branches_fn`: 并行分支函数，返回一个列表，每一个列表都是 Send 类型，用于描述本次执行需要并行执行的状态图节点。
-- `graph_name`: 最后构建的图的名称。
-- `context_schema`: 最后构建的图的 Context Schema。
-- `input_schema`: 最后构建的图的输入 Schema。
-- `output_schema`: 最后构建的图的输出 Schema。
+- `sub_graphs`: 要组合的状态图列表
+- `state_schema`: 最终生成图的 State Schema
+- `parallel_entry_graph`: 入口状态图（默认为 `__start__`，指定后该图不参与并行）
+- `branches_fn`: 并行分支函数，返回 Send 对象列表控制并行执行
+- `graph_name`: 最终生成图的名称（可选）
+- `context_schema`: 最终生成图的 Context Schema（可选）
+- `input_schema`: 最终生成图的输入 Schema（可选）
+- `output_schema`: 最终生成图的输出 Schema（可选）
 
 ### 使用示例
 
+#### 基础并行示例
+
 ```python
 from langgraph.graph import StateGraph
 from typing import Annotated, TypedDict
 from langchain_dev_utils import parallel_pipeline
 
-
 def replace(a: int, b: int):
     return b
-
 
 class State(TypedDict):
     a: Annotated[int, replace]
 
-
 def add(state: State):
     return {"a": state["a"] + 1}
-
 
 def make_graph(name: str):
     sub_graph = StateGraph(State)
@@ -109,7 +104,7 @@ def make_graph(name: str):
     sub_graph.add_edge("__start__", "add")
     return sub_graph.compile(name=name)
 
-
+# 构建并行管道（所有子图并行执行）
 graph = parallel_pipeline(
     sub_graphs=[
         make_graph("graph1"),
@@ -120,38 +115,13 @@ graph = parallel_pipeline(
 )
 ```
 
-最终构建的图如下：
-![alt text](/img/parallel.png)
+最终生成的流程图如下：
+![并行管道示意图](/img/parallel.png)
 
-如果指定了 `parallel_entry_node`，则并行入口节点将不会被添加到并行节点中。
-如下：
+#### 指定入口图的并行示例
 
 ```python
-from langgraph.graph import StateGraph
-from typing import Annotated, TypedDict
-from langchain_dev_utils import parallel_pipeline
-
-
-def replace(a: int, b: int):
-    return b
-
-
-class State(TypedDict):
-    a: Annotated[int, replace]
-
-
-def add(state: State):
-    print(state)
-    return {"a": state["a"] + 1}
-
-
-def make_graph(name: str):
-    sub_graph = StateGraph(State)
-    sub_graph.add_node("add", add)
-    sub_graph.add_edge("__start__", "add")
-    return sub_graph.compile(name=name)
-
-
+# 指定 graph1 为入口图，其余图并行执行
 graph = parallel_pipeline(
     sub_graphs=[
         make_graph("graph1"),
@@ -159,37 +129,41 @@ graph = parallel_pipeline(
         make_graph("graph3"),
     ],
     state_schema=State,
-    parallel_entry_node="graph1",
+    parallel_entry_graph="graph1",
 )
 ```
 
-最终构建的图如下：
-![alt text](/img/parallel_entry.png)
+最终生成的流程图如下：
+![带入口的并行管道示意图](/img/parallel_entry.png)
 
-此外你还可以决定当前执行有哪些状态图需要并行执行，这要用到`LangGraph`中的`Send`API。
+#### 使用分支函数控制并行执行
+
+分支函数需要返回`Send`列表。具体参考[Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send)
 
 ```python
-    graph = parallel_pipeline(
-        sub_graphs=[
-            make_graph("graph1"),
-            make_graph("graph2"),
-            make_graph("graph3"),
-        ],
-        state_schema=State,
-        branches_fn=lambda state: [
-            Send("graph1", arg={"a": state["a"]}),
-            Send("graph2", arg={"a": state["a"]}),
-        ],
-    )
+from langgraph.prebuilt import Send
+
+# 使用分支函数精确控制并行执行
+graph = parallel_pipeline(
+    sub_graphs=[
+        make_graph("graph1"),
+        make_graph("graph2"),
+        make_graph("graph3"),
+    ],
+    state_schema=State,
+    branches_fn=lambda state: [
+        Send("graph1", arg={"a": state["a"]}),
+        Send("graph2", arg={"a": state["a"]}),
+        # graph3 不会被执行
+    ],
+)
 ```
 
-最终构建的图结构和上述类似，但是唯一的区别是，上述的图三个子图都会并行执行，而这个则会只执行`graph1`和`graph2`，具体参考[Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send)。
+### 重要注意事项
 
-**注意**：
-
-（1）不传入`branches_fn`参数，则所有的子图都会并行执行，除非这个子图为入口节点。此时这个入口节点与其它子图是串行执行的。但是当传入了`branches_fn`参数，则需要执行哪些子图由这个函数的返回值决定，因此如果你同时设置了`parallel_entry_node`和`branches_fn`，请注意这个函数的返回值中的列表中不能包含入口节点，否则会陷入死循环。
-
-（2）对于这些组合的状态图它们之间必须要有共享的状态键值。
+- 不传入 `branches_fn` 参数时，所有子图都会并行执行（入口图除外）
+- 传入 `branches_fn` 参数时，执行哪些子图由该函数的返回值决定
+- 如果同时设置了 `parallel_entry_graph` 和 `branches_fn`，请确保分支函数不包含入口节点，避免死循环
 
 ## 下一步
 

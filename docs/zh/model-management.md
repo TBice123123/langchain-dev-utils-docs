@@ -4,7 +4,7 @@
 
 ## 概述
 
-LangChain 官方的 `init_chat_model` 和 `init_embeddings` 函数很方便，但它们支持的模型提供商数量相对有限。该模块提供了 `register_model_provider`(`batch_register_model_provider`) 和 `register_embeddings_provider`(`batch_register_embeddings_provider`) 函数，使开发者能够通过统一的机制注册任何模型提供商。
+langchain 官方的 `init_chat_model` 和 `init_embeddings` 函数很方便，但它们支持的模型提供商数量相对有限。该模块提供了 `register_model_provider`(`batch_register_model_provider`) 和 `register_embeddings_provider`(`batch_register_embeddings_provider`) 函数，使开发者能够通过统一的机制注册任何模型提供商。
 
 ## ChatModel 类
 
@@ -19,18 +19,18 @@ LangChain 官方的 `init_chat_model` 和 `init_embeddings` 函数很方便，�
 #### `register_model_provider` 的参数
 
 - `provider_name`：提供商名称；必须是自定义名称
-- `chat_model`：ChatModel 类或字符串。如果是字符串，必须是官方 `init_chat_model` 支持的提供商（例如 `openai`、`anthropic`）。在这种情况下，将调用 `init_chat_model` 函数。
+- `chat_model`：chat_model 类或字符串。如果是字符串，必须是官方 `init_chat_model` 支持的提供商（例如 `openai`、`anthropic`）。在这种情况下，将调用 `init_chat_model` 函数。
 - `base_url`：可选的基础 URL。当 `chat_model` 是字符串时才有效。
 
 #### `batch_register_model_provider` 的参数
 
-- `poviders`: 一个字典的数组，每个字典包含了 `provider`、`chat_model` 和 `base_url`。
+- `poviders`: 一个字典的数组，每个字典包含了 `provider`、`chat_model` 和 `base_url`，每个参数的含义与 `register_model_provider` 相同。
 
 ::: tip 📌
-`chat_model` 支持通过字符串参数指定模型提供商，其取值应为 LangChain 中 `init_chat_model` 所支持的提供商名称（例如 `"openai"`）。  
+`chat_model` 支持通过字符串参数指定模型提供商，其取值应为 langchain 中 `init_chat_model` 所支持的提供商名称（例如 `openai`）。  
 这是因为目前许多大模型都提供了兼容其他厂商风格（如 OpenAI）的 API。若您的模型没有专用或者合适的集成库，但提供商支持兼容其他厂商的 API 风格，可考虑传递对应提供商字符串。
 使用此方式时必须同时传递 `base_url` 参数或者设置提供商的 API_BASE 环境变量以指定自定义模型的 API 端点。  
-若您的模型为推理模型且遵循 DeepSeek 的调用模式，也推荐传递 `"deepseek"` 值。
+若您的模型为推理模型且推理输出模式和`deepseek`一致，则此处可以考虑传递 `deepseek`。
 
 这个功能的实现思路可以参考: [配置 BASEURL 参数](https://docs.langchain.com/oss/python/langchain/models#base-url-or-proxy)
 :::
@@ -126,8 +126,8 @@ langgraph-project/
 - `poviders`: 一个字典的数组，每个字典包含了 `provider`、`embeddings_model` 和 `base_url`。
 
 ::: tip 📌
-`embeddings_model` 支持通过字符串参数指定模型提供商，其取值应为 LangChain 中 `init_embeddings` 所支持的提供商名称（例如 `"openai"`）。  
-这是因为目前许多大模型都提供了兼容其他厂商风格（如 OpenAI）的 API。若您的模型没有专用或者适合的集成库，但提供商支持兼容其他厂商的 API 风格，可考虑传递对应提供商字符串。
+`embeddings_model` 支持通过字符串参数指定嵌入模型提供商，其取值应为 langchain 中 `init_embeddings` 所支持的提供商名称（例如 `openai`）。  
+这是因为目前许多嵌入模型都提供了兼容其他厂商风格（如 OpenAI）的 API。若您的模型没有专用或者适合的集成库，但提供商支持兼容其他厂商的 API 风格，可考虑传递对应提供商字符串。
 使用此方式时必须同时传递 `base_url` 参数以指定自定义模型的 API 端点。  
 :::
 
@@ -135,8 +135,8 @@ langgraph-project/
 
 #### `load_embeddings` 的参数
 
-- `model`：模型名称，格式为 `model_name` 或 `provider_name:model_name`
-- `provider`：可选的模型提供商名称。如果未提供，`model`参数的格式必须是`provider_name:model_name`。
+- `model`：嵌入模型名称，格式为 `model_name` 或 `provider_name:model_name`
+- `provider`：可选的嵌入模型提供商名称。如果未提供，`model`参数的格式必须是`provider_name:model_name`。
 - `kwargs`：可选的额外模型参数，如 `chunk_size`、`api_key`、`dimensions` 等。
 
 ### 使用示例

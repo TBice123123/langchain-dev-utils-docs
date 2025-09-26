@@ -1,6 +1,6 @@
 # Installation
 
-`LangChain-Dev-Utils` can be installed using various package managers. Choose the one that best fits your workflow.
+`langchain-dev-utils` can be installed using various package managers. Choose the one that best fits your workflow.
 
 ## Package Managers
 
@@ -35,16 +35,16 @@ This package automatically installs the following dependencies:
 
 ## Verification
 
-After installation, verify that the package was installed correctly:
+After installation, verify that the package has been installed correctly:
 
 ```python
 import langchain_dev_utils
 print(langchain_dev_utils.__version__)
 ```
 
-## Development Installation
+## Running Tests
 
-If you’d like to contribute to the project or run tests:
+If you wish to contribute to the project or run tests:
 
 ```bash
 git clone https://github.com/TBice123123/langchain-dev-utils.git
@@ -55,12 +55,12 @@ uv run pytest .
 
 ## Next Steps
 
-After installation, continue with:
+After installation, you can proceed with:
 
-- [Model Management](./model-management.md) - Provides a unified registration and management system for easy use of chat and embeddings models.
-- [Message Processing](./message-processing.md) - Provides utility functions related to Message handling, such as chunk concatenation.
-- [Tool Enhancement](./tool-enhancement.md) - Adds new functionality to already defined tools.
-- [Context Engineering](./context-engineering.md) - Provides practical tools and associated state schemas for assisting context engineering management.
-- [Graph Orchestration](./graph-orchestration.md) - Combines multiple StateGraphs in parallel or sequential configurations.
-- [API Reference](./api-reference.md) - API reference documentation
-- [Usage Examples](./example.md) - Demonstrates practical usage examples of this library
+- [Model Management](./model-management.md) — Unified registration and management of chat and embedding models
+- [Message Processing](./message-processing.md) — Utility functions for message handling, such as chunk concatenation
+- [Tool Enhancement](./tool-enhancement.md) — Add new functionality to existing tools
+- [Context Engineering](./context-engineering.md) — Practical tools and State Schemas for context management
+- [Graph Orchestration](./graph-orchestration.md) — Combine multiple StateGraphs in parallel or serial workflows
+- [API Reference](./api-reference.md) — Complete API documentation
+- [Usage Examples](./example.md) — Practical code examples demonstrating real-world usage

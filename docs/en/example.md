@@ -1,24 +1,24 @@
 # Usage Example
 
-> This article demonstrates a **complete example of multiple agents discussing a specific topic** to showcase how to effectively use the `langchain-dev-utils` library within a `LangChain` and `LangGraph` project. This example deeply integrates all core modules of the library, helping you comprehensively master the practical usage of its five main modules.
+> This article demonstrates how to efficiently use the `langchain-dev-utils` library in a `langchain` and `langgraph` project through a complete example of **multi-agent discussions around a specific topic**. This example deeply integrates all core modules of the library, helping you comprehensively master the practical usage of the five major modules.
 
 ## Project Setup
 
 ### Project Initialization
 
-This project uses `uv` as the project management tool. First, you need to install `uv`.
+This project uses `uv` as the project management tool. First, you need to download `uv`.
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-For Windows systems, use:
+For Windows systems, you can use:
 
-```powershell
+```bash
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-After installation, create a new project using `uv`:
+After installation, use `uv` to create the project.
 
 ```bash
 uv init langchain-dev-utils-example
@@ -32,23 +32,23 @@ cd langchain-dev-utils-example
 
 ### Installing Dependencies
 
-Before proceeding, ensure Python is installed on your system. If not, you can use `uv` to [install Python](https://docs.astral.sh/uv/guides/install-python/). Once Python is available, install the required dependencies using `uv`:
+Before this, you need to ensure that `python` is installed on your computer. If not, you can use `uv` to [install python](https://docs.astral.sh/uv/guides/install-python/).
+After ensuring your computer has `python`, use `uv` to install the dependencies.
 
 ```bash
 uv add langchain langgraph langchain-dev-utils
 ```
 
-Additionally, install `langgraph-cli` for debugging:
+In addition to the above dependencies, you also need to install `langgraph-cli` for debugging.
 
 ```bash
 uv add langgraph-cli[inmem] --group dev
 ```
 
-### Project Directory Structure
+### Setting Up the Project Directory
 
-Next, create a `src` directory in your project, and add an `__init__.py` file inside it. All subsequent code will reside within the `src` directory.
-
-Your project structure should look like this:
+Next, create a `src` directory in the project, and then create an `__init__.py` file in the `src` directory. All our code will be placed in the `src` directory.
+Please ensure your project directory structure is as follows:
 
 ```
 src/
@@ -70,23 +70,18 @@ src/
 
 ### Registering Model Providers
 
-The first step is to register model providers using the `register_model_provider` function from `langchain-dev-utils`. Since we need to use multiple model providers, we’ll use the more convenient `batch_register_model_provider` function.
+The first step we need to do is register the model providers. Use the `register_model_provider` function provided by `langchain-dev-utils`. However, since we need to use multiple different types of models this time and register multiple model providers, we need to use the more convenient `batch_register_model_provider` function. According to the introduction in [Model Management](./model-management.md), we usually recommend placing the model provider registration in the project's `__init__.py` file to ensure registration is completed after the project starts.
 
-As described in the [Model Management](./model-management.md) documentation, it’s recommended to place provider registration in the project’s `__init__.py` file to ensure registration completes upon project startup.
+This time we use four leading open-source models: `deepseek-v3.1`, `qwen3-235b-a22b-instruct-2507`, `kimi-k2-0955`, and `glm-4.5`. For the `deepseek` and `qwen` models, there are corresponding `langchain` integrations (`langchain-deepseek`, `langchain-qwq`), while for the `kimi` and `glm` models, there are no suitable `langchain` integrations, so we choose to use `langchain-openai` for integration.
+Therefore, the providers we need to register and the corresponding methods are as follows:
 
-In this example, we use four top-tier open-source models: `deepseek-v3.1`, `qwen3-235b-a22b-instruct-2507`, `kimi-k2-0955`, and `glm-4.5`.
+- deepseek model: Install `langchain-deepseek`. No need to register a model provider because it is a supported provider of `init_chat_model` and can be called directly without registration.
+- qwen model: Install `langchain-qwq`, then register the provider. Here, `chat_model` needs to be passed the specific ChatModel class.
+- kimi model: Install `langchain-openai`, then register the provider. Here, `chat_model` needs to be passed the string value `openai` and `base_url` must also be provided.
+- glm model: Install `langchain-openai`, then register the provider. Here, `chat_model` needs to be passed the string value `openai` and `base_url` must also be provided.
 
-- For `deepseek` and `qwen` models, there are official LangChain integrations (`langchain-deepseek`, `langchain-qwq`).
-- For `kimi` and `glm`, no suitable LangChain integrations exist, so we use `langchain-openai` with custom `base_url`s.
-
-Thus, the providers and registration methods are as follows:
-
-- **Deepseek**: Install `langchain-deepseek`. No explicit registration needed—it’s natively supported by `init_chat_model`.
-- **Qwen**: Install `langchain-qwq`, then register the provider by passing the actual `ChatModel` class.
-- **Kimi**: Install `langchain-openai`, then register with `chat_model="openai"` and a `base_url`.
-- **GLM**: Install `langchain-openai`, then register similarly with `chat_model="openai"` and a `base_url`.
-
-Add the following code to `src/__init__.py`:
+Of course, you can also choose other models, the method is the same as above.
+We need to register the model providers in the `src/__init__.py` file. The code is as follows:
 
 ```python
 from langchain_dev_utils import batch_register_model_provider
@@ -110,7 +105,7 @@ batch_register_model_provider(
 )
 ```
 
-You can verify registration success with:
+You can test whether the registration was successful. The test code can be referenced as follows:
 
 ```python
 from langchain_dev_utils import load_chat_model
@@ -119,21 +114,21 @@ model = load_chat_model("dashscope:qwen3-235b-a22b-instruct-2507")
 print(model.invoke("hello"))
 ```
 
-If this runs without error, registration is successful.
+If the program runs successfully, it means the model provider registration was successful.
 
-### Implementing the Main Agent
+### Writing the Main Agent
 
-Now, let’s implement the main agent.
+Next, let's complete the writing of the main agent.
 
-#### Writing Tools
+#### Writing the Tools
 
-The main agent has three tools:
+For the main agent, it has the following three tools.
 
-- `ls`: Lists existing notes.
-- `query_note`: Retrieves the content of a specific note.
-- `transfor_to_talk`: Routes user requests to sub-agents for discussion.
+- ls: Used to list existing notes.
+- query_note: Used to query the specific content of a note.
+- transfor_to_talk: An agent used for routing, transferring the user's request to multiple agents for discussion based on the user's needs.
 
-For `ls` and `query_note`, use the utility functions `create_ls_tool` and `create_query_note_tool` from the [Context Engineering](./context-engineering.md) module:
+For the `ls` and `query_note` tools, we use the two tool functions `create_ls_tool` and `create_query_note_tool` provided in [Context Engineering](./context-engineering.md). The specific usage is as follows:
 
 ```python
 from langchain_dev_utils import (
@@ -144,46 +139,48 @@ from langchain_dev_utils import (
 
 ls = create_ls_tool(
     name="ls",
-    description="""Lists all saved note names.
+    description="""Used to list the names of all saved notes.
 
     Returns:
-    list[str]: A list of note filenames
+    list[str]: A list containing all note filenames
+
     """,
 )
 
 query_note = create_query_note_tool(
     name="query_note",
-    description="""Queries a note.
+    description="""Used to query a note.
 
     Parameters:
-    file_name: Note name
+    file_name: The name of the note
 
     Returns:
-    str: Content of the queried note
+    str, The content of the queried note
+
     """,
 )
 ```
 
-For `transfor_to_talk`, implement it manually:
+For the `transfor_to_talk` tool, we need to write it ourselves. The specific implementation can be referenced as follows:
 
 ```python
 @tool
 async def transfor_to_talk(
     topic: Annotated[
         str,
-        "The current discussion topic",
+        "The topic theme of the current discussion",
     ],
 ):
-    """Routes the topic to sub-agents for discussion."""
+    """Used to transfer the topic to sub-agents for discussion"""
 
     return "transfor success!"
 ```
 
-> **Note**: All the above code resides in `src/tools.py`.
+**Note: The above code is located in `src/tools.py`**
 
-#### Defining State
+#### Writing the State
 
-The main agent’s state schema is as follows (`src/state.py`):
+The state Schema for this main agent is as follows:
 
 ```python
 from typing import Annotated
@@ -204,20 +201,24 @@ class StateIn(MessagesState):
 
 class StateOut(MessagesState, NoteStateMixin):
     pass
+
 ```
 
-State keys:
+**Note: The above code is located in `src/state.py`**
+Our definition of the main agent state keys is as follows:
 
-- `messages`: Stores the main agent’s conversation history (from `MessagesState`).
-- `note`: Stores notes (from `NoteStateMixin`).
-- `talker_list`: List of agents participating in the discussion.
-- `talk_messages`: Stores the discussion results from sub-agents.
+- `messages`: Used to store the conversation messages of the main agent.
+- `note`: Used to store notes.
+- `talker_list`: Used to store the agents participating in the discussion.
+- `talk_messages`: Used to store the discussion results of the participating agents.
 
-We also define `StateIn` (input schema) and `StateOut` (output schema) for user-facing interfaces.
+Note that the `message` key is implemented by inheriting `MessagesState`, and the `note` key is implemented by inheriting `NoteStateMixin`. By inheriting these two state classes, you can very simply implement these two state keys without having to write them yourself (the main hassle is writing the reducer).
 
-#### Implementing Nodes
+In addition to the graph state State, we also define `StateIn` and `StateOut`, where `StateIn` is used to represent the input state and `StateOut` is used to represent the output state. Both are for the user.
 
-Node implementation (`src/node.py`):
+#### Writing the Node
+
+The node code is as follows (`src/node.py`):
 
 ```python
 from typing import Literal, cast
@@ -267,22 +268,25 @@ async def moderator(
 moderator_tools = ToolNode([ls, query_note])
 ```
 
-We use `has_tool_calling` to check for tool calls and `parse_tool_calling` to extract tool names and arguments. If the tool is `transfor_to_talk`, we route to the discussion subgraph.
+Note that the `has_tool_calling` and `parse_tool_calling` functions from [Message Processing](./message-processing.md) are used here.
 
-#### Writing Prompts
+`has_tool_calling` is used to determine if a message contains a tool call, and `parse_tool_calling` is used to parse the tool call. For parsing tool calls, by default, a list of tuples (name, args) is returned. If `first_tool_call_only=True` is passed, only the first tool call's (name, args) tuple is returned.
+For the parsed tool call, if its name is `transfor_to_talk`, it is forwarded to the sub-agents for discussion.
 
-Main agent prompt (`src/prompt.py`):
+#### Writing the Prompt
+
+The prompt for the main agent is as follows:
 
 ```python
-MODERATOR_PROMPT = """Your role is to extract the discussion topic from the user's query and invoke the `transfor_to_talk` tool to delegate the topic to sub-agents for discussion.
-Once the sub-agents return their discussion results, use the `query_note` tool to retrieve the note content."""
+MODERATOR_PROMPT = """Your role is to extract the topic theme from the user's question and call the `transfor_to_talk` tool to transfer the topic to sub-agents for discussion.
+After the sub-agents' discussion returns, use the `query_note` tool to query the note content."""
 ```
 
 ### Discussion Agents
 
-#### Writing Tools
+#### Writing the Tools
 
-Each discussion agent has a `tavily_search` tool for internet searches.
+For the sub-agents participating in the discussion, they only have one `tavily_search` tool for searching internet content.
 
 First, install `langchain-tavily`:
 
@@ -290,20 +294,26 @@ First, install `langchain-tavily`:
 uv add langchain-tavily
 ```
 
-Basic tool implementation:
+Its tool implementation is as follows:
 
 ```python
 @tool
-async def tavily_search(query: Annotated[str, "Search query"]):
-    """Internet search tool for up-to-date information. Note: To control context length and cost, call this tool only once per task."""
-    tavily_search = TavilySearch(max_results=5)
+async def tavily_search(query: Annotated[str, "The content to search for"]):
+    """Internet search tool, used to obtain the latest online information and data. Note: To control context length and reduce calling costs, this tool can only be called once during each task execution."""
+    tavily_search = TavilySearch(
+        max_results=5,
+    )
     result = await tavily_search.ainvoke({"query": query})
     return result
 ```
 
-> **Note**: Ensure the `TAVILY_API_KEY` environment variable is set.
+**Note: Make sure you set the `TAVILY_API_KEY` environment variable, otherwise an error will occur.**
 
-To allow human-in-the-loop review (from [Tool Enhancement](./tool-enhancement.md)), wrap the tool with `human_in_the_loop_async` and a custom handler:
+Also, for this `tavily_search` tool, some users may not want to call it too many times because it can lead to long contexts affecting the model's response speed. Therefore, we can add human review to this tool, which is an important function in [Tool Enhancement](./tool-enhancement.md).
+
+Since this function is asynchronous, we need to use the `human_in_the_loop_async` decorator. At the same time, we want to achieve a high degree of customization, so we need to pass a `handler`.
+
+Therefore, its implementation is as follows:
 
 ```python
 from typing import Any
@@ -313,29 +323,30 @@ from langgraph.types import interrupt
 
 async def custom_handler(params: InterruptParams) -> Any:
     response = interrupt(
-        f"I want to call tool {params['tool_call_name']} with args {params['tool_call_args']}. Confirm?"
+        f"I want to call the tool {params['tool_call_name']} with parameters {params['tool_call_args']}. Please confirm whether to call it."
     )
     if response["type"] == "accept":
         return await params["tool"].ainvoke(params["tool_call_args"], params["config"])
     elif response["type"] == "reject":
-        return "User rejected tool call"
+        return "User rejected calling the tool."
     else:
         raise ValueError(f"Unsupported response type: {response['type']}")
 
-
 @human_in_the_loop_async(handler=custom_handler)
-async def tavily_search(query: Annotated[str, "Search query"]):
-    """Internet search tool... (same docstring as above)"""
-    tavily_search = TavilySearch(max_results=5)
+async def tavily_search(query: Annotated[str, "The content to search for"]):
+    """Internet search tool, used to obtain the latest online information and data. Note: To control context length and reduce calling costs, this tool can only be called once during each task execution."""
+    tavily_search = TavilySearch(
+        max_results=5,
+    )
     result = await tavily_search.ainvoke({"query": query})
     return result
 ```
 
-> **Note**: This code is also in `src/tools.py`.
+**Note: This code is also located in `src/tools.py`**
 
-#### Defining State
+#### Writing the State
 
-Discussion agent state (`src/talker_agents/state.py`):
+For the state of the sub-agent, we write it as follows (located in `src/talker_agents/state.py`):
 
 ```python
 from typing import Annotated
@@ -351,19 +362,20 @@ class TalkState(MessagesState):
     talker_list: list[str]
 ```
 
-State keys:
+For the sub-agent state, it contains the following state keys.
 
-- `topic`: Discussion topic.
-- `talk_messages`: Final discussion results.
-- `temp_messages`: Temporary discussion messages.
-- `talker_list`: List of participating agents.
-- `messages`: Main agent messages (inherited).
+- topic: The topic of the discussion.
+- talk_messages: Used to store the final results of each sub-agent's discussion.
+- temp_messages: Used to store temporary discussion messages.
+- talker_list: Used to store the participants in the discussion.
+- messages: Used to store the messages of the main agent.
 
-#### Building the Graph
+#### Writing the Graph
 
-Each discussion agent graph (`src/talker_agents/graph.py`):
+The graph implementation for the sub-agent is as follows (located in `src/talker_agents/graph.py`):
 
 ```python
+
 def build_talker_with_name(talker_name: str):
     async def talk(state: TalkState) -> Command[Literal["__end__", "talk_tools"]]:
         model = load_chat_model(talk_name_map[talker_name])
@@ -377,7 +389,9 @@ def build_talker_with_name(talker_name: str):
         if has_tool_calling(cast(AIMessage, response)):
             return Command(
                 goto="talk_tools",
-                update={"temp_messages": [response]},
+                update={
+                    "temp_messages": [response],
+                },
             )
         return Command(
             goto="__end__",
@@ -398,11 +412,12 @@ def build_talker_with_name(talker_name: str):
     return graph.compile(name=talker_name)
 ```
 
-This agent discusses the topic, uses tools in a temporary context (`temp_messages`), and saves the final result to `talk_messages`.
+This is a very simple agent implementation. First, it receives the topic of this discussion, then discusses based on this topic. During the discussion, it may call tools, and all results will be in the temporary context window provided by `temp_messages`. After the discussion is completed, the final result is saved to `talk_messages` (indicating which agent's discussion result it is).
 
-We have four such agents (Qwen, DeepSeek, Kimi, GLM), running in parallel. Users can specify participants via `talker_list`.
+For the discussion agents, there are four this time, and they are in a parallel relationship. In addition, we also want users to be able to specify the participants of this discussion. Therefore, we add a `talker_list` state to store the discussion participants.
 
-Now, compose them into a parallel pipeline:
+Next is to combine these agents to build a new graph.
+The code is as follows (located in `src/talker_agents/graph.py`):
 
 ```python
 def branch_talker(state: TalkState):
@@ -414,10 +429,13 @@ def branch_talker(state: TalkState):
         return [
             Send(
                 node=talk_name,
-                arg={"topic": cast(dict[str, Any], args).get("topic", "")},
+                arg={
+                    "topic": cast(dict[str, Any], args).get("topic", ""),
+                },
             )
             for talk_name in state["talker_list"]
         ]
+
     return [Send(node="__end__", arg={})]
 
 
@@ -434,24 +452,28 @@ talkers = parallel_pipeline(
 )
 ```
 
-We use `parallel_pipeline` from `langchain-dev-utils` and a custom `branch_talker` function to dynamically route to selected agents.
+Here, `parallel_pipeline` from `langchain-dev-utils` is used to build a parallel agent pipeline. At the same time, to allow users to specify which agents can discuss, we need to pass `branches_fn`. In this article, it is `branch_talker`.
+The implementation of this function is also very simple. First, it gets the `topic` from `messages`, and then generates `Send` objects based on the `talker_list` in the `state`. The `node` is the agent name to forward to, and the `arg` is the `topic` to pass.
 
-#### Writing Prompts
+This completes the construction of the discussion agents.
 
-Discussion agent prompt:
+#### Writing the Prompt
+
+The prompt for the discussion agent is as follows:
 
 ```python
+
 TALK_PROMPT = """
-Your task is to discuss the given topic. You may use the `tavily_search` tool for internet research.
-Topic: {topic}
+Your task is to discuss based on the user's topic. You can use the `tavily_search` tool for internet searches.
+The user's topic is {topic}
 """
 ```
 
-### Note-Writing Agent
+### Note-taking Agent
 
-#### Defining State
+#### Writing the State
 
-(`src/write_note_agent/state.py`):
+Located in `src/write_note_agent/state.py`
 
 ```python
 from typing import Annotated
@@ -465,16 +487,16 @@ class WriteState(MessagesState, NoteStateMixin):
     talk_messages: Annotated[list[AnyMessage], add_messages]
 ```
 
-State keys:
+It contains the following state keys.
 
-- `temp_write_note_messages`: Temporary messages during note writing.
-- `talk_messages`: Final discussion results.
-- `messages`: Main agent messages.
-- `note`: Stored notes.
+- temp_write_note_messages: Used to store temporary note-writing messages.
+- talk_messages: Used to store the final results of the discussion.
+- messages: Used to store the main agent's messages.
+- note: Used to store notes.
 
-#### Building the Graph
+#### Writing the Graph
 
-(`src/write_note_agent/graph.py`):
+Located in `src/write_note_agent/graph.py`
 
 ```python
 from langgraph.graph import StateGraph
@@ -488,7 +510,9 @@ from src.tools import write_note
 from src.prompt import WRITE_NOTE_PROMPT
 
 
-async def write_note_node(state: WriteState):
+async def write_note_node(
+    state: WriteState,
+):
     model = load_chat_model("dashscope:qwen3-235b-a22b-instruct-2507")
     bind_model = model.bind_tools([write_note])
     response = await bind_model.ainvoke(
@@ -508,8 +532,10 @@ async def write_note_node(state: WriteState):
         return {
             "messages": [
                 ToolMessage(
-                    content=f"Discussion complete. Note saved as {note_name}!",
-                    tool_call_id=cast(AIMessage, state["messages"][-1]).tool_calls[0]["id"],
+                    content=f"Discussion completed. The note has been written to {note_name}!!",
+                    tool_call_id=cast(AIMessage, state["messages"][-1]).tool_calls[0][
+                        "id"
+                    ],
                 )
             ],
             "temp_write_note_messages": [response],
@@ -528,45 +554,53 @@ graph.add_edge("write_note", "write_note_tools")
 write_note_agent = graph.compile(name="write_note_agent")
 ```
 
-This agent summarizes discussion results and writes a note using the `message_format` utility to convert messages into a readable string.
+The implementation of the writing agent is also very simple. It analyzes the final results of each discussion sub-agent and then writes a summary note.
+Here, the `message_format` function from [Message Processing](./message-processing.md) is also used to format several Messages into a string.
 
-#### Writing Tools
+#### Writing the Tools
 
-The `write_note` tool uses `create_write_note_tool`:
+The tool for the writing agent is `write_note`, which is also created using `create_write_note_tool` from [Context Engineering](./context-engineering.md).
+The code implementation is as follows:
 
 ```python
+
 write_note = create_write_note_tool(
     name="write_note",
-    description="""Writes content to a note.
+    description="""Tool used to write a note.
 
     Parameters:
-    content: str, note content
+    content: str, The content of the note
+
     """,
     message_key="temp_write_note_messages",
 )
 ```
 
-> **Note**: In `src/tools.py`.
+**Note: Located in `src/tools.py`**
 
-#### Writing Prompts
+#### Writing the Prompt
 
-Note-writing prompt:
+The prompt for the writing agent is as follows:
 
 ```python
 WRITE_NOTE_PROMPT = """
-Your task is to summarize the discussion results from multiple agents and write a note.
+Your task is to summarize the content discussed by multiple agents and write it into a note.
 
-Discussion results:
+
+The respective discussion results of the multiple agents are:
 {messages}
 """
 ```
 
-### Final Graph Composition
+### Final Graph Construction
 
-Main graph (`src/graph.py`):
+Reference code is as follows:
 
 ```python
-from src.node import moderator, moderator_tools
+from src.node import (
+    moderator,
+    moderator_tools,
+)
 from langgraph.graph import StateGraph
 from src.state import State, StateIn, StateOut
 from langchain_dev_utils import sequential_pipeline
@@ -577,21 +611,23 @@ from src.write_note_agent.graph import write_note_agent
 graph = StateGraph(State, input_schema=StateIn, output_schema=StateOut)
 graph.add_node("moderator", moderator)
 graph.add_node("moderator_tools", moderator_tools)
+
+
 graph.add_node(
     "talk_and_write",
     sequential_pipeline([talkers, write_note_agent], state_schema=State),
 )
-
 graph.add_edge("__start__", "moderator")
 graph.add_edge("moderator_tools", "moderator")
 graph.add_edge("talk_and_write", "moderator")
 
+
 graph = graph.compile()
 ```
 
-We use `sequential_pipeline` to chain the discussion (`talkers`) and note-writing (`write_note_agent`) agents.
+Since `talkers` and `write_note_agent` are sequential, `sequential_pipeline` from [State Graph Orchestration](./graph-orchestration.md) is used here.
 
-Finally, create `langgraph.json` in the project root:
+Finally, create a new `langgraph.json` in the project root directory and write the following:
 
 ```json
 {
@@ -602,6 +638,5 @@ Finally, create `langgraph.json` in the project root:
 }
 ```
 
-Start the LangGraph server, and you should see a graph like this:
-
+Then start the `langgraph server`. Eventually, you should see a graph structure as shown in the figure below.
 ![Final Graph](/img/graph.png)

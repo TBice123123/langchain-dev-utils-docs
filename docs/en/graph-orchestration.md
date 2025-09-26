@@ -1,27 +1,27 @@
 # State Graph Orchestration
 
-This module provides two utility functions (pipelines) that allow you to combine multiple StateGraphs in either parallel or sequential order.
+This module provides two utility functions (pipelines) for combining multiple StateGraphs in parallel or sequential order to achieve complex multi-agent orchestration.
 
 ## Overview
 
-Combine multiple StateGraphs in parallel or sequential order to enable complex multi-agent orchestration.
+Combine multiple StateGraphs through parallel or sequential approaches to build more complex multi-agent workflows.
 
 ## Sequential Pipeline
 
-Provides functionality to combine StateGraphs in a sequential pipeline.
+Connect state graphs in sequence to form a serial execution flow.
 
-### Core Function
+### Core Functions
 
-- `sequential_pipeline`: Combines StateGraphs into a sequential pipeline.
+- `sequential_pipeline` - Combines multiple state graphs sequentially
 
 ### Parameters
 
-- `sub_graphs`: A list of state graphs to be combined (must be instances of StateGraph).
-- `state_schema`: The state schema of the final constructed graph.
-- `graph_name`: The name of the final constructed graph.
-- `context_schema`: The context schema of the final constructed graph.
-- `input_schema`: The input schema of the final constructed graph.
-- `output_schema`: The output schema of the final constructed graph.
+- `sub_graphs`: List of state graphs to combine (must be StateGraph instances)
+- `state_schema`: State Schema for the final graph
+- `graph_name`: Name of the final graph (optional)
+- `context_schema`: Context Schema for the final graph (optional)
+- `input_schema`: Input Schema for the final graph (optional)
+- `output_schema`: Output Schema for the final graph (optional)
 
 ### Usage Example
 
@@ -30,27 +30,24 @@ from langgraph.graph import StateGraph
 from typing import Annotated, TypedDict
 from langchain_dev_utils import sequential_pipeline
 
-
 def replace(a: int, b: int):
     return b
 
-
 class State(TypedDict):
     a: Annotated[int, replace]
-
 
 def add(state: State):
     print(state)
     return {"a": state["a"] + 1}
 
-
 def make_graph(name: str):
+    """Create a simple state graph"""
     sub_graph = StateGraph(State)
     sub_graph.add_node("add", add)
     sub_graph.add_edge("__start__", "add")
     return sub_graph.compile(name=name)
 
-
+# Build sequential pipeline
 graph = sequential_pipeline(
     sub_graphs=[
         make_graph("graph1"),
@@ -61,47 +58,45 @@ graph = sequential_pipeline(
 )
 ```
 
-The final constructed graph is as follows:
-![alt text](/img/sequential.png)
+The final generated flowchart is as follows:
+![Sequential Pipeline Diagram](/img/sequential.png)
 
 ## Parallel Pipeline
 
-Provides functionality to combine StateGraphs in a parallel pipeline.
+Combine multiple state graphs in parallel, supporting flexible parallel execution strategies.
 
-### Core Function
+### Core Functions
 
-- `parallel_pipeline`: Combines StateGraphs into a parallel pipeline.
+- `parallel_pipeline` - Combines multiple state graphs in parallel
 
 ### Parameters
 
-- `sub_graphs`: A list of state graphs to be combined.
-- `state_schema`: The state schema of the final constructed graph.
-- `parallel_entry_node`: The parallel entry node (default: `__start__`) (note: this node is not included in the parallel nodes).
-- `branches_fn`: A branching function that returns a list of `Send` objects, each describing which sub-graph nodes should be executed in parallel during this step.
-- `graph_name`: The name of the final constructed graph.
-- `context_schema`: The context schema of the final constructed graph.
-- `input_schema`: The input schema of the final constructed graph.
-- `output_schema`: The output schema of the final constructed graph.
+- `sub_graphs`: List of state graphs to combine
+- `state_schema`: State Schema for the final graph
+- `parallel_entry_graph`: Entry state graph (defaults to `__start__`; when specified, this graph does not participate in parallel execution)
+- `branches_fn`: Parallel branching function that returns a list of Send objects to control parallel execution
+- `graph_name`: Name of the final graph (optional)
+- `context_schema`: Context Schema for the final graph (optional)
+- `input_schema`: Input Schema for the final graph (optional)
+- `output_schema`: Output Schema for the final graph (optional)
 
-### Usage Example
+### Usage Examples
+
+#### Basic Parallel Example
 
 ```python
 from langgraph.graph import StateGraph
 from typing import Annotated, TypedDict
 from langchain_dev_utils import parallel_pipeline
 
-
 def replace(a: int, b: int):
     return b
-
 
 class State(TypedDict):
     a: Annotated[int, replace]
 
-
 def add(state: State):
     return {"a": state["a"] + 1}
-
 
 def make_graph(name: str):
     sub_graph = StateGraph(State)
@@ -109,7 +104,7 @@ def make_graph(name: str):
     sub_graph.add_edge("__start__", "add")
     return sub_graph.compile(name=name)
 
-
+# Build parallel pipeline (all subgraphs execute in parallel)
 graph = parallel_pipeline(
     sub_graphs=[
         make_graph("graph1"),
@@ -120,37 +115,13 @@ graph = parallel_pipeline(
 )
 ```
 
-The final constructed graph is as follows:
-![alt text](/img/parallel.png)
+The final generated flowchart is as follows:
+![Parallel Pipeline Diagram](/img/parallel.png)
 
-If `parallel_entry_node` is specified, the parallel entry node will not be included in the list of parallel nodes. For example:
+#### Parallel Example with Entry Graph
 
 ```python
-from langgraph.graph import StateGraph
-from typing import Annotated, TypedDict
-from langchain_dev_utils import parallel_pipeline
-
-
-def replace(a: int, b: int):
-    return b
-
-
-class State(TypedDict):
-    a: Annotated[int, replace]
-
-
-def add(state: State):
-    print(state)
-    return {"a": state["a"] + 1}
-
-
-def make_graph(name: str):
-    sub_graph = StateGraph(State)
-    sub_graph.add_node("add", add)
-    sub_graph.add_edge("__start__", "add")
-    return sub_graph.compile(name=name)
-
-
+# Specify graph1 as entry graph, other graphs execute in parallel
 graph = parallel_pipeline(
     sub_graphs=[
         make_graph("graph1"),
@@ -158,39 +129,43 @@ graph = parallel_pipeline(
         make_graph("graph3"),
     ],
     state_schema=State,
-    parallel_entry_node="graph1",
+    parallel_entry_graph="graph1",
 )
 ```
 
-The final constructed graph is as follows:
-![alt text](/img/parallel_entry.png)
+The final generated flowchart is as follows:
+![Parallel Pipeline with Entry Diagram](/img/parallel_entry.png)
 
-Additionally, you can dynamically determine which sub-graphs should be executed in parallel using LangGraph's `Send` API:
+#### Controlling Parallel Execution with Branch Function
+
+The branch function needs to return a list of `Send` objects. For details, refer to [Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send)
 
 ```python
-    graph = parallel_pipeline(
-        sub_graphs=[
-            make_graph("graph1"),
-            make_graph("graph2"),
-            make_graph("graph3"),
-        ],
-        state_schema=State,
-        branches_fn=lambda state: [
-            Send("graph1", arg={"a": state["a"]}),
-            Send("graph2", arg={"a": state["a"]}),
-        ],
-    )
+from langgraph.prebuilt import Send
+
+# Use branch function to precisely control parallel execution
+graph = parallel_pipeline(
+    sub_graphs=[
+        make_graph("graph1"),
+        make_graph("graph2"),
+        make_graph("graph3"),
+    ],
+    state_schema=State,
+    branches_fn=lambda state: [
+        Send("graph1", arg={"a": state["a"]}),
+        Send("graph2", arg={"a": state["a"]}),
+        # graph3 will not be executed
+    ],
+)
 ```
 
-The final graph structure is similar to the above, but the key difference is: whereas the previous example executes all three sub-graphs in parallel, this version executes only `graph1` and `graph2`. For details, refer to [Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send).
+### Important Notes
 
-**Note**:
-
-(1) If the `branches_fn` parameter is not provided, all sub-graphs will execute in parallel, except for the entry node—in this case, the entry node executes sequentially before the others. However, if `branches_fn` is provided, the function's return value determines which sub-graphs to execute. Therefore, if both `parallel_entry_node` and `branches_fn` are set, ensure the returned list from `branches_fn` does not include the entry node; otherwise, it may cause an infinite loop.
-
-(2) All combined state graphs must share common state keys.
+- When `branches_fn` parameter is not provided, all subgraphs execute in parallel (except the entry graph)
+- When `branches_fn` parameter is provided, which subgraphs to execute is determined by the function's return value
+- If both `parallel_entry_graph` and `branches_fn` are set, ensure the branch function does not include the entry node to avoid infinite loops
 
 ## Next Steps
 
-- [API Reference](./api-reference.md) - API reference documentation
-- [Usage Examples](./example.md) - Demonstrates practical usage examples of this library
+- [API Reference](./api-reference.md) — Complete API documentation
+- [Usage Examples](./example.md) — Practical code examples demonstrating real-world usage

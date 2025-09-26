@@ -4,17 +4,17 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   base: "/langchain-dev-utils-docs/",
 
-  title: "LangChain Dev Utils",
+  title: "langchain dev utils",
   description:
-    "A comprehensive utility library for developers building applications with LangChain and LangGraph",
-  
+    "A comprehensive utility library for developers building applications with langchain and langgraph",
+
   // Enable dark mode with user preference as default
   appearance: true,
 
   themeConfig: {
     outline: {
-      level: [2, 3]
-    }
+      level: [2, 3],
+    },
   },
 
   locales: {

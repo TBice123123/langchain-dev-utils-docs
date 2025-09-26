@@ -1,6 +1,6 @@
 # 使用示例
 
-> 本文通过一个**多智能体围绕特定话题讨论**的完整示例，展示如何在 `LangChain` 与 `LangGraph` 项目中高效使用 `langchain-dev-utils` 库。该示例深度融合了本库的所有核心模块，帮助你全面掌握本库五大模块的实战用法。
+> 本文通过一个**多智能体围绕特定话题讨论**的完整示例，展示如何在 `langchain` 与 `langgraph` 项目中高效使用 `langchain-dev-utils` 库。该示例深度融合了本库的所有核心模块，帮助你全面掌握本库五大模块的实战用法。
 
 ## 项目搭建
 
@@ -32,7 +32,7 @@ cd langchain-dev-utils-example
 
 ### 安装依赖
 
-再次之前你需要确保你的电脑里面已经安装了`python`，如果没有你可以使用`uv`[安装 python](https://docs.astral.sh/uv/guides/install-python/)。
+在此之前你需要确保你的电脑里面已经安装了`python`，如果没有你可以使用`uv`[安装 python](https://docs.astral.sh/uv/guides/install-python/)。
 确保你的电脑已经有了`python`后，使用`uv`安装依赖。
 
 ```bash
@@ -70,9 +70,9 @@ src/
 
 ### 注册模型提供商
 
-接下来我们第一步要做的就是注册模型提供商。需使用`langchain-dev-utils`提供的`register_model_provider`函数。但是由于本次我们需要使用多个不同的模型提供商，因此需要注册多个模型提供商，因此要使用更加方便的`batch_register_model_provider`函数。根据[模型管理](./model-management.md)的介绍，我们通常建议把注册模型提供商放到项目的`__init__.py`文件中，确保能够在项目启动完成后完成注册。
+接下来我们第一步要做的就是注册模型提供商。需使用`langchain-dev-utils`提供的`register_model_provider`函数。但是由于本次我们需要使用多个不同种类的模型，需要注册多个模型提供商，因此要使用更加方便的`batch_register_model_provider`函数。根据[模型管理](./model-management.md)的介绍，我们通常建议把注册模型提供商放到项目的`__init__.py`文件中，确保能够在项目启动完成后完成注册。
 
-本次我们使用的模型是四个比较顶尖的开源模型，分别是`deepseek-v3.1`、`qwen3-235b-a22b-instruct-2507`、`kimi-k2-0955`、`glm-4.5`。对于`deepseek`和`qwen`模型，有对应的`langChain`集成（`langchain-deepseek`、`langchain-qwq`），而`kimi`和`glm`模型则没有比较适合的`langChain`集成，因此我们选择使用`langchain-openai`来集成。
+本次我们使用的模型是四个比较顶尖的开源模型，分别是`deepseek-v3.1`、`qwen3-235b-a22b-instruct-2507`、`kimi-k2-0955`、`glm-4.5`。对于`deepseek`和`qwen`模型，有对应的`langchain`集成（`langchain-deepseek`、`langchain-qwq`），而`kimi`和`glm`模型则没有比较适合的`langchain`集成，因此我们选择使用`langchain-openai`来集成。
 故我们需要注册的提供商和对应的方式如下：
 
 - deepseek 模型：安装`langchain-deepseek`，无需注册模型提供商，因为其是`init_chat_model`的支持的提供商，可以直接调用无需注册。

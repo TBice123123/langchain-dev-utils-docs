@@ -1,6 +1,6 @@
 # 安装
 
-`LangChain-Dev-Utils`可以使用各种包管理器安装。选择最适合您工作流程的工具。
+`langchain-dev-utils`可以使用各种包管理器安装。选择最适合您工作流程的工具。
 
 ## 包管理器
 
@@ -42,7 +42,7 @@ import langchain_dev_utils
 print(langchain_dev_utils.__version__)
 ```
 
-## 开发安装
+## 执行测试
 
 如果您想为项目做贡献或运行测试：
 
