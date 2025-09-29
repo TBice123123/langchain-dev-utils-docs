@@ -1,6 +1,6 @@
 # 状态图编排
 
-本模块提供了两个工具函数（管道），用于将多个 StateGraph 状态图以并行或串行的方式进行组合，实现复杂的多智能体编排。
+本模块提供了两个工具函数（本工具库将其称为管道），用于将多个 StateGraph 状态图以并行或串行的方式进行组合，实现复杂的多智能体编排。
 
 ## 概述
 
@@ -58,8 +58,21 @@ graph = sequential_pipeline(
 )
 ```
 
-最终生成的流程图如下：
+最终生成的图结构如下：
 ![串行管道示意图](/img/sequential.png)
+
+::: tip 📝
+对于串行组合的图，langgraph 的 StateGraph 提供了 add_sequence 方法作为简便写法。该方法最适合在节点为函数（而非子图）时使用。若节点为子图，代码可能如下：
+
+```python
+graph = StateGraph(AgentState)
+graph.add_sequence([("graph1", graph1), ("graph2", graph2), ("graph3", graph3)])
+graph.add_edge("__start__", "graph1")
+graph = graph.compile()
+```
+
+不过，上述写法仍显繁琐。因此，更推荐使用 sequential_pipeline 函数，它能通过一行代码快速构建串行执行图，更为简洁高效。
+:::
 
 ## 并行管道
 

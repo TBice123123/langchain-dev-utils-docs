@@ -286,7 +286,7 @@ After the sub-agents' discussion returns, use the `query_note` tool to query the
 
 #### Writing the Tools
 
-For the sub-agents participating in the discussion, they only have one `tavily_search` tool for searching internet content.
+For the sub-agents participating in the discussion, they need to have a `tavily_search` tool for searching internet content.
 
 First, install `langchain-tavily`:
 

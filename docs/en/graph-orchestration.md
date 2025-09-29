@@ -1,6 +1,6 @@
 # State Graph Orchestration
 
-This module provides two utility functions (pipelines) for combining multiple StateGraphs in parallel or sequential order to achieve complex multi-agent orchestration.
+This module provides two utility functions (called pipelines in this utils library) for combining multiple StateGraphs in parallel or sequential order to achieve complex multi-agent orchestration.
 
 ## Overview
 
@@ -58,8 +58,19 @@ graph = sequential_pipeline(
 )
 ```
 
-The final generated flowchart is as follows:
+The final generated graph is as follows:
 ![Sequential Pipeline Diagram](/img/sequential.png)
+
+::: tip 📝
+For sequentially composed graphs, LangGraph's StateGraph provides the add_sequence method as a convenient shorthand. This method works best when each node is a function (rather than a subgraph). If the nodes are subgraphs, the code might look like this:
+
+python
+graph = StateGraph(AgentState)
+graph.add_sequence([("graph1", graph1), ("graph2", graph2), ("graph3", graph3)])
+graph.add_edge("**start**", "graph1")
+graph = graph.compile()
+However, the above approach can still be somewhat verbose. Therefore, it's recommended to use the sequential_pipeline function instead, which allows you to quickly build a sequentially executed graph with just a single line of code—making it much more concise and efficient.
+:::
 
 ## Parallel Pipeline
 
@@ -115,7 +126,7 @@ graph = parallel_pipeline(
 )
 ```
 
-The final generated flowchart is as follows:
+The final generated graph is as follows:
 ![Parallel Pipeline Diagram](/img/parallel.png)
 
 #### Parallel Example with Entry Graph

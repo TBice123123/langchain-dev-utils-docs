@@ -128,7 +128,7 @@ print(model.invoke("hello"))
 - query_note: 用于查询笔记的具体内容
 - transfor_to_talk: 用于路由的智能体，根据用户需求将其转交给多个智能体讨论。
 
-对于`ls`和`query_note`工具，我们[上下文工程](./context-engineering.md)中提供的两个工具函数`create_ls_tool`和`create_query_note_tool`。来实现，具体使用方式如下：
+对于`ls`和`query_note`工具，我们这里使用[上下文工程](./context-engineering.md)中提供的两个工具函数`create_ls_tool`和`create_query_note_tool`来实现，具体使用方式如下：
 
 ```python
 from langchain_dev_utils import (
@@ -286,7 +286,7 @@ MODERATOR_PROMPT = """你的作用是根据用户的提问，提取其中的话�
 
 #### tools 的编写
 
-对于参与讨论的子智能体，它至于一个`tavily_search`工具，用于搜索互联网内容。
+对于参与讨论的子智能体，它需要一个`tavily_search`工具，用于搜索互联网内容。
 
 首先需要安装`langchain-tavily`:
 
