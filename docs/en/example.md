@@ -638,5 +638,10 @@ Finally, create a new `langgraph.json` in the project root directory and write t
 }
 ```
 
-Then start the `langgraph server`. Eventually, you should see a graph structure as shown in the figure below.
+Then, run following command to run `langgraph studio`，you should see the graph structure as shown in the figure below.
+
+```bash
+langgraph dev
+```
+
 ![Final Graph](/img/graph.png)

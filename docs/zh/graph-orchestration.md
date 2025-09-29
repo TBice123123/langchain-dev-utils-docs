@@ -128,7 +128,7 @@ graph = parallel_pipeline(
 )
 ```
 
-最终生成的流程图如下：
+最终生成的图结构如下：
 ![并行管道示意图](/img/parallel.png)
 
 #### 指定入口图的并行示例
@@ -146,7 +146,7 @@ graph = parallel_pipeline(
 )
 ```
 
-最终生成的流程图如下：
+最终生成的图结构如下：
 ![带入口的并行管道示意图](/img/parallel_entry.png)
 
 #### 使用分支函数控制并行执行

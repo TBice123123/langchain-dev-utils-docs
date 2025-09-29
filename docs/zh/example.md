@@ -638,5 +638,10 @@ graph = graph.compile()
 }
 ```
 
-然后启动`langgraph server`，最终你应该能看到如下图所示的图结构。
+然后运行如下命令运行`langgraph studio`，最终你应该能看到如下图所示的图结构。
+
+```bash
+langgraph dev
+```
+
 ![最终图](/img/graph.png)
