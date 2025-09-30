@@ -213,6 +213,9 @@
   box-shadow: var(--vp-shadow-2);
   width: 100%;
   margin: 1.5em 0;
+  border-collapse: collapse;
+  display: table;
+  min-width: max-content;
 }
 
 .vp-doc table th {
@@ -220,15 +223,67 @@
   font-weight: var(--vp-font-weight-semibold);
   padding: 0.75em 1em;
   text-align: left;
+  border-bottom: 1px solid var(--vp-c-divider-light);
 }
 
-.vp-doc table th, .vp-doc table td {
+.vp-doc table td {
   padding: 0.75em 1em;
   border-bottom: 1px solid var(--vp-c-divider-light);
 }
 
+.vp-doc table th, .vp-doc table td {
+  vertical-align: top;
+}
+
 .vp-doc table tr:last-child td {
   border-bottom: none;
+}
+
+/* Responsive wrapper for tables on mobile - with improved UX */
+.vp-doc {
+  overflow-x: auto;
+}
+
+/* Specific wrapper for better mobile experience */
+.vp-doc > div:has(> table) {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -1.5rem;
+  padding: 0 1.5rem;
+  width: calc(100% + 3rem);
+}
+
+@media (max-width: 768px) {
+  .vp-doc table {
+    display: table;
+    width: max-content;
+    min-width: 100%;
+    margin: 1.2em 0;
+  }
+  
+  /* Improve horizontal scrolling experience */
+  .vp-doc table th,
+  .vp-doc table td {
+    padding: 0.6em 0.9em;
+  }
+  
+  /* Add a subtle indicator that the table is scrollable */
+  .vp-doc table {
+    position: relative;
+  }
+}
+
+/* For very narrow viewports, adjust padding to maximize content space */
+@media (max-width: 480px) {
+  .vp-doc table th,
+  .vp-doc table td {
+    padding: 0.4em 0.6em;
+    font-size: 0.9em;
+  }
+  
+  .vp-doc table th {
+    font-weight: var(--vp-font-weight-medium);
+  }
 }
 
 /* Custom container styling */
