@@ -1,30 +1,30 @@
 # 使用示例
 
-> 本文通过一个**多智能体围绕特定话题讨论**的完整示例，展示如何在 `langchain` 与 `langgraph` 项目中高效使用 `langchain-dev-utils` 库。该示例深度融合了本库的所有核心模块，帮助你全面掌握本库五大模块的实战用法。
+> 本文通过一个**多智能体围绕特定话题讨论**的完整示例，展示如何在 `langchain` 与 `langgraph` 项目中高效使用 `langchain-dev-utils` 库。该示例深度融合了本库的所有核心模块，帮助你全面掌握五大核心模块的实战用法。
 
 ## 项目搭建
 
 ### 项目初始化
 
-本项目采用`uv`作为项目管理工具，首先需要下载`uv`。
+本项目采用 `uv` 作为项目管理工具，首先需要安装 `uv`。
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-如果是 windows 系统，可以使用
+Windows 系统可使用：
 
 ```bash
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-安装好后，使用`uv`创建项目。
+安装完成后，使用 `uv` 创建项目：
 
 ```bash
 uv init langchain-dev-utils-example
 ```
 
-进入项目目录
+进入项目目录：
 
 ```bash
 cd langchain-dev-utils-example
@@ -32,14 +32,15 @@ cd langchain-dev-utils-example
 
 ### 安装依赖
 
-在此之前你需要确保你的电脑里面已经安装了`python`，如果没有你可以使用`uv`[安装 python](https://docs.astral.sh/uv/guides/install-python/)。
-确保你的电脑已经有了`python`后，使用`uv`安装依赖。
+确保已安装 `python`，如未安装可使用 `uv` [安装 Python](https://docs.astral.sh/uv/guides/install-python/)。
+
+安装项目依赖：
 
 ```bash
 uv add langchain langgraph langchain-dev-utils
 ```
 
-除了上述依赖以外，你还需要安装`langgraph-cli`用于调试。
+安装 `langgraph-cli` 用于调试：
 
 ```bash
 uv add langgraph-cli[inmem] --group dev
@@ -47,8 +48,7 @@ uv add langgraph-cli[inmem] --group dev
 
 ### 搭建项目目录
 
-接下来请在项目中建立`src`目录，然后在`src`目录下创建`__init__.py`文件。接下来我们的所有代码都放在`src`目录下。
-请确保你的项目目录结构如下所示：
+在项目中建立 `src` 目录，所有代码将放置于此。确保项目目录结构如下：
 
 ```
 src/
@@ -70,23 +70,19 @@ src/
 
 ### 注册模型提供商
 
-接下来我们第一步要做的就是注册模型提供商。需使用`langchain-dev-utils`提供的`register_model_provider`函数。但是由于本次我们需要使用多个不同种类的模型，需要注册多个模型提供商，因此要使用更加方便的`batch_register_model_provider`函数。根据[模型管理](./model-management.md)的介绍，我们通常建议把注册模型提供商放到项目的`__init__.py`文件中，确保能够在项目启动完成后完成注册。
+首先注册模型提供商。根据[模型管理](./model-management.md)的建议，通常在项目的 `__init__.py` 文件中完成注册，确保项目启动时完成初始化。
 
-本次我们使用的模型是四个比较顶尖的开源模型，分别是`deepseek-v3.1`、`qwen3-235b-a22b-instruct-2507`、`kimi-k2-0955`、`glm-4.5`。对于`deepseek`和`qwen`模型，有对应的`langchain`集成（`langchain-deepseek`、`langchain-qwq`），而`kimi`和`glm`模型则没有比较适合的`langchain`集成，因此我们选择使用`langchain-openai`来集成。
-故我们需要注册的提供商和对应的方式如下：
+本次使用四个开源模型：
 
-- deepseek 模型：安装`langchain-deepseek`，无需注册模型提供商，因为其是`init_chat_model`的支持的提供商，可以直接调用无需注册。
-- qwen 模型：安装`langchain-qwq`，然后注册提供商，此时`chat_model`需要传入具体的 ChatModel 类。
-- kimi 模型：安装`langchain-openai`，然后注册提供商，此时`chat_model`需要传入字符串值`openai`且同时传入`base_url`。
-- glm 模型：安装`langchain-openai`，然后注册提供商，此时`chat_model`需要传入字符串值`openai`且同时传入`base_url`。
+- `deepseek`：通过 `langchain-deepseek` 集成(其为官方`init_chat_model`支持的模型提供商，无需再次注册)
+- `qwen`：通过 `langchain-qwq` 集成 (需要注册，chat_model 传入 ChatQwen)
+- `kimi` 和 `glm`：通过 `langchain-openai` 集成 (需要注册，但没有适合的集成库，但提供商均支持 OpenAI 风格的 API，需要使用`langchain-openai`进行接入，chat_model 传入`openai`)
 
-当然你也可以选择别的模型，方法和上面相同。
-我们需要在`src/__init__.py`文件中注册模型提供商，代码如下：
+在 `src/__init__.py` 中注册模型提供商：
 
 ```python
 from langchain_dev_utils import batch_register_model_provider
 from langchain_qwq import ChatQwen
-
 
 batch_register_model_provider(
     [
@@ -105,7 +101,7 @@ batch_register_model_provider(
 )
 ```
 
-当然你可以试一下是否注册成功了，测试的代码可以参考如下：
+可通过以下代码测试注册是否成功：
 
 ```python
 from langchain_dev_utils import load_chat_model
@@ -114,28 +110,22 @@ model = load_chat_model("dashscope:qwen3-235b-a22b-instruct-2507")
 print(model.invoke("hello"))
 ```
 
-如果程序能够成功运行，说明模型提供商注册成功。
+如能成功运行，说明模型提供商注册成功。
 
-### 主智能体编写
+## 主智能体编写
 
-接下来我们先完成主智能体的编写吧。
+### Tools 编写
 
-#### tools 的编写
+主智能体包含三个工具：
 
-对主智能体，它有以下三个工具。
+- `ls`：列出已有笔记列表
+- `query_note`：查询笔记具体内容
+- `transfor_to_talk`：路由智能体，根据用户需求转交给多个智能体讨论
 
-- ls: 用于列出已有的笔记列表
-- query_note: 用于查询笔记的具体内容
-- transfor_to_talk: 用于路由的智能体，根据用户需求将其转交给多个智能体讨论。
-
-对于`ls`和`query_note`工具，我们这里使用[上下文工程](./context-engineering.md)中提供的两个工具函数`create_ls_tool`和`create_query_note_tool`来实现，具体使用方式如下：
+使用[上下文工程](./context-engineering.md)提供的工具函数创建前两个工具：
 
 ```python
-from langchain_dev_utils import (
-    create_ls_tool,
-    create_query_note_tool,
-)
-
+from langchain_dev_utils import create_ls_tool, create_query_note_tool
 
 ls = create_ls_tool(
     name="ls",
@@ -143,7 +133,6 @@ ls = create_ls_tool(
 
     返回：
     list[str]: 包含所有笔记文件名的列表
-
     """,
 )
 
@@ -152,73 +141,61 @@ query_note = create_query_note_tool(
     description="""用于查询笔记。
 
     参数：
-    file_name:笔记名称
+    file_name: 笔记名称
 
     返回：
     str, 查询的笔记内容
-
     """,
 )
 ```
 
-而对于`transfor_to_talk`工具，我们需要自行完成编写，具体实现可以参考如下：
+`transfor_to_talk` 工具实现如下：
 
 ```python
+from langchain.tools import tool
+from typing import Annotated
+
 @tool
 async def transfor_to_talk(
-    topic: Annotated[
-        str,
-        "当前讨论的话题主题",
-    ],
+    topic: Annotated[str, "当前讨论的话题主题"],
 ):
-    """用于将话题转交给子智能体进行进行讨论"""
-
+    """用于将话题转交给子智能体进行讨论"""
     return "transfor success!"
 ```
 
-**注意：上述的代码都在`src/tools.py`中**
+**代码位置：`src/tools.py`**
 
-#### state 的编写
+### State 编写
 
-本次主智能体的状态 Schema 如下：
+主智能体状态 Schema：
 
 ```python
 from typing import Annotated
-
 from langchain_core.messages import AnyMessage
 from langchain_dev_utils import NoteStateMixin
 from langgraph.graph import MessagesState, add_messages
-
 
 class State(MessagesState, NoteStateMixin):
     talker_list: list[str]
     talk_messages: Annotated[list[AnyMessage], add_messages]
 
-
 class StateIn(MessagesState):
     talker_list: list[str]
 
-
 class StateOut(MessagesState, NoteStateMixin):
     pass
-
 ```
 
-**注意：上述的代码都在`src/state.py`中**
-我们对主智能体状态键(state key)的定义如下：
+**代码位置：`src/state.py`**
 
-- `messages`: 用于存储主智能体的对话消息
-- `note`: 用于存储笔记
-- `talker_list`: 用于存储参与讨论的智能体
-- `talk_messages`: 用于存储参与讨论的智能体的讨论的结果
+状态键定义：
 
-这里需要注意的是`message`键是通过继承`MessagesState`实现的，`note`键是通过继承`NoteStateMixin`实现的。通过继承这两个状态类，你就可以非常简单的实现这两个状态键，而无需自行编写（主要麻烦点是要编写 reducer）。
+- `messages`：存储主智能体对话消息（继承 `MessagesState`）
+- `note`：存储笔记（继承 `NoteStateMixin`）
+- `talker_list`：存储参与讨论的智能体
+- `talk_messages`：存储讨论结果
 
-除了图的状态 State,我们还定义了`StateIn`和`StateOut`，其中`StateIn`用于表示输入状态，`StateOut`用于表示输出状态，这两个都是用于面向使用者的。
-
-#### node 的编写
-
-node 的编写代码如下（`src/node.py`）：
+### Node 编写
 
 ```python
 from typing import Literal, cast
@@ -227,13 +204,8 @@ from langgraph.prebuilt.tool_node import ToolNode
 from langgraph.types import Command
 from src.state import State
 from src.tools import transfor_to_talk, ls, query_note
-from langchain_dev_utils import (
-    has_tool_calling,
-    load_chat_model,
-    parse_tool_calling,
-)
+from langchain_dev_utils import has_tool_calling, load_chat_model, parse_tool_calling
 from src.prompt import MODERATOR_PROMPT
-
 
 async def moderator(
     state: State,
@@ -256,70 +228,62 @@ async def moderator(
         if tool_call_name == "transfor_to_talk":
             return Command(
                 goto="talk_and_write",
-                update={
-                    "messages": [response],
-                },
+                update={"messages": [response]},
             )
 
         return Command(goto="moderator_tools", update={"messages": [response]})
     return Command(goto="__end__", update={"messages": [response]})
 
-
 moderator_tools = ToolNode([ls, query_note])
 ```
 
-需要注意的是，这里使用了[消息处理](./message-processing.md)中的`has_tool_calling`和`parse_tool_calling`函数。
+**代码位置：`src/node.py`**
 
-`has_tool_calling`用于判断消息是否包含工具调用，`parse_tool_calling`用于解析工具调用。对于解析工具调用，默认会返回一个由(name,args)组成的元组的列表，如果传递了`first_tool_call_only=True`，则只返回第一个工具调用的(name,args)的元组。
-对于解析的工具调用，如果其名字是`transfor_to_talk`则将其转发给子智能体进行讨论。
+使用[消息处理](./message-processing.md)中的 `has_tool_calling` 和 `parse_tool_calling` 函数：
 
-#### prompt 编写
+- `has_tool_calling`：判断消息是否包含工具调用
+- `parse_tool_calling`：解析工具调用，返回 `(name, args)` 元组列表
 
-对于主智能体的提示词，参考如下：
+### Prompt 编写
+
+主智能体提示词：
 
 ```python
 MODERATOR_PROMPT = """你的作用是根据用户的提问，提取其中的话题主题并调用`transfor_to_talk`工具将话题转交给子智能体进行讨论。
 当子智能体的讨论返回后利用`query_note`工具查询笔记内容"""
 ```
 
-### 讨论智能体
+## 讨论智能体
 
-#### tools 的编写
+### Tools 编写
 
-对于参与讨论的子智能体，它需要一个`tavily_search`工具，用于搜索互联网内容。
+讨论智能体需要 `tavily_search` 工具进行互联网搜索。
 
-首先需要安装`langchain-tavily`:
+安装依赖：
 
-```python
+```bash
 uv add langchain-tavily
 ```
 
-其 tool 实现如下：
+基础工具实现：
 
 ```python
+from langchain_community.tools.tavily_search import TavilySearch
+
 @tool
 async def tavily_search(query: Annotated[str, "要搜索的内容"]):
     """互联网搜索工具，用于获取最新的网络信息和资料。注意：为控制上下文长度和降低调用成本，每个任务执行过程中仅可调用一次此工具。"""
-    tavily_search = TavilySearch(
-        max_results=5,
-    )
+    tavily_search = TavilySearch(max_results=5)
     result = await tavily_search.ainvoke({"query": query})
     return result
 ```
 
-**注意：确保你设置了`TAVILY_API_KEY`环境变量，否则会报错。**
-
-同时，这个 tavily_search 工具,可能有些用户不想要调用太多次这个工具，因为它会带来较长的上下文影响模型的回答速度，因此我们可以对这个工具添加人工审核，即[工具增强](./tool-enhancement.md)这里面的一个很重要的功能。
-
-由于这个函数是异步的，因此我们需要使用`human_in_the_loop_async`装饰器，同时我们希望的是实现高度的定制性，因此需要传入`handler`。
-
-故其实现如下：
+为控制调用频率，使用[工具增强](./tool-enhancement.md)添加人工审核：
 
 ```python
 from typing import Any
 from langchain_dev_utils import human_in_the_loop_async, InterruptParams
 from langgraph.types import interrupt
-
 
 async def custom_handler(params: InterruptParams) -> Any:
     response = interrupt(
@@ -335,25 +299,21 @@ async def custom_handler(params: InterruptParams) -> Any:
 @human_in_the_loop_async(handler=custom_handler)
 async def tavily_search(query: Annotated[str, "要搜索的内容"]):
     """互联网搜索工具，用于获取最新的网络信息和资料。注意：为控制上下文长度和降低调用成本，每个任务执行过程中仅可调用一次此工具。"""
-    tavily_search = TavilySearch(
-        max_results=5,
-    )
+    tavily_search = TavilySearch(max_results=5)
     result = await tavily_search.ainvoke({"query": query})
     return result
 ```
 
-**注意：该代码也位于`src/tools.py`中**
+**代码位置：`src/tools.py`**
 
-#### state 的编写
+**注意：需设置 `TAVILY_API_KEY` 环境变量**
 
-对于子智能体的状态，我们编写如下（位于`src/talker_agents/state.py`)：
+### State 编写
 
 ```python
 from typing import Annotated
-
 from langchain_core.messages import AnyMessage
 from langgraph.graph import MessagesState, add_messages
-
 
 class TalkState(MessagesState):
     topic: Annotated[str, lambda x, y: y]
@@ -362,19 +322,29 @@ class TalkState(MessagesState):
     talker_list: list[str]
 ```
 
-对于子智能的状态，其包含以下状态键。
+**代码位置：`src/talker_agents/state.py`**
 
-- topic: 讨论的主题
-- talk_messages: 用于存储每个子智能体讨论的最终结果
-- temp_messages: 用于存储讨论的临时消息
-- talker_list: 用于存储讨论的参与者
-- messages: 用于存储主智能体的消息
+状态键定义：
 
-#### graph 的编写
+- `topic`：讨论主题
+- `talk_messages`：存储每个子智能体讨论的最终结果
+- `temp_messages`：存储讨论的临时消息
+- `talker_list`：存储讨论参与者
+- `messages`：存储主智能体消息
 
-对于子智能体的 graph 实现如下（位于`src/talker_agents/graph.py`)：
+### Graph 编写
+
+单个讨论智能体实现：
 
 ```python
+from langgraph.graph import StateGraph
+from langgraph.prebuilt.tool_node import ToolNode
+from langgraph.types import Command
+from typing import Literal, cast
+from langchain_core.messages import AIMessage, SystemMessage
+from langchain_dev_utils import load_chat_model, has_tool_calling
+from src.tools import tavily_search
+from src.prompt import TALK_PROMPT
 
 def build_talker_with_name(talker_name: str):
     async def talk(state: TalkState) -> Command[Literal["__end__", "talk_tools"]]:
@@ -389,9 +359,7 @@ def build_talker_with_name(talker_name: str):
         if has_tool_calling(cast(AIMessage, response)):
             return Command(
                 goto="talk_tools",
-                update={
-                    "temp_messages": [response],
-                },
+                update={"temp_messages": [response]},
             )
         return Command(
             goto="__end__",
@@ -412,14 +380,15 @@ def build_talker_with_name(talker_name: str):
     return graph.compile(name=talker_name)
 ```
 
-这是一个非常简单的智能体实现，首先它会接收到本次讨论的主题 topic，然后会根据这个主题进行讨论，讨论过程中会调用工具，此时所有的结果都会在`temp_messages`提供的临时上下文窗口中进行。当完成讨论后，会将最终的结果保存到`talk_messages`中（表明是哪个智能体的讨论结果）。
+智能体接收讨论主题，在 `temp_messages` 临时上下文中进行讨论，最终结果保存到 `talk_messages`。
 
-对于讨论智能体，本次共有 4 个，它们是并行的关系。除此之外，我们还希望用户可以指定此次讨论的参与者，因此，我们添加了一个`talker_list`状态，用于存储讨论的参与者。
-
-接下来就是组合这些智能体构建一个新的图。
-代码如下（位于`src/talker_agents/graph.py`）：
+并行组合多个智能体：
 
 ```python
+from langchain_dev_utils import parallel_pipeline
+from langgraph.types import Send
+from typing import Any, cast
+
 def branch_talker(state: TalkState):
     message = state["messages"][-1]
     if has_tool_calling(message=cast(AIMessage, message)):
@@ -429,15 +398,18 @@ def branch_talker(state: TalkState):
         return [
             Send(
                 node=talk_name,
-                arg={
-                    "topic": cast(dict[str, Any], args).get("topic", ""),
-                },
+                arg={"topic": cast(dict[str, Any], args).get("topic", "")},
             )
             for talk_name in state["talker_list"]
         ]
-
     return [Send(node="__end__", arg={})]
 
+talk_name_map = {
+    "qwen": "dashscope:qwen3-235b-a22b-instruct-2507",
+    "deepseek": "deepseek:deepseek-chat",
+    "kimi": "moonshot:moonshot-v1-8k",
+    "glm": "zai:glm-4-plus"
+}
 
 talkers = parallel_pipeline(
     [
@@ -452,28 +424,24 @@ talkers = parallel_pipeline(
 )
 ```
 
-这里使用了`langchain-dev-utils`中的`parallel_pipeline`，用于构建并行的智能体管道。同时为了实现用户指定可以讨论的智能体，我们需要传入`branches_fn`。在本文中就是`branch_talker`。
-这个函数的实现也非常简单，首先是根据`messages`获取`topic`，然后根据`state`中的`talker_list`来依次生成`Send`对象，其`node`就是要转发的智能体名称，`arg`就是传递的`topic`。
+**代码位置：`src/talker_agents/graph.py`**
 
-到此完成了讨论智能体的构建。
+使用 `parallel_pipeline` 构建并行智能体管道，通过 `branches_fn` 实现用户指定参与讨论的智能体。
 
-#### prompt 的编写
+### Prompt 编写
 
-讨论智能体的提示词如下：
+讨论智能体提示词：
 
 ```python
-
 TALK_PROMPT = """
 你的任务是根据用户的主题进行讨论。你可以使用`tavily_search`工具进行互联网搜索。
 用户的主题为{topic}
 """
 ```
 
-### 记录智能体
+## 记录智能体
 
-#### state 的编写
-
-位于`src/write_note_agent/state.py`
+### State 编写
 
 ```python
 from typing import Annotated
@@ -481,22 +449,21 @@ from langchain_core.messages import AnyMessage
 from langgraph.graph import MessagesState, add_messages
 from langchain_dev_utils import NoteStateMixin
 
-
 class WriteState(MessagesState, NoteStateMixin):
     temp_write_note_messages: Annotated[list[AnyMessage], add_messages]
     talk_messages: Annotated[list[AnyMessage], add_messages]
 ```
 
-其包含以下状态键。
+**代码位置：`src/write_note_agent/state.py`**
 
-- temp_write_note_messages: 用于存储临时的写笔记消息
-- talk_messages: 用于存储讨论的最终结果
-- messages: 用于存储主智能体的消息
-- note：用于存储笔记
+状态键定义：
 
-#### graph 的编写
+- `temp_write_note_messages`：存储临时写笔记消息
+- `talk_messages`：存储讨论最终结果
+- `messages`：存储主智能体消息
+- `note`：存储笔记
 
-位于`src/write_note_agent/graph.py`
+### Graph 编写
 
 ```python
 from langgraph.graph import StateGraph
@@ -509,10 +476,7 @@ from typing import Any, cast
 from src.tools import write_note
 from src.prompt import WRITE_NOTE_PROMPT
 
-
-async def write_note_node(
-    state: WriteState,
-):
+async def write_note_node(state: WriteState):
     model = load_chat_model("dashscope:qwen3-235b-a22b-instruct-2507")
     bind_model = model.bind_tools([write_note])
     response = await bind_model.ainvoke(
@@ -533,14 +497,11 @@ async def write_note_node(
             "messages": [
                 ToolMessage(
                     content=f"讨论完毕，笔记已经写入{note_name}中！！",
-                    tool_call_id=cast(AIMessage, state["messages"][-1]).tool_calls[0][
-                        "id"
-                    ],
+                    tool_call_id=cast(AIMessage, state["messages"][-1]).tool_calls[0]["id"],
                 )
             ],
             "temp_write_note_messages": [response],
         }
-
 
 write_note_tools = ToolNode([write_note], messages_key="temp_write_note_messages")
 
@@ -554,15 +515,16 @@ graph.add_edge("write_note", "write_note_tools")
 write_note_agent = graph.compile(name="write_note_agent")
 ```
 
-写智能体的实现也非常简单，它通过分析每个讨论子智能体的最终结果，然后撰写总结笔记。
-这里同时也用到了[消息处理](./message-processing.md)中的`message_format`函数，用于将若干个 Message 格式化为一个字符串。
+**代码位置：`src/write_note_agent/graph.py`**
 
-#### tools 的编写
+写智能体分析各讨论结果并撰写总结笔记，使用 `message_format` 函数将多个 Message 格式化为字符串。
 
-写智能体的工具是`write_note`同样是使用[上下文工程](./context-engineering.md)中的`create_write_note_tool`创建的。
-代码实现如下：
+### Tools 编写
+
+使用[上下文工程](./context-engineering.md)创建写笔记工具：
 
 ```python
+from langchain_dev_utils import create_write_note_tool
 
 write_note = create_write_note_tool(
     name="write_note",
@@ -570,48 +532,39 @@ write_note = create_write_note_tool(
 
     参数：
     content: str, 笔记内容
-
     """,
     message_key="temp_write_note_messages",
 )
 ```
 
-**注意：位于`src/tools.py`中**
+**代码位置：`src/tools.py`**
 
-#### prompt 的编写
+### Prompt 编写
 
-写智能体的提示词如下：
+写智能体提示词：
 
 ```python
 WRITE_NOTE_PROMPT = """
 你的任务是根据多个智能体讨论的内容进行总结并写入笔记。
 
-
-多个智能体的各自的讨论结果是
+多个智能体的各自的讨论结果是：
 {messages}
 """
 ```
 
-### 最终图的构建
-
-参考代码如下：
+## 最终图构建
 
 ```python
-from src.node import (
-    moderator,
-    moderator_tools,
-)
+from src.node import moderator, moderator_tools
 from langgraph.graph import StateGraph
 from src.state import State, StateIn, StateOut
 from langchain_dev_utils import sequential_pipeline
 from src.talker_agents.graph import talkers
 from src.write_note_agent.graph import write_note_agent
 
-
 graph = StateGraph(State, input_schema=StateIn, output_schema=StateOut)
 graph.add_node("moderator", moderator)
 graph.add_node("moderator_tools", moderator_tools)
-
 
 graph.add_node(
     "talk_and_write",
@@ -621,13 +574,14 @@ graph.add_edge("__start__", "moderator")
 graph.add_edge("moderator_tools", "moderator")
 graph.add_edge("talk_and_write", "moderator")
 
-
 graph = graph.compile()
 ```
 
-其中由于`talkers`和`write_note_agent`是串行的，因此这里使用了[状态图编排](./graph-orchestration.md)中的`sequential_pipeline`。
+**代码位置：`src/graph.py`**
 
-最后在项目根目录新建`langgraph.json`写入如下：
+使用 `sequential_pipeline` 将 `talkers` 和 `write_note_agent` 串联。
+
+在项目根目录创建 `langgraph.json`：
 
 ```json
 {
@@ -638,10 +592,12 @@ graph = graph.compile()
 }
 ```
 
-然后运行如下命令运行`langgraph studio`，最终你应该能看到如下图所示的图结构。
+运行 `LangGraph Studio`：
 
 ```bash
 langgraph dev
 ```
+
+最终图结构如下：
 
 ![最终图](/img/graph.png)
