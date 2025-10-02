@@ -4,7 +4,7 @@ The Context Engineering module provides a set of advanced and commonly used tool
 
 ## Overview
 
-This module is primarily designed for AI context management. Currently, it implements Plan management for task planning, and Note management for context writing and reading.
+This module is primarily designed for AI context management. Currently, it implements Plan management for task planning, and Note management for context writing and reading. The current implementation is based on the `langgraph` official project `deepagents`.
 
 ## Plan Management
 
