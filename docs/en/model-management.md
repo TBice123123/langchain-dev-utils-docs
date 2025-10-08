@@ -105,7 +105,7 @@ langgraph-project/
 │       └── graph2
 ```
 
-### English Version:
+### Prebuilt Agent Function
 
 Currently, `langgraph` offers a **prebuilt** `create_react_agent` function (scheduled for migration to `langchain` in v1) designed to create a single agent. While its required `model` parameter accepts string inputs, it is restricted to only the formats supported by the official `init_chat_model`.
 
