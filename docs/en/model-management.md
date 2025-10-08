@@ -105,6 +105,24 @@ langgraph-project/
 │       └── graph2
 ```
 
+### English Version:
+
+Currently, `langgraph` offers a **prebuilt** `create_react_agent` function (scheduled for migration to `langchain` in v1) designed to create a single agent. While its required `model` parameter accepts string inputs, it is restricted to only the formats supported by the official `init_chat_model`.
+
+To enhance flexibility, `langchain-dev-utils` provides a fully compatible alternative function. The key difference is that its `model` parameter exclusively accepts string types and supports any chat model that can be initialized via `load_chat_model`.
+
+Usage Example:
+
+```python
+from langchain_dev_utils.prebuilt import create_agent
+agent = create_agent(model="dashscope:qwen-flash")
+
+# Usage is identical to langgraph's create_react_agent
+print(agent.invoke({"messages": [{"role": "user", "content": "Hello"}]}))
+```
+
+---
+
 ## Embeddings Class
 
 ### Core Functions
