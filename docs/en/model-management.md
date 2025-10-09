@@ -205,9 +205,9 @@ print(embeddings.embed_query("hello world"))
 
 ## Next Steps
 
-- [Message Processing](./message-processing.md) — Utility functions for message handling, such as chunk concatenation
-- [Tool Enhancement](./tool-enhancement.md) — Add new functionality to existing tools
-- [Context Engineering](./context-engineering.md) — Practical tools and State Schemas for context management
-- [Graph Orchestration](./graph-orchestration.md) — Combine multiple StateGraphs in parallel or serial workflows
-- [API Reference](./api-reference.md) — Complete API documentation
-- [Usage Examples](./example.md) — Practical code examples demonstrating real-world usage
+- [Tool Enhancement](./tool-enhancement.md) — Add new functionality to existing tools.
+- [Context Engineering](./context-engineering.md) — Practical tools and State Schemas for context management.
+- [Graph Orchestration](./graph-orchestration.md) — Combine multiple StateGraphs in parallel or serial workflows.
+- [Prebuilt Agent](./prebuilt.md) — Effectively aligns with the prebuilt Agent of the official library, but extends its model selection.
+- [API Reference](./api-reference.md) — Complete API documentation.
+- [Usage Examples](./example.md) — Practical code examples demonstrating real-world usage.

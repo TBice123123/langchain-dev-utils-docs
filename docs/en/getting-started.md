@@ -4,50 +4,60 @@ Welcome to **`langchain-dev-utils`** — a powerful, practical utility library d
 
 ## 📌 Core Feature Modules
 
-`langchain-dev-utils` currently offers five core modules:
+`langchain-dev-utils` provides six core feature modules:
+
+Among them, the following five are key modules:
 
 1. **Model Management**  
-   Unified registration and management of any model provider — invoke chat and embedding models with a single function call, eliminating the need to repeatedly import third-party integrations.
+   Unified registration and management of any model provider, with a single function call to chat and embeddings models, avoiding redundant imports of third-party libraries.
 
 2. **Message Processing**  
-   Flexible utilities for handling messages: supports chunk merging, inference content aggregation, tool call parsing, and more.
+   Provides versatile message processing tools, including chunk concatenation, content deduction, and tool call parsing.
 
 3. **Tool Enhancement**  
-   Dynamically extend existing tools with new capabilities — for example, adding human-in-the-loop support during tool invocation.
+   Dynamically extend existing tools with new capabilities, such as adding human-in-the-loop support to tool calls.
 
 4. **Context Engineering**  
-   Practical tools and corresponding State Schemas to simplify context management, enabling better handling of multi-turn conversations and external context.
+   Provides practical tools and corresponding State Schemas for context management.
 
 5. **Graph Orchestration**  
-   Combine multiple StateGraphs in parallel or sequential workflows to build complex, scalable agent systems.
+   Combines multiple StateGraphs in parallel or serial workflows.
+
+In addition, there is a **prebuilt agent module** that extends the official prebuilt Agent's model selection.
 
 ## 🛠️ Quick Start
 
 Install the library with just one command:
 
-```bash
-# Using pip
+::: code-group
+
+```sh[pip]
 pip install -U langchain-dev-utils
+```
 
-# Using Poetry
+```sh[poetry]
 poetry add langchain-dev-utils
+```
 
-# Using uv (recommended — ultra-fast installation)
+```sh[uv]
 uv add langchain-dev-utils
 ```
+
+:::
 
 Once installed, simply import and start using the library in your project.
 
 ## 📘 Next Steps
 
-- [Installation](./installation.md) — How to install this library
-- [Model Management](./model-management.md) — Unified registration and management of chat and embedding models
-- [Message Processing](./message-processing.md) — Utility functions for message handling, such as chunk concatenation
-- [Tool Enhancement](./tool-enhancement.md) — Add new functionality to existing tools
-- [Context Engineering](./context-engineering.md) — Practical tools and State Schemas for context management
-- [Graph Orchestration](./graph-orchestration.md) — Combine multiple StateGraphs in parallel or serial workflows
-- [API Reference](./api-reference.md) — Complete API documentation
-- [Usage Examples](./example.md) — Practical code examples demonstrating real-world usage
+- [Installation](./installation.md) — How to install this library.
+- [Model Management](./model-management.md) — Unified registration and management of chat and embedding models.
+- [Message Processing](./message-processing.md) — Utility functions for message handling, such as chunk concatenation.
+- [Tool Enhancement](./tool-enhancement.md) — Add new functionality to existing tools.
+- [Context Engineering](./context-engineering.md) — Practical tools and State Schemas for context management.
+- [Graph Orchestration](./graph-orchestration.md) — Combine multiple StateGraphs in parallel or serial workflows.
+- [Prebuilt Agent](./prebuilt.md) — Effectively aligns with the prebuilt Agent of the official library, but extends its model selection.
+- [API Reference](./api-reference.md) — Complete API documentation.
+- [Usage Examples](./example.md) — Practical code examples demonstrating real-world usage.
 
 > If you’re building a simple LLM application, you’ll likely only need **Model Management** and **Message Processing**.  
 > For complex agent systems, you’ll want to leverage additional modules like **Tool Enhancement**, **Context Engineering**, and **Graph Orchestration** on top of the basics.

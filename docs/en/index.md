@@ -16,15 +16,16 @@ Follow the [Installation Guide](./installation.md) to set up the library in your
 
 ### 📚 Documentation
 
-- [Getting Started](./getting-started.md) - Overview and quick start
-- [Installation](./installation.md) - How to install this library
+- [Getting Started](./getting-started.md) - Overview and quick start.
+- [Installation](./installation.md) - How to install this library.
 - [Model Management](./model-management.md) - Provides a unified registration and management system for chat and embedding models.
 - [Message Processing](./message-processing.md) - Offers utility functions related to Message handling, such as chunk concatenation.
 - [Tool Enhancement](./tool-enhancement.md) - Adds new functionality to existing tools dynamically.
 - [Context Engineering](./context-engineering.md) - Provides practical tools and associated State Schemas to help manage context engineering.
 - [Graph Orchestration](./graph-orchestration.md) - Combines multiple StateGraphs in parallel or sequential workflows.
-- [API Reference](./api-reference.md) - Complete API documentation
-- [Usage Examples](./example.md) - Practical examples demonstrating how to use this library
+- [Prebuilt Agent](./prebuilt.md) - Effectively aligns with the prebuilt Agent of the official library, but extends its model selection.
+- [API Reference](./api-reference.md) - Complete API documentation.
+- [Usage Examples](./example.md) - Practical examples demonstrating how to use this library.
 
 ### 🛠️ Key Features
 
@@ -40,4 +41,4 @@ Visit the [GitHub Repository](https://github.com/TBice123123/langchain-dev-utils
 
 ---
 
-Last updated: 2025-10-7
+Last updated: 2025-10-9

@@ -24,16 +24,25 @@ export default defineConfig({
       link: "/en/",
       themeConfig: {
         nav: [
+          { text: "Home", link: "/en/" },
           { text: "Getting Started", link: "/en/getting-started" },
-          { text: "Installation", link: "/en/installation" },
+          { text: "Documentation", link: "/en/installation" },
           { text: "API Reference", link: "/en/api-reference" },
+          { text: "Example", link: "/en/example" },
         ],
 
         sidebar: [
           {
+            text: "Home",
+            items: [{ text: "Home", link: "/en/" }],
+          },
+          {
+            text: "Getting Started",
+            items: [{ text: "Getting Started", link: "/en/getting-started" }],
+          },
+          {
             text: "Documentation",
             items: [
-              { text: "Getting Started", link: "/en/getting-started" },
               { text: "Installation", link: "/en/installation" },
               { text: "Model Management", link: "/en/model-management" },
               { text: "Message Processing", link: "/en/message-processing" },
@@ -43,9 +52,19 @@ export default defineConfig({
                 text: "StateGraph Orchestration",
                 link: "/en/graph-orchestration",
               },
-              { text: "API Reference", link: "/en/api-reference" },
-              { text: "Example", link: "/en/example" },
+              {
+                text: "Prebuilt Agent",
+                link: "/en/prebuilt",
+              },
             ],
+          },
+          {
+            text: "API Reference",
+            items: [{ text: "API Reference", link: "/en/api-reference" }],
+          },
+          {
+            text: "Example",
+            items: [{ text: "Example", link: "/en/example" }],
           },
         ],
 
@@ -63,16 +82,25 @@ export default defineConfig({
       link: "/zh/",
       themeConfig: {
         nav: [
-          { text: "入门指南", link: "/zh/getting-started" },
-          { text: "安装", link: "/zh/installation" },
+          { text: "Home", link: "/zh/" },
+          { text: "快速开始", link: "/zh/getting-started" },
+          { text: "文档", link: "/zh/installation" },
           { text: "API 参考", link: "/zh/api-reference" },
+          { text: "使用示例", link: "/zh/example" },
         ],
 
         sidebar: [
           {
+            text: "Home",
+            items: [{ text: "Home", link: "/zh/" }],
+          },
+          {
+            text: "快速开始",
+            items: [{ text: "快速开始", link: "/zh/getting-started" }],
+          },
+          {
             text: "文档",
             items: [
-              { text: "入门指南", link: "/zh/getting-started" },
               { text: "安装", link: "/zh/installation" },
               { text: "模型管理", link: "/zh/model-management" },
               { text: "消息处理", link: "/zh/message-processing" },
@@ -82,9 +110,19 @@ export default defineConfig({
                 text: "状态图编排",
                 link: "/zh/graph-orchestration",
               },
-              { text: "API 参考", link: "/zh/api-reference" },
-              { text: "使用示例", link: "/zh/example" },
+              {
+                text: "预构建 Agent",
+                link: "/zh/prebuilt",
+              },
             ],
+          },
+          {
+            text: "API 参考",
+            items: [{ text: "API 参考", link: "/zh/api-reference" }],
+          },
+          {
+            text: "使用示例",
+            items: [{ text: "使用示例", link: "/zh/example" }],
           },
         ],
 

@@ -792,6 +792,71 @@ parallel_pipeline(
 )
 ```
 
+## 预构建 Agent
+
+### create_agent
+
+预构建智能体函数，提供与 langgraph 官方 `create_react_agent` 完全相同的功能，但拓展了模型选择。
+
+```python
+def create_agent(
+    model: str,
+    tools: Union[Sequence[Union[BaseTool, Callable, dict[str, Any]]], ToolNode],
+    *,
+    prompt: Optional[Prompt] = None,
+    response_format: Optional[
+        Union[StructuredResponseSchema, tuple[str, StructuredResponseSchema]]
+    ] = None,
+    pre_model_hook: Optional[RunnableLike] = None,
+    post_model_hook: Optional[RunnableLike] = None,
+    state_schema: Optional[StateSchemaType] = None,
+    context_schema: Optional[Type[Any]] = None,
+    checkpointer: Optional[Checkpointer] = None,
+    store: Optional[BaseStore] = None,
+    interrupt_before: Optional[list[str]] = None,
+    interrupt_after: Optional[list[str]] = None,
+    debug: bool = False,
+    version: Literal["v1", "v2"] = "v2",
+    name: Optional[str] = None,
+    **deprecated_kwargs: Any,
+) -> CompiledStateGraph
+```
+
+**参数**
+
+| 参数名            | 类型                                                                            | 必填 | 描述                                                                               |
+| ----------------- | ------------------------------------------------------------------------------- | ---- | ---------------------------------------------------------------------------------- |
+| model             | str                                                                             | 是   | 可由 `load_chat_model` 加载的模型标识符字符串。可指定为 "provider:model-name" 格式 |
+| tools             | Union[Sequence[Union[BaseTool, Callable, dict[str, Any]]], ToolNode]            | 是   | 智能体可用的工具列表                                                               |
+| prompt            | Optional[Prompt]                                                                | 否   | 智能体的自定义提示词                                                               |
+| response_format   | Optional[Union[StructuredResponseSchema, tuple[str, StructuredResponseSchema]]] | 否   | 响应格式规范                                                                       |
+| pre_model_hook    | Optional[RunnableLike]                                                          | 否   | 模型推理前执行的可运行对象                                                         |
+| post_model_hook   | Optional[RunnableLike]                                                          | 否   | 模型推理后执行的可运行对象                                                         |
+| state_schema      | Optional[StateSchemaType]                                                       | 否   | 智能体的状态模式                                                                   |
+| context_schema    | Optional[Type[Any]]                                                             | 否   | 智能体的上下文模式                                                                 |
+| checkpointer      | Optional[Checkpointer]                                                          | 否   | 状态持久化的检查点                                                                 |
+| store             | Optional[BaseStore]                                                             | 否   | 数据持久化的存储                                                                   |
+| interrupt_before  | Optional[list[str]]                                                             | 否   | 执行前要中断的节点                                                                 |
+| interrupt_after   | Optional[list[str]]                                                             | 否   | 执行后要中断的节点                                                                 |
+| debug             | bool                                                                            | 否   | 启用调试模式，默认为 False                                                         |
+| version           | Literal["v1", "v2"]                                                             | 否   | 智能体版本，默认为 "v2"                                                            |
+| name              | Optional[str]                                                                   | 否   | 智能体名称                                                                         |
+| deprecated_kwargs | Any                                                                             | 否   | 用于向后兼容的已弃用参数                                                           |
+
+**返回值**
+
+| 类型               | 描述           |
+| ------------------ | -------------- |
+| CompiledStateGraph | 创建的智能体图 |
+
+**注意：**此函数提供与 `langgraph` 官方 `create_react_agent` 完全相同的功能，但拓展了模型选择。主要区别在于 `model` 参数必须是可由 `load_chat_model` 函数加载的字符串，允许使用注册的模型提供者进行更灵活的模型选择。
+
+**示例**
+
+```python
+agent = create_agent(model="moonshot:kimi-k2-0905-preview", tools=[get_current_time])
+```
+
 ---
 
 ## 类型定义

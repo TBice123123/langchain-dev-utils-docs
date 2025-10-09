@@ -180,5 +180,6 @@ graph = parallel_pipeline(
 
 ## Next Steps
 
+- [Prebuilt Agent](./prebuilt.md) — Effectively aligns with the prebuilt Agent of the official library, but extends its model selection.
 - [API Reference](./api-reference.md) — Complete API documentation
 - [Usage Examples](./example.md) — Practical code examples demonstrating real-world usage

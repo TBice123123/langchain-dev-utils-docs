@@ -23,6 +23,7 @@
 - [工具增强](./tool-enhancement.md) - 在已定义的 tools 中添加新的功能。
 - [上下文工程](./context-engineering.md) - 提供用于帮助上下文工程管理的实用性 tools 以及相关的状态 Schema。
 - [状态图编排](./graph-orchestration.md) - 将多个状态图(StateGraph)以并行或者串行的方式组合在一起。
+- [预构建 Agent](./prebuilt.md) - 效果与官方预构建的 Agent 对齐，但是拓展了其模型选择。
 - [API 参考](./api-reference.md) - API 参考文档
 - [使用示例](./example.md) - 介绍本库的使用示例
 
@@ -40,4 +41,4 @@
 
 ---
 
-文档最后更新：2025-10-07
+文档最后更新：2025-10-09

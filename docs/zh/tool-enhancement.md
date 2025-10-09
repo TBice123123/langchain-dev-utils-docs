@@ -89,5 +89,6 @@ async def get_weather(city: str) -> str:
 
 - [上下文工程](./context-engineering.md) - 提供用于帮助上下文工程管理的实用性 tools 以及相关的状态 Schema。
 - [状态图编排](./graph-orchestration.md) - 将多个状态图(StateGraph)以并行或者串行的方式组合在一起。
-- [API 参考](./api-reference.md) - API 参考文档
-- [使用示例](./example.md) - 介绍本库的使用示例
+- [预构建 Agent](./prebuilt.md) - 效果与官方预构建的 Agent 对齐，但是拓展了其模型选择。
+- [API 参考](./api-reference.md) - API 参考文档。
+- [使用示例](./example.md) - 介绍本库的使用示例。

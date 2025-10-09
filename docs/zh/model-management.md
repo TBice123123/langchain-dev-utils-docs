@@ -105,22 +105,6 @@ langgraph-project/
 │       └── graph2
 ```
 
-### 使用预购建的 Agent 函数
-
-目前，`langgraph` 提供了一个**预构建**的 `create_react_agent` 函数（该函数将在 v1 版本迁移至 `langchain`），用于创建一个单智能体。此函数的 `model` 参数为必填项，虽然支持传入字符串，但仅限于官方 `init_chat_model` 所支持的格式。
-
-为此，`langchain-dev-utils` 提供了一个功能完全相同、但 `model` 参数更具灵活性的替代函数。该函数不仅要求 `model` 参数为字符串类型，还支持所有能够通过 `load_chat_model` 初始化的聊天模型。
-
-使用示例如下：
-
-```python
-from langchain_dev_utils.prebuilt import create_agent
-agent = create_agent(model="dashscope:qwen-flash")
-
-# 调用方式与 langgraph 的 create_react_agent 完全一致
-print(agent.invoke({"messages": [{"role": "user", "content": "Hello"}]}))
-```
-
 ---
 
 ## Embeddings 类
@@ -209,5 +193,6 @@ print(embeddings.embed_query("hello world"))
 - [工具增强](./tool-enhancement.md) - 在已定义的 tools 中添加新的功能。
 - [上下文工程](./context-engineering.md) - 提供用于帮助上下文工程管理的实用性 tools 以及相关的状态 Schema。
 - [状态图编排](./graph-orchestration.md) - 将多个状态图(StateGraph)以并行或者串行的方式组合在一起。
-- [API 参考](./api-reference.md) - API 参考文档
-- [使用示例](./example.md) - 介绍本库的使用示例
+- [预构建 Agent](./prebuilt.md) - 效果与官方预构建的 Agent 对齐，但是拓展了其模型选择。
+- [API 参考](./api-reference.md) - API 参考文档。
+- [使用示例](./example.md) - 介绍本库的使用示例。

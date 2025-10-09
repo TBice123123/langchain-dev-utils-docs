@@ -4,23 +4,21 @@
 
 ## Package Managers
 
-### Using pip
+::: code-group
 
-```bash
+```sh[pip]
 pip install -U langchain-dev-utils
 ```
 
-### Using poetry
-
-```bash
+```sh[poetry]
 poetry add langchain-dev-utils
 ```
 
-### Using uv
-
-```bash
+```sh[uv]
 uv add langchain-dev-utils
 ```
+
+:::
 
 ## System Requirements
 
@@ -57,10 +55,11 @@ uv run pytest .
 
 After installation, you can proceed with:
 
-- [Model Management](./model-management.md) — Unified registration and management of chat and embedding models
-- [Message Processing](./message-processing.md) — Utility functions for message handling, such as chunk concatenation
-- [Tool Enhancement](./tool-enhancement.md) — Add new functionality to existing tools
-- [Context Engineering](./context-engineering.md) — Practical tools and State Schemas for context management
-- [Graph Orchestration](./graph-orchestration.md) — Combine multiple StateGraphs in parallel or serial workflows
-- [API Reference](./api-reference.md) — Complete API documentation
-- [Usage Examples](./example.md) — Practical code examples demonstrating real-world usage
+- [Model Management](./model-management.md) — Unified registration and management of chat and embedding models.
+- [Message Processing](./message-processing.md) — Utility functions for message handling, such as chunk concatenation.
+- [Tool Enhancement](./tool-enhancement.md) — Add new functionality to existing tools.
+- [Context Engineering](./context-engineering.md) — Practical tools and State Schemas for context management.
+- [Graph Orchestration](./graph-orchestration.md) — Combine multiple StateGraphs in parallel or serial workflows.
+- [Prebuilt Agent](./prebuilt.md) — Effectively aligns with the prebuilt Agent of the official library, but extends its model selection.
+- [API Reference](./api-reference.md) — Complete API documentation.
+- [Usage Examples](./example.md) — Practical code examples demonstrating real-world usage.

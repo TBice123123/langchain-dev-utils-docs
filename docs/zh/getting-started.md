@@ -4,7 +4,9 @@
 
 ## 📌 核心功能模块
 
-目前，`langchain-dev-utils` 提供五大核心模块：
+`langchain-dev-utils` 提供六大核心模块：
+
+其中作为核心的有以下五大模块：
 
 1. **模型管理**  
    统一注册与管理任何的模型提供商，一个函数调用 chat 与 embeddings 模型，告别重复导入第三方集成库。
@@ -21,35 +23,42 @@
 5. **状态图编排**  
    将多个状态图（StateGraph）以并行或者串行的方式组合在一起。
 
+同时还有一个**预构建模块**，主要是用于拓展官方`create_react_agent`函数的模型选择。
+
 ## 🛠️ 快速开始
 
 只需一行命令即可安装：
+::: code-group
 
-```bash
-# 使用 pip
+```sh[pip]
 pip install -U langchain-dev-utils
+```
 
-# 使用 poetry
+```sh[poetry]
 poetry add langchain-dev-utils
+```
 
-# 使用 uv（推荐，极速安装）
+```sh[uv]
 uv add langchain-dev-utils
 ```
+
+:::
 
 安装完成后，即可在项目中导入使用。
 
 ## 📘 下一步学习路径
 
-- [安装](./installation.md) - 如何安装本库
+- [安装](./installation.md) - 如何安装本库。
 - [模型管理](./model-management.md) - 提供统一的注册管理方式，方便开发者使用 chat 和 embeddings 模型。
 - [消息处理](./message-processing.md) - 提供与 Message 相关的工具函数，例如 chunk 拼接。
 - [工具增强](./tool-enhancement.md) - 在已定义的 tools 中添加新的功能。
 - [上下文工程](./context-engineering.md) - 提供用于帮助上下文工程管理的实用性 tools 以及相关的状态 Schema。
 - [状态图编排](./graph-orchestration.md) - 将多个状态图(StateGraph)以并行或者串行的方式组合在一起。
-- [API 参考](./api-reference.md) - API 参考文档
-- [使用示例](./example.md) - 介绍本库的使用示例
+- [预构建 Agent](./prebuilt.md) - 效果与官方预构建的 Agent 对齐，但是拓展了其模型选择。
+- [API 参考](./api-reference.md) - API 参考文档。
+- [使用示例](./example.md) - 介绍本库的使用示例。
 
-> 如果你构建的是简单的大模型应用，那么你可能需要的是模型管理和消息处理。如果构建的是复杂的智能体系统，那么你可能在之前的基础上额外还要使用工具增强、上下文工程、状态图编排等模块。
+> 如果你构建的是简单的大模型应用，那么你可能需要的是模型管理和消息处理。如果构建的是复杂的智能体系统，那么你可能在之前的基础上额外还要使用工具增强、上下文工程、状态图编排、预构建 Agent 等模块。
 
 ---
 

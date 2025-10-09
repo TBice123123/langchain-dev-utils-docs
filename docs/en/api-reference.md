@@ -794,6 +794,73 @@ parallel_pipeline(
 
 ---
 
+## Prebuilt Agent
+
+### create_agent
+
+Prebuilt agent function that provides exactly the same functionality as the official langgraph `create_react_agent`, but with expanded model selection options.
+
+```python
+def create_agent(
+    model: str,
+    tools: Union[Sequence[Union[BaseTool, Callable, dict[str, Any]]], ToolNode],
+    *,
+    prompt: Optional[Prompt] = None,
+    response_format: Optional[
+        Union[StructuredResponseSchema, tuple[str, StructuredResponseSchema]]
+    ] = None,
+    pre_model_hook: Optional[RunnableLike] = None,
+    post_model_hook: Optional[RunnableLike] = None,
+    state_schema: Optional[StateSchemaType] = None,
+    context_schema: Optional[Type[Any]] = None,
+    checkpointer: Optional[Checkpointer] = None,
+    store: Optional[BaseStore] = None,
+    interrupt_before: Optional[list[str]] = None,
+    interrupt_after: Optional[list[str]] = None,
+    debug: bool = False,
+    version: Literal["v1", "v2"] = "v2",
+    name: Optional[str] = None,
+    **deprecated_kwargs: Any,
+) -> CompiledStateGraph
+```
+
+**Parameters**
+
+| Parameter         | Type                                                                            | Required | Description                                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| model             | str                                                                             | Yes      | Model identifier string that can be loaded by `load_chat_model`. Can be specified in "provider:model-name" format |
+| tools             | Union[Sequence[Union[BaseTool, Callable, dict[str, Any]]], ToolNode]            | Yes      | List of tools available to the agent                                                                              |
+| prompt            | Optional[Prompt]                                                                | No       | Custom prompt for the agent                                                                                       |
+| response_format   | Optional[Union[StructuredResponseSchema, tuple[str, StructuredResponseSchema]]] | No       | Response format specification                                                                                     |
+| pre_model_hook    | Optional[RunnableLike]                                                          | No       | Runnable object to execute before model inference                                                                 |
+| post_model_hook   | Optional[RunnableLike]                                                          | No       | Runnable object to execute after model inference                                                                  |
+| state_schema      | Optional[StateSchemaType]                                                       | No       | State schema for the agent                                                                                        |
+| context_schema    | Optional[Type[Any]]                                                             | No       | Context schema for the agent                                                                                      |
+| checkpointer      | Optional[Checkpointer]                                                          | No       | Checkpoint for state persistence                                                                                  |
+| store             | Optional[BaseStore]                                                             | No       | Storage for data persistence                                                                                      |
+| interrupt_before  | Optional[list[str]]                                                             | No       | Nodes to interrupt before execution                                                                               |
+| interrupt_after   | Optional[list[str]]                                                             | No       | Nodes to interrupt after execution                                                                                |
+| debug             | bool                                                                            | No       | Enable debug mode, defaults to False                                                                              |
+| version           | Literal["v1", "v2"]                                                             | No       | Agent version, defaults to "v2"                                                                                   |
+| name              | Optional[str]                                                                   | No       | Agent name                                                                                                        |
+| deprecated_kwargs | Any                                                                             | No       | Deprecated parameters for backward compatibility                                                                  |
+
+**Returns**
+
+| Type               | Description             |
+| ------------------ | ----------------------- |
+| CompiledStateGraph | The created agent graph |
+
+**Note:** This function provides exactly the same functionality as the official langgraph `create_react_agent`, but with expanded model selection. The main difference is that the `model` parameter must be a string that can be loaded by the `load_chat_model` function, allowing for more flexible model selection using registered model providers.
+
+**Example**
+
+```python
+agent = create_agent(model="moonshot:kimi-k2-0905-preview", tools=[get_current_time])
+```
+
+---
+
 ## Type Definitions
 
 ### InterruptParams

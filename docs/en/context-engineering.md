@@ -248,6 +248,7 @@ class State(NoteStateMixin, PlanStateMixin, MessageState):
 
 ## Next Steps
 
-- [State Graph Orchestration](./graph-orchestration.md) - Combine multiple state graphs in parallel or serial fashion
-- [API Reference](./api-reference.md) - API reference documentation
-- [Usage Examples](./example.md) - Examples demonstrating library usage
+- [Graph Orchestration](./graph-orchestration.md) — Combine multiple StateGraphs in parallel or serial workflows.
+- [Prebuilt Agent](./prebuilt.md) — Effectively aligns with the prebuilt Agent of the official library, but extends its model selection.
+- [API Reference](./api-reference.md) — Complete API documentation.
+- [Usage Examples](./example.md) — Practical code examples demonstrating real-world usage.
