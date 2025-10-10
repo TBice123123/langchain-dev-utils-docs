@@ -65,7 +65,7 @@ def write_plan(plan: list[str], tool_call_id: Annotated[str, InjectedToolCallId]
 ```python
 def update_plan(update_plans: list[Plan], tool_call_id: Annotated[str, InjectedToolCallId],
                 state: Annotated[PlanStateMixin, InjectedState]):
-    plan_list = state["plan"] if "plan" in state else []
+    plan_list = state.get("plan", [])
     updated_plan_list = []
 
     for update_plan in update_plans:
@@ -147,8 +147,8 @@ Note 管理工具通过在状态中维护一个字典来存储笔记，键为笔
 ```python
 def write_note(file_name: str, content: str, tool_call_id: str,
                state: Annotated[NoteStateMixin, InjectedState]):
-    if file_name in state["note"] if "note" in state else {}:
-        notes = state["note"] if "note" in state else {}
+    notes = state.get("note", {})
+    if file_name in notes:
         file_name = file_name + "_" + str(len(notes[file_name]))
 
     msg_key = message_key or "messages"
@@ -172,17 +172,17 @@ def write_note(file_name: str, content: str, tool_call_id: str,
 def update_note(file_name: str, origin_content: str, new_content: str,
                 tool_call_id: str, state: Annotated[NoteStateMixin, InjectedState],
                 replace_all: bool = False):
-    note = state["note"] if "note" in state else {}
-    if file_name not in note:
+    notes = state.get("note", {})
+    if file_name not in notes:
         raise ValueError(f"Error: Note {file_name} not found")
 
-    if origin_content not in note.get(file_name, ""):
+    if origin_content not in notes.get(file_name, ""):
         raise ValueError(f"Error: Origin content {origin_content} not found in note {file_name}")
 
     if replace_all:
-        new_content = note.get(file_name, "").replace(origin_content, new_content)
+        new_content = notes.get(file_name, "").replace(origin_content, new_content)
     else:
-        new_content = note.get(file_name, "").replace(origin_content, new_content, 1)
+        new_content = notes.get(file_name, "").replace(origin_content, new_content, 1)
 
     return Command(update={"note": {file_name: new_content}, msg_key: [ToolMessage(...)]})
 ```

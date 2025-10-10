@@ -40,7 +40,7 @@ agent = create_agent(
     tools=[get_current_time],
     name="time-agent"
 )
-# Usage is exactly the same as the official create_agent
+# Usage is identical to langgraph's create_react_agent
 response = agent.invoke({
     "messages": [{"role": "user", "content": "What time is it now?"}]
 })
