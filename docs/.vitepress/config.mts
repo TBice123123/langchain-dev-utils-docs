@@ -24,21 +24,19 @@ export default defineConfig({
       link: "/en/",
       themeConfig: {
         nav: [
-          { text: "Home", link: "/en/" },
-          { text: "Getting Started", link: "/en/getting-started" },
+          { text: "Introduction", link: "/en/" },
           { text: "Documentation", link: "/en/installation" },
           { text: "API Reference", link: "/en/api-reference" },
-          { text: "Example", link: "/en/example" },
+          { text: "Usage Examples", link: "/en/example" },
         ],
 
         sidebar: [
           {
-            text: "Home",
-            items: [{ text: "Home", link: "/en/" }],
-          },
-          {
-            text: "Getting Started",
-            items: [{ text: "Getting Started", link: "/en/getting-started" }],
+            text: "Introduction",
+            items: [
+              { text: "Welcome to langchain dev utils", link: "/en/" },
+              { text: "Getting Started", link: "/en/getting-started" },
+            ],
           },
           {
             text: "Documentation",
@@ -63,7 +61,7 @@ export default defineConfig({
             items: [{ text: "API Reference", link: "/en/api-reference" }],
           },
           {
-            text: "Example",
+            text: "Usage Examples",
             items: [{ text: "Example", link: "/en/example" }],
           },
         ],
@@ -82,8 +80,7 @@ export default defineConfig({
       link: "/zh/",
       themeConfig: {
         nav: [
-          { text: "Home", link: "/zh/" },
-          { text: "快速开始", link: "/zh/getting-started" },
+          { text: "介绍", link: "/zh/" },
           { text: "文档", link: "/zh/installation" },
           { text: "API 参考", link: "/zh/api-reference" },
           { text: "使用示例", link: "/zh/example" },
@@ -91,12 +88,11 @@ export default defineConfig({
 
         sidebar: [
           {
-            text: "Home",
-            items: [{ text: "Home", link: "/zh/" }],
-          },
-          {
-            text: "快速开始",
-            items: [{ text: "快速开始", link: "/zh/getting-started" }],
+            text: "介绍",
+            items: [
+              { text: "欢迎使用 langchain dev utils", link: "/zh/" },
+              { text: "快速开始", link: "/zh/getting-started" },
+            ],
           },
           {
             text: "文档",
