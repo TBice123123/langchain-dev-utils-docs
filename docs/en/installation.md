@@ -20,6 +20,24 @@ uv add langchain-dev-utils
 
 :::
 
+If you want to use the complete functionality of this package, you need to execute the following command:
+
+::: code-group
+
+```sh[pip]
+pip install -U langchain-dev-utils[standard]
+```
+
+```sh[poetry]
+poetry add langchain-dev-utils[standard]
+```
+
+```sh[uv]
+uv add langchain-dev-utils[standard]
+```
+
+:::
+
 ## System Requirements
 
 - Python 3.11 or higher
@@ -30,6 +48,10 @@ This package automatically installs the following dependencies:
 
 - `langchain`
 - `langgraph`
+
+If it is a standard version, it will also install the following dependencies:
+
+- `langchain-openai`
 
 ## Verification
 

@@ -20,6 +20,24 @@ uv add langchain-dev-utils
 
 :::
 
+上述会安装`langchain-dev-utils`以及它的基础依赖。如果你想要使用它的完整功能你需要执行下面的命令：
+
+::: code-group
+
+```sh[pip]
+pip install -U langchain-dev-utils[standard]
+```
+
+```sh[poetry]
+poetry add langchain-dev-utils[standard]
+```
+
+```sh[uv]
+uv add langchain-dev-utils[standard]
+```
+
+:::
+
 ## 系统要求
 
 - Python 3.11 或更高版本
@@ -30,6 +48,10 @@ uv add langchain-dev-utils
 
 - `langchain`
 - `langgraph`
+
+如果是 standard 版本，还会安装以下依赖项：
+
+- `langchain-openai`
 
 ## 验证
 
