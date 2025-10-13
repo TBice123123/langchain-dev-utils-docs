@@ -30,8 +30,6 @@ langchain 官方的 `init_chat_model` 和 `init_embeddings` 函数很方便，�
 `chat_model` 支持通过字符串参数指定模型提供商，其取值应为 langchain 中 `init_chat_model` 所支持的提供商名称（例如 `openai`）。  
 这是因为目前许多大模型都提供了兼容其他厂商风格（如 OpenAI）的 API。若您的模型没有专用或者合适的集成库，但提供商支持兼容其他厂商的 API 风格，可考虑传递对应提供商字符串。
 使用此方式时必须同时传递 `base_url` 参数或者设置提供商的 API_BASE 环境变量以指定自定义模型的 API 端点。  
-若您的模型为推理模型且推理输出模式和`deepseek`一致，则此处可以考虑传递 `deepseek`。
-
 这个功能的实现思路可以参考: [配置 BASEURL 参数](https://docs.langchain.com/oss/python/langchain/models#base-url-or-proxy)
 :::
 
@@ -41,6 +39,7 @@ langchain 官方的 `init_chat_model` 和 `init_embeddings` 函数很方便，�
 
 - `model`：模型名称，格式为 `model_name` 或 `provider_name:model_name`
 - `model_provider`：可选的模型提供商名称。如果未提供， `model`参数的格式必须是`provider_name:model_name`。
+- `enable_reasoning_parse`：是否启用思维链（`reasoning_content`）输出。默认为 `False`，具体参数含义与设置方式见下文。
 - `kwargs`：可选的额外模型参数，如 `temperature`、`api_key`、`stop` 等。
 
 ### 使用示例
@@ -85,6 +84,28 @@ print(model.invoke("Hello"))
 
 model = load_chat_model(model="openrouter:moonshotai/kimi-k2-0905")
 print(model.invoke("Hello"))
+```
+
+### `enable_reasoning_parse` 参数说明
+
+`enable_reasoning_parse` 参数默认为 `False`。当设置为 `True` 时，需要满足 `chat_model` 参数为 `openai` 方可生效。生效后，系统会自动将 provider 转换为 `deepseek` 以实现输出思维链（`reasoning_content`）。
+
+**重要提示**：请确保您使用的模型是推理模型，并且其思维链的输出格式与 DeepSeek 模型的输出方式相同（与`content`同级），否则仍然无法输出思维链。
+
+#### 参考代码:
+
+```python
+from langchain_dev_utils import load_chat_model
+model = load_chat_model(
+        "zai:glm-4.6",
+        enable_reasoning_parse=True,
+        extra_body={
+            "thinking": {
+                "type": "enabled",
+            },
+        },
+    )
+response = model.invoke("你好啊")
 ```
 
 ### 重要说明

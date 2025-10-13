@@ -4,7 +4,7 @@
 
 ### register_model_provider
 
-Registers a model provider for chat models.
+Registers a provider for chat models.
 
 ```python
 def register_model_provider(
@@ -14,15 +14,13 @@ def register_model_provider(
 ) -> None
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter     | Type                            | Required | Description                                  |
-| ------------- | ------------------------------- | -------- | -------------------------------------------- |
-| provider_name | str                             | Yes      | Custom provider name                         |
-| chat_model    | Union[Type[BaseChatModel], str] | Yes      | ChatModel class or supported provider string |
-| base_url      | Optional[str]                   | No       | Provider's base URL                          |
+- `provider_name`: Required `str`, custom provider name.
+- `chat_model`: Required `BaseChatModel` class or supported provider string.
+- `base_url`: Optional `str`, the provider's base URL.
 
-**Examples**
+**Example:**
 
 ```python
 register_model_provider("dashscope", ChatQwen)
@@ -33,7 +31,7 @@ register_model_provider("openrouter", "openai", base_url="https://openrouter.ai/
 
 ### batch_register_model_provider
 
-Bulk registers model providers.
+Registers multiple model providers in batch.
 
 ```python
 def batch_register_model_provider(
@@ -41,13 +39,11 @@ def batch_register_model_provider(
 ) -> None
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter | Type                    | Required | Description                     |
-| --------- | ----------------------- | -------- | ------------------------------- |
-| providers | List[ChatModelProvider] | Yes      | List of provider configurations |
+- `providers`: Required `list[ChatModelProvider]`, list of provider configurations.
 
-**Examples**
+**Example:**
 
 ```python
 batch_register_model_provider([
@@ -60,31 +56,27 @@ batch_register_model_provider([
 
 ### load_chat_model
 
-Loads a chat model from registered providers.
+Loads a chat model from a registered provider.
 
 ```python
 def load_chat_model(
     model: str,
     model_provider: Optional[str] = None,
+    enable_reasoning_parse: bool = False,
     **kwargs
 ) -> BaseChatModel
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter      | Type          | Required | Description                                                     |
-| -------------- | ------------- | -------- | --------------------------------------------------------------- |
-| model          | str           | Yes      | Model name in format `model_name` or `provider_name:model_name` |
-| model_provider | Optional[str] | No       | Model provider name                                             |
-| \*\*kwargs     | Any           | No       | Additional model parameters                                     |
+- `model`: Required `str`, model name in format `model_name` or `provider_name:model_name`.
+- `model_provider`: Optional `str`, name of the model provider.
+- `enable_reasoning_parse`: Optional `bool`, whether to enable chain-of-thought (`reasoning_content`) output. Default: `False`.
+- `**kwargs`: Optional additional model parameters.
 
-**Returns**
+**Returns:** Instance of `BaseChatModel`.
 
-| Type          | Description                |
-| ------------- | -------------------------- |
-| BaseChatModel | Loaded chat model instance |
-
-**Examples**
+**Example:**
 
 ```python
 model = load_chat_model("dashscope:qwen-flash")
@@ -104,15 +96,13 @@ def register_embeddings_provider(
 ) -> None
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter        | Type                         | Required | Description                                         |
-| ---------------- | ---------------------------- | -------- | --------------------------------------------------- |
-| provider_name    | str                          | Yes      | Custom provider name                                |
-| embeddings_model | Union[Type[Embeddings], str] | Yes      | Embeddings model class or supported provider string |
-| base_url         | Optional[str]                | No       | Provider's base URL                                 |
+- `provider_name`: Required `str`, custom provider name.
+- `embeddings_model`: Required `Embeddings` class or supported provider string.
+- `base_url`: Optional `str`, the provider's base URL.
 
-**Examples**
+**Example:**
 
 ```python
 register_embeddings_provider("dashscope", "openai", base_url="https://dashscope.aliyuncs.com/compatible-mode/v1")
@@ -122,7 +112,7 @@ register_embeddings_provider("dashscope", "openai", base_url="https://dashscope.
 
 ### batch_register_embeddings_provider
 
-Bulk registers embedding model providers.
+Registers multiple embedding model providers in batch.
 
 ```python
 def batch_register_embeddings_provider(
@@ -130,13 +120,11 @@ def batch_register_embeddings_provider(
 ) -> None
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter | Type                    | Required | Description                     |
-| --------- | ----------------------- | -------- | ------------------------------- |
-| providers | List[EmbeddingProvider] | Yes      | List of provider configurations |
+- `providers`: Required `list[EmbeddingProvider]`, list of provider configurations.
 
-**Examples**
+**Example:**
 
 ```python
 batch_register_embeddings_provider([
@@ -149,7 +137,7 @@ batch_register_embeddings_provider([
 
 ### load_embeddings
 
-Loads an embeddings model from registered providers.
+Loads an embedding model from a registered provider.
 
 ```python
 def load_embeddings(
@@ -159,21 +147,15 @@ def load_embeddings(
 ) -> Embeddings
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter  | Type          | Required | Description                                                     |
-| ---------- | ------------- | -------- | --------------------------------------------------------------- |
-| model      | str           | Yes      | Model name in format `model_name` or `provider_name:model_name` |
-| provider   | Optional[str] | No       | Model provider name                                             |
-| \*\*kwargs | Any           | No       | Additional model parameters                                     |
+- `model`: Required `str`, model name in format `model_name` or `provider_name:model_name`.
+- `provider`: Optional `str`, name of the model provider.
+- `**kwargs`: Optional additional model parameters.
 
-**Returns**
+**Returns:** Instance of `Embeddings`.
 
-| Type       | Description                      |
-| ---------- | -------------------------------- |
-| Embeddings | Loaded embeddings model instance |
-
-**Examples**
+**Example:**
 
 ```python
 embeddings = load_embeddings("dashscope:text-embedding-v4")
@@ -185,29 +167,23 @@ embeddings = load_embeddings("dashscope:text-embedding-v4")
 
 ### convert_reasoning_content_for_ai_message
 
-Merges reasoning content into the content field of an AIMessage.
+Merges reasoning content from an `AIMessage` into its content field.
 
 ```python
 def convert_reasoning_content_for_ai_message(
     model_response: AIMessage,
-    think_tag: Tuple[str, str] = ("<think>", "</think>")
+    think_tag: Tuple[str, str] = ("\<think\>", "\</think\>")
 ) -> AIMessage
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter      | Type            | Required | Description                                                                 |
-| -------------- | --------------- | -------- | --------------------------------------------------------------------------- |
-| model_response | AIMessage       | Yes      | AI message containing reasoning content                                     |
-| think_tag      | Tuple[str, str] | No       | Start and end tags for reasoning content, default `("<think>", "</think>")` |
+- `model_response`: Required `AIMessage`, AI message containing reasoning content.
+- `think_tag`: Optional `Tuple[str, str]`, start and end tags for reasoning content. Default: `("<think>", "</think>")`.
 
-**Returns**
+**Returns:** `AIMessage` with merged reasoning content.
 
-| Type      | Description                           |
-| --------- | ------------------------------------- |
-| AIMessage | Message with merged reasoning content |
-
-**Examples**
+**Example:**
 
 ```python
 response = convert_reasoning_content_for_ai_message(
@@ -224,28 +200,22 @@ Merges reasoning content for streaming message chunks.
 ```python
 def convert_reasoning_content_for_chunk_iterator(
     model_response: Iterator[BaseMessageChunk],
-    think_tag: Tuple[str, str] = ("<think>", "</think>"),
+    think_tag: Tuple[str, str] = ("\<think\>", "\</think\>"),
 ) -> Iterator[BaseMessageChunk]
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter      | Type                       | Required | Description                                                                 |
-| -------------- | -------------------------- | -------- | --------------------------------------------------------------------------- |
-| model_response | Iterator[BaseMessageChunk] | Yes      | Iterator of message chunks                                                  |
-| think_tag      | Tuple[str, str]            | No       | Start and end tags for reasoning content, default `("<think>", "</think>")` |
+- `model_response`: Required `Iterator[BaseMessageChunk]`, iterator of message chunks.
+- `think_tag`: Optional `Tuple[str, str]`, start and end tags for reasoning content. Default: `("<think>", "</think>")`.
 
-**Returns**
+**Returns:** Iterator of processed message chunks.
 
-| Type                       | Description              |
-| -------------------------- | ------------------------ |
-| Iterator[BaseMessageChunk] | Processed chunk iterator |
-
-**Examples**
+**Example:**
 
 ```python
 for chunk in convert_reasoning_content_for_chunk_iterator(
-    model.stream("Hello"), think_tag=("<think>", "</think>")
+    model.stream("Hello"), think_tag=("\<think\>", "\</think\>")
 ):
     print(chunk.content, end="", flush=True)
 ```
@@ -259,28 +229,22 @@ Asynchronous version of `convert_reasoning_content_for_chunk_iterator`.
 ```python
 async def aconvert_reasoning_content_for_chunk_iterator(
     model_response: AsyncIterator[BaseMessageChunk],
-    think_tag: Tuple[str, str] = ("<think>", "</think>"),
+    think_tag: Tuple[str, str] = ("\<think\>", "\</think\>"),
 ) -> AsyncIterator[BaseMessageChunk]
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter      | Type                            | Required | Description                                                                 |
-| -------------- | ------------------------------- | -------- | --------------------------------------------------------------------------- |
-| model_response | AsyncIterator[BaseMessageChunk] | Yes      | Async iterator of message chunks                                            |
-| think_tag      | Tuple[str, str]                 | No       | Start and end tags for reasoning content, default `("<think>", "</think>")` |
+- `model_response`: Required `AsyncIterator[BaseMessageChunk]`, async iterator of message chunks.
+- `think_tag`: Optional `Tuple[str, str]`, start and end tags for reasoning content. Default: `("<think>", "</think>")`.
 
-**Returns**
+**Returns:** Async iterator of processed message chunks.
 
-| Type                            | Description                    |
-| ------------------------------- | ------------------------------ |
-| AsyncIterator[BaseMessageChunk] | Processed async chunk iterator |
-
-**Examples**
+**Example:**
 
 ```python
 async for chunk in aconvert_reasoning_content_for_chunk_iterator(
-    model.astream("Hello"), think_tag=("<think>", "</think>")
+    model.astream("Hello"), think_tag=("\<think\>", "\</think\>")
 ):
     print(chunk.content, end="", flush=True)
 ```
@@ -292,22 +256,18 @@ async for chunk in aconvert_reasoning_content_for_chunk_iterator(
 Merges multiple AI message chunks into a single message.
 
 ```python
-def merge_ai_message_chunk(chunks: Sequence[AIMessageChunk]) -> AIMessage
+def merge_ai_message_chunk(
+    chunks: Sequence[AIMessageChunk]
+) -> AIMessage
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter | Type                     | Required | Description                     |
-| --------- | ------------------------ | -------- | ------------------------------- |
-| chunks    | Sequence[AIMessageChunk] | Yes      | List of message chunks to merge |
+- `chunks`: Required `Sequence[AIMessageChunk]`, list of message chunks to merge.
 
-**Returns**
+**Returns:** Merged `AIMessage`.
 
-| Type      | Description    |
-| --------- | -------------- |
-| AIMessage | Merged message |
-
-**Examples**
+**Example:**
 
 ```python
 chunks = list(model.stream("Hello"))
@@ -321,22 +281,18 @@ merged = merge_ai_message_chunk(chunks)
 Checks if a message contains tool calls.
 
 ```python
-def has_tool_calling(message: AIMessage) -> bool
+def has_tool_calling(
+    message: AIMessage
+) -> bool
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter | Type      | Required | Description      |
-| --------- | --------- | -------- | ---------------- |
-| message   | AIMessage | Yes      | Message to check |
+- `message`: Required `AIMessage`, message to inspect.
 
-**Returns**
+**Returns:** `True` if the message contains tool calls, otherwise `False`.
 
-| Type | Description                                          |
-| ---- | ---------------------------------------------------- |
-| bool | True if message contains tool calls, False otherwise |
-
-**Examples**
+**Example:**
 
 ```python
 if has_tool_calling(response):
@@ -348,7 +304,7 @@ if has_tool_calling(response):
 
 ### parse_tool_calling
 
-Parses tool calling parameters from a message.
+Parses tool call arguments from a message.
 
 ```python
 def parse_tool_calling(
@@ -357,26 +313,20 @@ def parse_tool_calling(
 ) -> Union[Tuple[str, Dict[str, Any]], List[Tuple[str, Dict[str, Any]]]]
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter            | Type      | Required | Description                                               |
-| -------------------- | --------- | -------- | --------------------------------------------------------- |
-| message              | AIMessage | Yes      | Message to parse                                          |
-| first_tool_call_only | bool      | No       | Whether to return only the first tool call, default False |
+- `message`: Required `AIMessage`, message to parse.
+- `first_tool_call_only`: Optional `bool`, whether to return only the first tool call. Default: `False`.
 
-**Returns**
+**Returns:** Tuple of tool name and arguments, or a list of such tuples.
 
-| Type                                                                | Description                                    |
-| ------------------------------------------------------------------- | ---------------------------------------------- |
-| Union[Tuple[str, Dict[str, Any]], List[Tuple[str, Dict[str, Any]]]] | Tool call name and parameters, or list of them |
-
-**Examples**
+**Example:**
 
 ```python
 # Get all tool calls
 tool_calls = parse_tool_calling(response)
 
-# Get only first tool call
+# Get only the first tool call
 name, args = parse_tool_calling(response, first_tool_call_only=True)
 ```
 
@@ -394,21 +344,15 @@ def message_format(
 ) -> str
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter | Type                                    | Required | Description                                   |
-| --------- | --------------------------------------- | -------- | --------------------------------------------- |
-| inputs    | List[Union[BaseMessage, Document, str]] | Yes      | List of items to format                       |
-| separator | str                                     | No       | Separator string, default "-"                 |
-| with_num  | bool                                    | No       | Whether to add number prefixes, default False |
+- `inputs`: Required `List[Union[BaseMessage, Document, str]]`, list of items to format.
+- `separator`: Optional `str`, separator string. Default: `"-"`.
+- `with_num`: Optional `bool`, whether to add numeric prefixes. Default: `False`.
 
-**Returns**
+**Returns:** Formatted string.
 
-| Type | Description      |
-| ---- | ---------------- |
-| str  | Formatted string |
-
-**Examples**
+**Example:**
 
 ```python
 formatted = message_format(messages, separator="\n", with_num=True)
@@ -416,11 +360,11 @@ formatted = message_format(messages, separator="\n", with_num=True)
 
 ---
 
-## Tool Enhancement
+## Tool Augmentation
 
 ### human_in_the_loop
 
-Decorator that adds "human-in-the-loop" approval capability to **synchronous tool functions**.
+Decorator that adds human-in-the-loop review capability to **synchronous tool functions**.
 
 ```python
 def human_in_the_loop(
@@ -430,20 +374,14 @@ def human_in_the_loop(
 ) -> Union[Callable[[Callable], BaseTool], BaseTool]
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter | Type                            | Required | Description                                               |
-| --------- | ------------------------------- | -------- | --------------------------------------------------------- |
-| func      | Optional[Callable]              | No       | Synchronous function to decorate (decorator syntax sugar) |
-| handler   | Optional[HumanInterruptHandler] | No       | Custom interrupt handler function                         |
+- `func`: Optional callable, the synchronous function to decorate (syntactic sugar).
+- `handler`: Optional `HumanInterruptHandler`, custom interrupt handler.
 
-**Returns**
+**Returns:** Decorated `BaseTool` instance.
 
-| Type     | Description             |
-| -------- | ----------------------- |
-| BaseTool | Decorated tool instance |
-
-**Examples**
+**Example:**
 
 ```python
 @human_in_the_loop
@@ -456,7 +394,7 @@ def get_current_time():
 
 ### human_in_the_loop_async
 
-Decorator that adds "human-in-the-loop" approval capability to **asynchronous tool functions**.
+Decorator that adds human-in-the-loop review capability to **asynchronous tool functions**.
 
 ```python
 def human_in_the_loop_async(
@@ -466,20 +404,14 @@ def human_in_the_loop_async(
 ) -> Union[Callable[[Callable], BaseTool], BaseTool]
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter | Type                            | Required | Description                                                |
-| --------- | ------------------------------- | -------- | ---------------------------------------------------------- |
-| func      | Optional[Callable]              | No       | Asynchronous function to decorate (decorator syntax sugar) |
-| handler   | Optional[HumanInterruptHandler] | No       | Custom interrupt handler function                          |
+- `func`: Optional callable, the asynchronous function to decorate (syntactic sugar).
+- `handler`: Optional `HumanInterruptHandler`, custom interrupt handler.
 
-**Returns**
+**Returns:** Decorated async `BaseTool` instance.
 
-| Type     | Description                   |
-| -------- | ----------------------------- |
-| BaseTool | Decorated async tool instance |
-
-**Examples**
+**Example:**
 
 ```python
 @human_in_the_loop_async
@@ -504,21 +436,15 @@ def create_write_plan_tool(
 ) -> BaseTool
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter   | Type          | Required | Description                                   |
-| ----------- | ------------- | -------- | --------------------------------------------- |
-| name        | Optional[str] | No       | Tool name                                     |
-| description | Optional[str] | No       | Tool description                              |
-| message_key | Optional[str] | No       | Key for updating messages, default "messages" |
+- `name`: Optional `str`, tool name.
+- `description`: Optional `str`, tool description.
+- `message_key`: Optional `str`, key used to update messages. Default: `"messages"`.
 
-**Returns**
+**Returns:** Instance of `BaseTool`.
 
-| Type     | Description              |
-| -------- | ------------------------ |
-| BaseTool | Write plan tool instance |
-
-**Examples**
+**Example:**
 
 ```python
 write_plan_tool = create_write_plan_tool()
@@ -538,21 +464,15 @@ def create_update_plan_tool(
 ) -> BaseTool
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter   | Type          | Required | Description                                   |
-| ----------- | ------------- | -------- | --------------------------------------------- |
-| name        | Optional[str] | No       | Tool name                                     |
-| description | Optional[str] | No       | Tool description                              |
-| message_key | Optional[str] | No       | Key for updating messages, default "messages" |
+- `name`: Optional `str`, tool name.
+- `description`: Optional `str`, tool description.
+- `message_key`: Optional `str`, key used to update messages. Default: `"messages"`.
 
-**Returns**
+**Returns:** Instance of `BaseTool`.
 
-| Type     | Description               |
-| -------- | ------------------------- |
-| BaseTool | Update plan tool instance |
-
-**Examples**
+**Example:**
 
 ```python
 update_plan_tool = create_update_plan_tool()
@@ -572,21 +492,15 @@ def create_write_note_tool(
 ) -> BaseTool
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter   | Type          | Required | Description                                   |
-| ----------- | ------------- | -------- | --------------------------------------------- |
-| name        | Optional[str] | No       | Tool name                                     |
-| description | Optional[str] | No       | Tool description                              |
-| message_key | Optional[str] | No       | Key for updating messages, default "messages" |
+- `name`: Optional `str`, tool name.
+- `description`: Optional `str`, tool description.
+- `message_key`: Optional `str`, key used to update messages. Default: `"messages"`.
 
-**Returns**
+**Returns:** Instance of `BaseTool`.
 
-| Type     | Description              |
-| -------- | ------------------------ |
-| BaseTool | Write note tool instance |
-
-**Examples**
+**Example:**
 
 ```python
 write_note_tool = create_write_note_tool()
@@ -596,7 +510,7 @@ write_note_tool = create_write_note_tool()
 
 ### create_ls_tool
 
-Creates a tool for listing existing notes.
+Creates a tool for listing notes.
 
 ```python
 def create_ls_tool(
@@ -605,20 +519,14 @@ def create_ls_tool(
 ) -> BaseTool
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter   | Type          | Required | Description      |
-| ----------- | ------------- | -------- | ---------------- |
-| name        | Optional[str] | No       | Tool name        |
-| description | Optional[str] | No       | Tool description |
+- `name`: Optional `str`, tool name.
+- `description`: Optional `str`, tool description.
 
-**Returns**
+**Returns:** Instance of `BaseTool`.
 
-| Type     | Description              |
-| -------- | ------------------------ |
-| BaseTool | List notes tool instance |
-
-**Examples**
+**Example:**
 
 ```python
 ls_tool = create_ls_tool()
@@ -637,20 +545,14 @@ def create_query_note_tool(
 ) -> BaseTool
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter   | Type          | Required | Description      |
-| ----------- | ------------- | -------- | ---------------- |
-| name        | Optional[str] | No       | Tool name        |
-| description | Optional[str] | No       | Tool description |
+- `name`: Optional `str`, tool name.
+- `description`: Optional `str`, tool description.
 
-**Returns**
+**Returns:** Instance of `BaseTool`.
 
-| Type     | Description              |
-| -------- | ------------------------ |
-| BaseTool | Query note tool instance |
-
-**Examples**
+**Example:**
 
 ```python
 query_note_tool = create_query_note_tool()
@@ -670,21 +572,15 @@ def create_update_note_tool(
 ) -> BaseTool
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter   | Type          | Required | Description                                   |
-| ----------- | ------------- | -------- | --------------------------------------------- |
-| name        | Optional[str] | No       | Tool name                                     |
-| description | Optional[str] | No       | Tool description                              |
-| message_key | Optional[str] | No       | Key for updating messages, default "messages" |
+- `name`: Optional `str`, tool name.
+- `description`: Optional `str`, tool description.
+- `message_key`: Optional `str`, key used to update messages. Default: `"messages"`.
 
-**Returns**
+**Returns:** Instance of `BaseTool`.
 
-| Type     | Description               |
-| -------- | ------------------------- |
-| BaseTool | Update note tool instance |
-
-**Examples**
+**Example:**
 
 ```python
 update_note_tool = create_update_note_tool()
@@ -696,7 +592,7 @@ update_note_tool = create_update_note_tool()
 
 ### sequential_pipeline
 
-Combines multiple subgraphs with the same state in sequential manner.
+Combines multiple subgraphs with the same state schema sequentially.
 
 ```python
 def sequential_pipeline(
@@ -709,24 +605,18 @@ def sequential_pipeline(
 ) -> CompiledStateGraph[StateT, ContextT, InputT, OutputT]
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter      | Type                   | Required | Description                        |
-| -------------- | ---------------------- | -------- | ---------------------------------- |
-| sub_graphs     | list[SubGraph]         | Yes      | List of state graphs to combine    |
-| state_schema   | type[StateT]           | Yes      | State schema for the final graph   |
-| graph_name     | Optional[str]          | No       | Name of the final graph            |
-| context_schema | type[ContextT] \| None | No       | Context schema for the final graph |
-| input_schema   | type[InputT] \| None   | No       | Input schema for the final graph   |
-| output_schema  | type[OutputT] \| None  | No       | Output schema for the final graph  |
+- `sub_graphs`: Required `list[SubGraph]`, list of subgraphs to combine.
+- `state_schema`: Required `type[StateT]`, state schema of the resulting graph.
+- `graph_name`: Optional `str`, name of the resulting graph.
+- `context_schema`: Optional `type[ContextT]`, context schema of the resulting graph.
+- `input_schema`: Optional `type[InputT]`, input schema of the resulting graph.
+- `output_schema`: Optional `type[OutputT]`, output schema of the resulting graph.
 
-**Returns**
+**Returns:** `CompiledStateGraph`.
 
-| Type               | Description                    |
-| ------------------ | ------------------------------ |
-| CompiledStateGraph | Created sequential state graph |
-
-**Examples**
+**Example:**
 
 ```python
 sequential_pipeline(
@@ -743,7 +633,7 @@ sequential_pipeline(
 
 ### parallel_pipeline
 
-Combines multiple subgraphs with the same state in parallel manner.
+Combines multiple subgraphs with the same state schema in parallel.
 
 ```python
 def parallel_pipeline(
@@ -758,26 +648,20 @@ def parallel_pipeline(
 ) -> CompiledStateGraph[StateT, ContextT, InputT, OutputT]
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter            | Type                                     | Required | Description                                                               |
-| -------------------- | ---------------------------------------- | -------- | ------------------------------------------------------------------------- |
-| sub_graphs           | list[SubGraph]                           | Yes      | List of state graphs to combine                                           |
-| state_schema         | type[StateT]                             | Yes      | State schema for the final graph                                          |
-| graph_name           | Optional[str]                            | No       | Name of the final graph                                                   |
-| parallel_entry_graph | Optional[str]                            | No       | Parallel entry graph, default "**start**"                                 |
-| branches_fn          | Optional[Callable[[StateT], list[Send]]] | No       | Parallel branch function, returns Send list to control parallel execution |
-| context_schema       | type[ContextT] \| None                   | No       | Context schema for the final graph                                        |
-| input_schema         | type[InputT] \| None                     | No       | Input schema for the final graph                                          |
-| output_schema        | type[OutputT] \| None                    | No       | Output schema for the final graph                                         |
+- `sub_graphs`: Required `list[SubGraph]`, list of subgraphs to combine.
+- `state_schema`: Required `type[StateT]`, state schema of the resulting graph.
+- `graph_name`: Optional `str`, name of the resulting graph.
+- `parallel_entry_graph`: Optional `str`, entry point for parallel execution. Default: `"__start__"`.
+- `branches_fn`: Optional `Callable`, function returning a list of `Send` objects to control parallel execution.
+- `context_schema`: Optional `type[ContextT]`, context schema of the resulting graph.
+- `input_schema`: Optional `type[InputT]`, input schema of the resulting graph.
+- `output_schema`: Optional `type[OutputT]`, output schema of the resulting graph.
 
-**Returns**
+**Returns:** `CompiledStateGraph`.
 
-| Type               | Description                  |
-| ------------------ | ---------------------------- |
-| CompiledStateGraph | Created parallel state graph |
-
-**Examples**
+**Example:**
 
 ```python
 parallel_pipeline(
@@ -794,11 +678,11 @@ parallel_pipeline(
 
 ---
 
-## Prebuilt Agent
+## Prebuilt Agents
 
 ### create_agent
 
-Prebuilt agent function that provides exactly the same functionality as the official langgraph `create_react_agent`, but with expanded model selection options.
+Prebuilt agent function offering the same functionality as LangGraph’s official `create_react_agent`, but with extended model selection support.
 
 ```python
 def create_agent(
@@ -824,36 +708,30 @@ def create_agent(
 ) -> CompiledStateGraph
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter         | Type                                                                            | Required | Description                                                                                                       |
-| ----------------- | ------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
-| model             | str                                                                             | Yes      | Model identifier string that can be loaded by `load_chat_model`. Can be specified in "provider:model-name" format |
-| tools             | Union[Sequence[Union[BaseTool, Callable, dict[str, Any]]], ToolNode]            | Yes      | List of tools available to the agent                                                                              |
-| prompt            | Optional[Prompt]                                                                | No       | Custom prompt for the agent                                                                                       |
-| response_format   | Optional[Union[StructuredResponseSchema, tuple[str, StructuredResponseSchema]]] | No       | Response format specification                                                                                     |
-| pre_model_hook    | Optional[RunnableLike]                                                          | No       | Runnable object to execute before model inference                                                                 |
-| post_model_hook   | Optional[RunnableLike]                                                          | No       | Runnable object to execute after model inference                                                                  |
-| state_schema      | Optional[StateSchemaType]                                                       | No       | State schema for the agent                                                                                        |
-| context_schema    | Optional[Type[Any]]                                                             | No       | Context schema for the agent                                                                                      |
-| checkpointer      | Optional[Checkpointer]                                                          | No       | Checkpoint for state persistence                                                                                  |
-| store             | Optional[BaseStore]                                                             | No       | Storage for data persistence                                                                                      |
-| interrupt_before  | Optional[list[str]]                                                             | No       | Nodes to interrupt before execution                                                                               |
-| interrupt_after   | Optional[list[str]]                                                             | No       | Nodes to interrupt after execution                                                                                |
-| debug             | bool                                                                            | No       | Enable debug mode, defaults to False                                                                              |
-| version           | Literal["v1", "v2"]                                                             | No       | Agent version, defaults to "v2"                                                                                   |
-| name              | Optional[str]                                                                   | No       | Agent name                                                                                                        |
-| deprecated_kwargs | Any                                                                             | No       | Deprecated parameters for backward compatibility                                                                  |
+- `model`: Required `str`, model identifier loadable via `load_chat_model`. Can be in `"provider:model-name"` format.
+- `tools`: Required `Sequence[BaseTool | Callable | dict]` or `ToolNode`, list of tools available to the agent.
+- `prompt`: Optional `Prompt`, custom prompt for the agent.
+- `response_format`: Optional `StructuredResponseSchema` or tuple, defines structured output format.
+- `pre_model_hook`: Optional `RunnableLike`, runnable executed before model inference.
+- `post_model_hook`: Optional `RunnableLike`, runnable executed after model inference.
+- `state_schema`: Optional `StateSchemaType`, agent state schema.
+- `context_schema`: Optional `Type[Any]`, agent context schema.
+- `checkpointer`: Optional `Checkpointer`, for state persistence.
+- `store`: Optional `BaseStore`, for data persistence.
+- `interrupt_before`: Optional `list[str]`, nodes to interrupt before execution.
+- `interrupt_after`: Optional `list[str]`, nodes to interrupt after execution.
+- `debug`: Optional `bool`, enable debug mode. Default: `False`.
+- `version`: Optional `Literal["v1", "v2"]`, agent version. Default: `"v2"`.
+- `name`: Optional `str`, agent name.
+- `deprecated_kwargs`: Optional, for backward compatibility.
 
-**Returns**
+**Returns:** `CompiledStateGraph`.
 
-| Type               | Description             |
-| ------------------ | ----------------------- |
-| CompiledStateGraph | The created agent graph |
+**Note:** This function provides identical functionality to LangGraph’s `create_react_agent`, but extends model selection flexibility via the `load_chat_model` system.
 
-**Note:** This function provides exactly the same functionality as the official langgraph `create_react_agent`, but with expanded model selection. The main difference is that the `model` parameter must be a string that can be loaded by the `load_chat_model` function, allowing for more flexible model selection using registered model providers.
-
-**Example**
+**Example:**
 
 ```python
 agent = create_agent(model="moonshot:kimi-k2-0905-preview", tools=[get_current_time])
@@ -875,14 +753,12 @@ class InterruptParams(TypedDict):
     config: RunnableConfig
 ```
 
-**Fields**
+**Fields:**
 
-| Field          | Type           | Description           |
-| -------------- | -------------- | --------------------- |
-| tool_call_name | str            | Tool call name        |
-| tool_call_args | Dict[str, Any] | Tool call arguments   |
-| tool           | BaseTool       | Tool instance         |
-| config         | RunnableConfig | Runtime configuration |
+- `tool_call_name`: `str`, name of the tool call.
+- `tool_call_args`: `Dict[str, Any]`, arguments of the tool call.
+- `tool`: `BaseTool`, tool instance.
+- `config`: `RunnableConfig`, runtime configuration.
 
 ---
 
@@ -898,7 +774,7 @@ HumanInterruptHandler = Callable[[InterruptParams], Any]
 
 ### ChatModelProvider
 
-Chat model provider configuration type.
+Configuration type for chat model providers.
 
 ```python
 class ChatModelProvider(TypedDict):
@@ -907,19 +783,17 @@ class ChatModelProvider(TypedDict):
     base_url: NotRequired[str]
 ```
 
-**Fields**
+**Fields:**
 
-| Field      | Type                            | Required | Description                |
-| ---------- | ------------------------------- | -------- | -------------------------- |
-| provider   | str                             | Yes      | Provider name              |
-| chat_model | Union[type[BaseChatModel], str] | Yes      | Chat model class or string |
-| base_url   | NotRequired[str]                | No       | Base URL                   |
+- `provider`: Required `str`, provider name.
+- `chat_model`: Required `BaseChatModel` class or `str`.
+- `base_url`: Optional `str`, base URL.
 
 ---
 
 ### EmbeddingProvider
 
-Embedding model provider configuration type.
+Configuration type for embedding model providers.
 
 ```python
 class EmbeddingProvider(TypedDict):
@@ -928,19 +802,17 @@ class EmbeddingProvider(TypedDict):
     base_url: NotRequired[str]
 ```
 
-**Fields**
+**Fields:**
 
-| Field            | Type                         | Required | Description                      |
-| ---------------- | ---------------------------- | -------- | -------------------------------- |
-| provider         | str                          | Yes      | Provider name                    |
-| embeddings_model | Union[type[Embeddings], str] | Yes      | Embeddings model class or string |
-| base_url         | NotRequired[str]             | No       | Base URL                         |
+- `provider`: Required `str`, provider name.
+- `embeddings_model`: Required `Embeddings` class or `str`.
+- `base_url`: Optional `str`, base URL.
 
 ---
 
 ### PlanStateMixin
 
-Plan state mixin class.
+Mixin class for plan-related state.
 
 ```python
 class Plan(TypedDict):
@@ -951,27 +823,23 @@ class PlanStateMixin(TypedDict):
     plan: list[Plan]
 ```
 
-**Fields**
+**Fields:**
 
-| Field        | Type                                      | Description   |
-| ------------ | ----------------------------------------- | ------------- |
-| plan         | list[Plan]                                | List of plans |
-| Plan.content | str                                       | Plan content  |
-| Plan.status  | Literal["pending", "in_progress", "done"] | Plan status   |
+- `plan`: `list[Plan]`, list of plans.
+- `Plan.content`: `str`, plan content.
+- `Plan.status`: `Literal["pending", "in_progress", "done"]`, plan status.
 
 ---
 
 ### NoteStateMixin
 
-Note state mixin class.
+Mixin class for note-related state.
 
 ```python
 class NoteStateMixin(TypedDict):
     note: Annotated[dict[str, str], note_reducer]
 ```
 
-**Fields**
+**Fields:**
 
-| Field | Type                                    | Description     |
-| ----- | --------------------------------------- | --------------- |
-| note  | Annotated[dict[str, str], note_reducer] | Note dictionary |
+- `note`: Annotated `dict[str, str]`, dictionary of notes with string keys and values.

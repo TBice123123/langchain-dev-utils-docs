@@ -29,8 +29,7 @@ While langchain's official `init_chat_model` and `init_embeddings` functions are
 ::: tip 📌
 The `chat_model` parameter supports specifying the model provider via a string, which should be a provider name supported by langchain's `init_chat_model` (e.g., `openai`).  
 This is because many large models offer APIs compatible with other vendors' styles (e.g., OpenAI). If your model lacks a dedicated or suitable integration library but supports API compatibility with other vendors, consider passing the corresponding provider string.  
-When using this approach, you must provide the `base_url` parameter or set the provider's `API_BASE` environment variable to specify the custom model's API endpoint.  
-If your model is an inference model whose output format is consistent with `deepseek`, you may consider passing `deepseek` here.
+When using this approach, you must provide the `base_url` parameter or set the provider's `API_BASE` environment variable to specify the custom model's API endpoint.
 
 This functionality is implemented based on the concept described in: [Configuring the BASE_URL Parameter](https://docs.langchain.com/oss/python/langchain/models#base-url-or-proxy)
 :::
@@ -41,6 +40,7 @@ This functionality is implemented based on the concept described in: [Configurin
 
 - `model`: The model name, in the format `model_name` or `provider_name:model_name`.
 - `model_provider`: Optional model provider name. If not provided, the `model` parameter must be in the format `provider_name:model_name`.
+- `enable_reasoning_parse`: Whether to enable reasoning content output. Defaults to `False`, with specific parameter meanings and setting methods described below.
 - `kwargs`: Optional additional model parameters, such as `temperature`, `api_key`, `stop`, etc.
 
 ### Usage Examples
@@ -85,6 +85,28 @@ print(model.invoke("Hello"))
 
 model = load_chat_model(model="openrouter:moonshotai/kimi-k2-0905")
 print(model.invoke("Hello"))
+```
+
+### `enable_reasoning_parse` Parameter Description
+
+The `enable_reasoning_parse` parameter defaults to `False`. When set to `True`, it requires the `chat_model` parameter to be `openai` to take effect. After taking effect, the system will automatically switch the provider to `deepseek` to output the reasoning content (`reasoning_content`).
+
+**Important Note**: Please ensure that the model you are using is a reasoning model and its reasoning content output format is the same as DeepSeek's output format (at the same level as `content`), otherwise the reasoning content will still not be output.
+
+#### Reference Code:
+
+```python
+from langchain_dev_utils import load_chat_model
+model = load_chat_model(
+        "zai:glm-4.6",
+        enable_reasoning_parse=True,
+        extra_body={
+            "thinking": {
+                "type": "enabled",
+            },
+        },
+    )
+response = model.invoke("hello!")
 ```
 
 ### Important Notes

@@ -37,7 +37,6 @@ class State(TypedDict):
     a: Annotated[int, replace]
 
 def add(state: State):
-    print(state)
     return {"a": state["a"] + 1}
 
 def make_graph(name: str):
