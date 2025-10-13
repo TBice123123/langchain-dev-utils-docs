@@ -26,7 +26,7 @@ import datetime
 # Register a model provider
 register_model_provider(
     provider_name="moonshot",
-    chat_model="openai",
+    chat_model="openai-compatible",
     base_url="https://api.moonshot.cn/v1",
 )
 

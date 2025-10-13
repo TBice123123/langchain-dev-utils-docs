@@ -24,7 +24,7 @@ def register_model_provider(
 
 ```python
 register_model_provider("dashscope", ChatQwen)
-register_model_provider("openrouter", "openai", base_url="https://openrouter.ai/api/v1")
+register_model_provider("openrouter", "openai-compatible", base_url="https://openrouter.ai/api/v1")
 ```
 
 ---
@@ -48,7 +48,7 @@ def batch_register_model_provider(
 ```python
 batch_register_model_provider([
     {"provider": "dashscope", "chat_model": ChatQwen},
-    {"provider": "openrouter", "chat_model": "openai", "base_url": "https://openrouter.ai/api/v1"},
+    {"provider": "openrouter", "chat_model": "openai-compatible", "base_url": "https://openrouter.ai/api/v1"},
 ])
 ```
 
@@ -62,7 +62,6 @@ batch_register_model_provider([
 def load_chat_model(
     model: str,
     model_provider: Optional[str] = None,
-    enable_reasoning_parse: bool = False,
     **kwargs
 ) -> BaseChatModel
 ```
@@ -71,7 +70,6 @@ def load_chat_model(
 
 - `model`：字符串类型，必填，模型名称，格式为 `model_name` 或 `provider_name:model_name`
 - `model_provider`：可选字符串类型，模型提供者名称
-- `enable_reasoning_parse`：布尔类型，可选，是否启用思维链（`reasoning_content`）输出，默认 False
 - `**kwargs`：任意类型，可选，额外的模型参数
 
 **返回值：** BaseChatModel 类型，加载的聊天模型实例
@@ -105,7 +103,7 @@ def register_embeddings_provider(
 **示例：**
 
 ```python
-register_embeddings_provider("dashscope", "openai", base_url="https://dashscope.aliyuncs.com/compatible-mode/v1")
+register_embeddings_provider("dashscope", "openai-compatible", base_url="https://dashscope.aliyuncs.com/compatible-mode/v1")
 ```
 
 ---
@@ -128,7 +126,7 @@ def batch_register_embeddings_provider(
 
 ```python
 batch_register_embeddings_provider([
-    {"provider": "dashscope", "embeddings_model": "openai", "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"},
+    {"provider": "dashscope", "embeddings_model": "openai-compatible", "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"},
     {"provider": "siliconflow", "embeddings_model": SiliconFlowEmbeddings},
 ])
 ```

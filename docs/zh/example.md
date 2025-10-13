@@ -94,7 +94,7 @@ langchain-dev-utils-example/
 
 - `deepseek`：通过 `langchain-deepseek` 集成(其为官方`init_chat_model`支持的模型提供商，无需再次注册)
 - `qwen`：通过 `langchain-qwq` 集成 (需要注册，chat_model 传入 ChatQwen)
-- `kimi` 和 `glm`：通过 `langchain-openai` 集成 (需要注册，但没有适合的集成库，但提供商均支持 OpenAI 风格的 API，需要使用`langchain-openai`进行接入，chat_model 传入`openai`)
+- `kimi` 和 `glm`：通过 采用`OpenAI Compatible`风格进行集成 (需要注册，但没有适合的集成库，但提供商均支持 OpenAI 风格的 API，chat_model 传入`openai-compatible`)
 
 在 `src/__init__.py` 中注册模型提供商：
 
@@ -107,12 +107,12 @@ batch_register_model_provider(
         {"provider": "dashscope", "chat_model": ChatQwen},
         {
             "provider": "zai",
-            "chat_model": "openai",
+            "chat_model": "openai-compatible",
             "base_url": "https://open.bigmodel.cn/api/paas/v4/",
         },
         {
             "provider": "moonshot",
-            "chat_model": "openai",
+            "chat_model": "openai-compatible",
             "base_url": "https://api.moonshot.cn/v1",
         },
     ]
@@ -356,6 +356,25 @@ async def tavily_search(query: Annotated[str, "要搜索的内容"]):
     tavily_search = TavilySearch(max_results=5)
     result = await tavily_search.ainvoke({"query": query})
     return result
+```
+
+此外还有一个用于写入笔记的工具
+
+```python
+from langchain_dev_utils import create_write_note_tool
+
+write_note = create_write_note_tool(
+    name="write_note",
+    description="""用于写入笔记。
+
+    参数：
+    file_name: 笔记名称
+    content: 笔记内容
+
+    返回：
+    str, 写入的笔记内容
+    """,
+)
 ```
 
 **代码位置：`src/tools.py`**
