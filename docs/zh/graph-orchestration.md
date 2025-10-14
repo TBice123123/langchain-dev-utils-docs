@@ -85,7 +85,6 @@ graph = graph.compile()
 
 - `sub_graphs`: 要组合的状态图列表
 - `state_schema`: 最终生成图的 State Schema
-- `parallel_entry_graph`: 入口状态图（默认为 `__start__`，指定后该图不参与并行）
 - `branches_fn`: 并行分支函数，返回 Send 对象列表控制并行执行
 - `graph_name`: 最终生成图的名称（可选）
 - `context_schema`: 最终生成图的 Context Schema（可选）
@@ -130,24 +129,6 @@ graph = parallel_pipeline(
 最终生成的图结构如下：
 ![并行管道示意图](/img/parallel.png)
 
-#### 指定入口图的并行示例
-
-```python
-# 指定 graph1 为入口图，其余图并行执行
-graph = parallel_pipeline(
-    sub_graphs=[
-        make_graph("graph1"),
-        make_graph("graph2"),
-        make_graph("graph3"),
-    ],
-    state_schema=State,
-    parallel_entry_graph="graph1",
-)
-```
-
-最终生成的图结构如下：
-![带入口的并行管道示意图](/img/parallel_entry.png)
-
 #### 使用分支函数控制并行执行
 
 分支函数需要返回`Send`列表。具体参考[Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send)
@@ -173,9 +154,8 @@ graph = parallel_pipeline(
 
 ### 重要注意事项
 
-- 不传入 `branches_fn` 参数时，所有子图都会并行执行（入口图除外）
+- 不传入 `branches_fn` 参数时，所有子图都会并行执行
 - 传入 `branches_fn` 参数时，执行哪些子图由该函数的返回值决定
-- 如果同时设置了 `parallel_entry_graph` 和 `branches_fn`，请确保分支函数不包含入口节点，避免死循环
 
 ## 下一步
 

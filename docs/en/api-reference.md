@@ -9,16 +9,16 @@ Register a provider for chat models.
 ```python
 def register_model_provider(
     provider_name: str,
-    chat_model: Union[Type[BaseChatModel], str],
+    chat_model: ChatModelType,
     base_url: Optional[str] = None
 ) -> None
 ```
 
 **Parameters:**
 
-- `provider_name`: String, required, custom provider name
-- `chat_model`: ChatModel class or supported provider string, required
-- `base_url`: Optional string, provider's BaseURL
+- `provider_name`: string, required, custom provider name
+- `chat_model`: ChatModel class or supported provider string type, required
+- `base_url`: optional string, provider's BaseURL
 
 **Example:**
 
@@ -41,7 +41,7 @@ def batch_register_model_provider(
 
 **Parameters:**
 
-- `providers`: List of ChatModelProvider, required, list of provider configurations
+- `providers`: list of ChatModelProvider, required, list of provider configurations
 
 **Example:**
 
@@ -56,7 +56,7 @@ batch_register_model_provider([
 
 ### load_chat_model
 
-Load a chat model from a registered provider.
+Load a chat model from registered providers.
 
 ```python
 def load_chat_model(
@@ -68,9 +68,9 @@ def load_chat_model(
 
 **Parameters:**
 
-- `model`: String, required, model name in the format `model_name` or `provider_name:model_name`
-- `model_provider`: Optional string, model provider name
-- `**kwargs`: Any type, optional, additional model parameters
+- `model`: string, required, model name, format as `model_name` or `provider_name:model_name`
+- `model_provider`: optional string, model provider name
+- `**kwargs`: any type, optional, additional model parameters
 
 **Returns:** BaseChatModel type, loaded chat model instance
 
@@ -89,16 +89,16 @@ Register a provider for embedding models.
 ```python
 def register_embeddings_provider(
     provider_name: str,
-    embeddings_model: Union[Type[Embeddings], str],
+    embeddings_model: EmbeddingsType,
     base_url: Optional[str] = None
 ) -> None
 ```
 
 **Parameters:**
 
-- `provider_name`: String, required, custom provider name
-- `embeddings_model`: Embeddings model class or supported provider string, required
-- `base_url`: Optional string, provider's BaseURL
+- `provider_name`: string, required, custom provider name
+- `embeddings_model`: embedding model class or supported provider string type, required
+- `base_url`: optional string, provider's BaseURL
 
 **Example:**
 
@@ -120,7 +120,7 @@ def batch_register_embeddings_provider(
 
 **Parameters:**
 
-- `providers`: List of EmbeddingProvider, required, list of provider configurations
+- `providers`: list of EmbeddingProvider, required, list of provider configurations
 
 **Example:**
 
@@ -135,7 +135,7 @@ batch_register_embeddings_provider([
 
 ### load_embeddings
 
-Load an embedding model from a registered provider.
+Load an embedding model from registered providers.
 
 ```python
 def load_embeddings(
@@ -147,9 +147,9 @@ def load_embeddings(
 
 **Parameters:**
 
-- `model`: String, required, model name in the format `model_name` or `provider_name:model_name`
-- `provider`: Optional string, model provider name
-- `**kwargs`: Any type, optional, additional model parameters
+- `model`: string, required, model name, format as `model_name` or `provider_name:model_name`
+- `provider`: optional string, model provider name
+- `**kwargs`: any type, optional, additional model parameters
 
 **Returns:** Embeddings type, loaded embedding model instance
 
@@ -165,7 +165,7 @@ embeddings = load_embeddings("dashscope:text-embedding-v4")
 
 ### convert_reasoning_content_for_ai_message
 
-Merge reasoning content from AIMessage into the content field.
+Merge reasoning content in AIMessage into the content field.
 
 ```python
 def convert_reasoning_content_for_ai_message(
@@ -177,7 +177,7 @@ def convert_reasoning_content_for_ai_message(
 **Parameters:**
 
 - `model_response`: AIMessage type, required, AI message containing reasoning content
-- `think_tag`: Tuple of strings, optional, start and end tags for reasoning content, defaults to `("<think>", "</think>")`
+- `think_tag`: tuple of strings, optional, start and end tags for reasoning content, default `("<think>", "</think>")`
 
 **Returns:** AIMessage type, message with merged reasoning content
 
@@ -204,10 +204,10 @@ def convert_reasoning_content_for_chunk_iterator(
 
 **Parameters:**
 
-- `model_response`: Iterator of BaseMessageChunk, required, iterator of message chunks
-- `think_tag`: Tuple of strings, optional, start and end tags for reasoning content, defaults to `("<think>", "</think>")`
+- `model_response`: BaseMessageChunk iterator type, required, iterator of message chunks
+- `think_tag`: tuple of strings, optional, start and end tags for reasoning content, default `("<think>", "</think>")`
 
-**Returns:** Iterator of BaseMessageChunk type, processed message chunk iterator
+**Returns:** BaseMessageChunk iterator type, processed message chunk iterator
 
 **Example:**
 
@@ -233,10 +233,10 @@ async def aconvert_reasoning_content_for_chunk_iterator(
 
 **Parameters:**
 
-- `model_response`: AsyncIterator of BaseMessageChunk, required, async iterator of message chunks
-- `think_tag`: Tuple of strings, optional, start and end tags for reasoning content, defaults to `("<think>", "</think>")`
+- `model_response`: BaseMessageChunk async iterator type, required, async iterator of message chunks
+- `think_tag`: tuple of strings, optional, start and end tags for reasoning content, default `("<think>", "</think>")`
 
-**Returns:** AsyncIterator of BaseMessageChunk type, processed async message chunk iterator
+**Returns:** BaseMessageChunk async iterator type, processed async message chunk iterator
 
 **Example:**
 
@@ -261,7 +261,7 @@ def merge_ai_message_chunk(
 
 **Parameters:**
 
-- `chunks`: Sequence of AIMessageChunk, required, list of message chunks to merge
+- `chunks`: sequence of AIMessageChunk, required, list of message chunks to merge
 
 **Returns:** AIMessage type, merged message
 
@@ -288,7 +288,7 @@ def has_tool_calling(
 
 - `message`: AIMessage type, required, message to check
 
-**Returns:** Boolean type, returns True if the message contains tool calls, otherwise False
+**Returns:** boolean, returns True if the message contains tool calls, otherwise False
 
 **Example:**
 
@@ -314,9 +314,9 @@ def parse_tool_calling(
 **Parameters:**
 
 - `message`: AIMessage type, required, message to parse
-- `first_tool_call_only`: Boolean type, optional, whether to return only the first tool call, defaults to False
+- `first_tool_call_only`: boolean, optional, whether to return only the first tool call, default False
 
-**Returns:** Tuple of tool call name and parameters, or list of tuples of tool call names and parameters
+**Returns:** tuple of tool call name and parameters, or list of tuples of tool call names and parameters
 
 **Example:**
 
@@ -344,11 +344,11 @@ def message_format(
 
 **Parameters:**
 
-- `inputs`: List of BaseMessage, Document, or string, required, list of items to format
-- `separator`: String type, optional, separator string, defaults to "-"
-- `with_num`: Boolean type, optional, whether to add numeric prefixes, defaults to False
+- `inputs`: list of BaseMessage, Document, or string, required, list of items to format
+- `separator`: string, optional, separator string, default "-"
+- `with_num`: boolean, optional, whether to add numeric prefixes, default False
 
-**Returns:** String type, formatted string
+**Returns:** string, formatted string
 
 **Example:**
 
@@ -362,7 +362,7 @@ formatted = message_format(messages, separator="\n", with_num=True)
 
 ### human_in_the_loop
 
-Decorator to add "human-in-the-loop" manual review capability for **synchronous tool functions**.
+Decorator to add "human-in-the-loop" manual review capability to **synchronous tool functions**.
 
 ```python
 def human_in_the_loop(
@@ -374,8 +374,8 @@ def human_in_the_loop(
 
 **Parameters:**
 
-- `func`: Optional callable type, synchronous function to decorate (decorator syntax sugar)
-- `handler`: Optional HumanInterruptHandler type, custom interrupt handler function
+- `func`: optional callable, synchronous function to decorate (decorator syntax sugar)
+- `handler`: optional HumanInterruptHandler type, custom interrupt handler function
 
 **Returns:** BaseTool type, decorated tool instance
 
@@ -392,7 +392,7 @@ def get_current_time():
 
 ### human_in_the_loop_async
 
-Decorator to add "human-in-the-loop" manual review capability for **asynchronous tool functions**.
+Decorator to add "human-in-the-loop" manual review capability to **asynchronous tool functions**.
 
 ```python
 def human_in_the_loop_async(
@@ -404,8 +404,8 @@ def human_in_the_loop_async(
 
 **Parameters:**
 
-- `func`: Optional callable type, asynchronous function to decorate (decorator syntax sugar)
-- `handler`: Optional HumanInterruptHandler type, custom interrupt handler function
+- `func`: optional callable, asynchronous function to decorate (decorator syntax sugar)
+- `handler`: optional HumanInterruptHandler type, custom interrupt handler function
 
 **Returns:** BaseTool type, decorated asynchronous tool instance
 
@@ -436,9 +436,9 @@ def create_write_plan_tool(
 
 **Parameters:**
 
-- `name`: Optional string, tool name
-- `description`: Optional string, tool description
-- `message_key`: Optional string, key for updating messages, defaults to "messages"
+- `name`: optional string, tool name
+- `description`: optional string, tool description
+- `message_key`: optional string, key for updating messages, default "messages"
 
 **Returns:** BaseTool type, write plan tool instance
 
@@ -464,9 +464,9 @@ def create_update_plan_tool(
 
 **Parameters:**
 
-- `name`: Optional string, tool name
-- `description`: Optional string, tool description
-- `message_key`: Optional string, key for updating messages, defaults to "messages"
+- `name`: optional string, tool name
+- `description`: optional string, tool description
+- `message_key`: optional string, key for updating messages, default "messages"
 
 **Returns:** BaseTool type, update plan tool instance
 
@@ -492,9 +492,9 @@ def create_write_note_tool(
 
 **Parameters:**
 
-- `name`: Optional string, tool name
-- `description`: Optional string, tool description
-- `message_key`: Optional string, key for updating messages, defaults to "messages"
+- `name`: optional string, tool name
+- `description`: optional string, tool description
+- `message_key`: optional string, key for updating messages, default "messages"
 
 **Returns:** BaseTool type, write note tool instance
 
@@ -519,8 +519,8 @@ def create_ls_tool(
 
 **Parameters:**
 
-- `name`: Optional string, tool name
-- `description`: Optional string, tool description
+- `name`: optional string, tool name
+- `description`: optional string, tool description
 
 **Returns:** BaseTool type, list notes tool instance
 
@@ -545,8 +545,8 @@ def create_query_note_tool(
 
 **Parameters:**
 
-- `name`: Optional string, tool name
-- `description`: Optional string, tool description
+- `name`: optional string, tool name
+- `description`: optional string, tool description
 
 **Returns:** BaseTool type, query note tool instance
 
@@ -572,9 +572,9 @@ def create_update_note_tool(
 
 **Parameters:**
 
-- `name`: Optional string, tool name
-- `description`: Optional string, tool description
-- `message_key`: Optional string, key for updating messages, defaults to "messages"
+- `name`: optional string, tool name
+- `description`: optional string, tool description
+- `message_key`: optional string, key for updating messages, default "messages"
 
 **Returns:** BaseTool type, update note tool instance
 
@@ -605,9 +605,9 @@ def sequential_pipeline(
 
 **Parameters:**
 
-- `sub_graphs`: List of SubGraph, required, list of state graphs to combine
+- `sub_graphs`: list of SubGraph, required, list of state graphs to combine
 - `state_schema`: StateT type, required, State Schema of the final generated graph
-- `graph_name`: Optional string, name of the final generated graph
+- `graph_name`: optional string, name of the final generated graph
 - `context_schema`: ContextT type or None, optional, Context Schema of the final generated graph
 - `input_schema`: InputT type or None, optional, input Schema of the final generated graph
 - `output_schema`: OutputT type or None, optional, output Schema of the final generated graph
@@ -638,7 +638,6 @@ def parallel_pipeline(
     sub_graphs: list[SubGraph],
     state_schema: type[StateT],
     graph_name: Optional[str] = None,
-    parallel_entry_graph: Optional[str] = None,
     branches_fn: Optional[Callable[[StateT], list[Send]]] = None,
     context_schema: type[ContextT] | None = None,
     input_schema: type[InputT] | None = None,
@@ -648,11 +647,10 @@ def parallel_pipeline(
 
 **Parameters:**
 
-- `sub_graphs`: List of SubGraph, required, list of state graphs to combine
+- `sub_graphs`: list of SubGraph, required, list of state graphs to combine
 - `state_schema`: StateT type, required, State Schema of the final generated graph
-- `graph_name`: Optional string, name of the final generated graph
-- `parallel_entry_graph`: Optional string, parallel entry graph, defaults to "**start**"
-- `branches_fn`: Optional callable type, parallel branch function, returns a list of Send to control parallel execution
+- `graph_name`: optional string, name of the final generated graph
+- `branches_fn`: optional callable, parallel branch function, returns list of Send to control parallel execution
 - `context_schema`: ContextT type or None, optional, Context Schema of the final generated graph
 - `input_schema`: InputT type or None, optional, input Schema of the final generated graph
 - `output_schema`: OutputT type or None, optional, output Schema of the final generated graph
@@ -666,7 +664,6 @@ parallel_pipeline(
     sub_graphs=[graph1, graph2],
     state_schema=State,
     graph_name="parallel_pipeline",
-    parallel_entry_graph="__start__",
     branches_fn=lambda state: [Send("graph1", state), Send("graph2", state)],
     context_schema=Context,
     input_schema=Input,
@@ -708,22 +705,22 @@ def create_agent(
 
 **Parameters:**
 
-- `model`: String, required, model identifier string that can be loaded by `load_chat_model`. Can be specified in "provider:model-name" format
-- `tools`: Sequence of BaseTool, Callable, or dict, or ToolNode type, required, list of tools available to the agent
-- `prompt`: Optional Prompt type, custom prompt for the agent
-- `response_format`: Optional StructuredResponseSchema or tuple of string and StructuredResponseSchema type, response format specification
-- `pre_model_hook`: Optional RunnableLike type, runnable object executed before model inference
-- `post_model_hook`: Optional RunnableLike type, runnable object executed after model inference
-- `state_schema`: Optional StateSchemaType type, state schema of the agent
-- `context_schema`: Optional Any type, context schema of the agent
-- `checkpointer`: Optional Checkpointer type, checkpoint for state persistence
-- `store`: Optional BaseStore type, storage for data persistence
-- `interrupt_before`: Optional list of strings, nodes to interrupt before execution
-- `interrupt_after`: Optional list of strings, nodes to interrupt after execution
-- `debug`: Boolean type, optional, enable debug mode, defaults to False
-- `version`: Literal "v1" or "v2" type, optional, agent version, defaults to "v2"
-- `name`: Optional string, agent name
-- `deprecated_kwargs`: Any type, optional, deprecated parameters for backward compatibility
+- `model`: string, required, model identifier string that can be loaded by `load_chat_model`. Can be specified in "provider:model-name" format
+- `tools`: sequence of BaseTool, Callable, or dict, or ToolNode type, required, list of tools available to the agent
+- `prompt`: optional Prompt type, custom prompt for the agent
+- `response_format`: optional StructuredResponseSchema or tuple of string and StructuredResponseSchema type, response format specification
+- `pre_model_hook`: optional RunnableLike type, runnable to execute before model inference
+- `post_model_hook`: optional RunnableLike type, runnable to execute after model inference
+- `state_schema`: optional StateSchemaType type, state schema for the agent
+- `context_schema`: optional any type, context schema for the agent
+- `checkpointer`: optional Checkpointer type, checkpoint for state persistence
+- `store`: optional BaseStore type, storage for data persistence
+- `interrupt_before`: optional list of strings, nodes to interrupt before execution
+- `interrupt_after`: optional list of strings, nodes to interrupt after execution
+- `debug`: boolean, optional, enable debug mode, default False
+- `version`: literal "v1" or "v2", optional, agent version, default "v2"
+- `name`: optional string, agent name
+- `deprecated_kwargs`: any type, optional, deprecated parameters for backward compatibility
 
 **Returns:** CompiledStateGraph type, created agent graph
 
@@ -739,6 +736,64 @@ agent = create_agent(model="moonshot:kimi-k2-0905-preview", tools=[get_current_t
 
 ## Type Definitions
 
+### ChatModelType
+
+Supported types for the `chat_model` parameter when registering model providers.
+
+```python
+ChatModelType = Union[type[BaseChatModel], Literal["openai-compatible"]]
+```
+
+---
+
+### EmbeddingsType
+
+Supported types for the `embeddings_model` parameter when registering embedding providers.
+
+```python
+EmbeddingsType = Union[type[Embeddings], Literal["openai-compatible"]]
+```
+
+---
+
+### ChatModelProvider
+
+Chat model provider configuration type.
+
+```python
+class ChatModelProvider(TypedDict):
+    provider: str
+    chat_model: ChatModelType
+    base_url: NotRequired[str]
+```
+
+**Fields:**
+
+- `provider`: string, required, provider name
+- `chat_model`: BaseChatModel type or string, required, chat model class or string
+- `base_url`: not required string, base URL
+
+---
+
+### EmbeddingProvider
+
+Embedding model provider configuration type.
+
+```python
+class EmbeddingProvider(TypedDict):
+    provider: str
+    embeddings_model: EmbeddingsType
+    base_url: NotRequired[str]
+```
+
+**Fields:**
+
+- `provider`: string, required, provider name
+- `embeddings_model`: Embeddings type or string, required, embedding model class or string
+- `base_url`: not required string, base URL
+
+---
+
 ### InterruptParams
 
 Parameter type passed to interrupt handler functions.
@@ -753,10 +808,10 @@ class InterruptParams(TypedDict):
 
 **Fields:**
 
-- `tool_call_name`: String type, tool call name
-- `tool_call_args`: Dictionary of string to any value, tool call parameters
+- `tool_call_name`: string, tool call name
+- `tool_call_args`: dict of string to any value, tool call parameters
 - `tool`: BaseTool type, tool instance
-- `config`: RunnableConfig type, runtime configuration
+- `config`: RunnableConfig type, run configuration
 
 ---
 
@@ -767,44 +822,6 @@ Type alias for interrupt handler functions.
 ```python
 HumanInterruptHandler = Callable[[InterruptParams], Any]
 ```
-
----
-
-### ChatModelProvider
-
-Chat model provider configuration type.
-
-```python
-class ChatModelProvider(TypedDict):
-    provider: str
-    chat_model: Union[type[BaseChatModel], str]
-    base_url: NotRequired[str]
-```
-
-**Fields:**
-
-- `provider`: String type, required, provider name
-- `chat_model`: BaseChatModel type or string type, required, chat model class or string
-- `base_url`: Not required string type, base URL
-
----
-
-### EmbeddingProvider
-
-Embedding model provider configuration type.
-
-```python
-class EmbeddingProvider(TypedDict):
-    provider: str
-    embeddings_model: Union[type[Embeddings], str]
-    base_url: NotRequired[str]
-```
-
-**Fields:**
-
-- `provider`: String type, required, provider name
-- `embeddings_model`: Embeddings type or string type, required, embedding model class or string
-- `base_url`: Not required string type, base URL
 
 ---
 
@@ -823,9 +840,9 @@ class PlanStateMixin(TypedDict):
 
 **Fields:**
 
-- `plan`: List of Plan type, list of plans
-- `Plan.content`: String type, plan content
-- `Plan.status`: Literal "pending", "in_progress", or "done" type, plan status
+- `plan`: list of Plan, list of plans
+- `Plan.content`: string, plan content
+- `Plan.status`: literal "pending", "in_progress", or "done", plan status
 
 ---
 
@@ -840,4 +857,4 @@ class NoteStateMixin(TypedDict):
 
 **Fields:**
 
-- `note`: Annotated dictionary type, both keys and values are strings, note dictionary
+- `note`: annotated dict type, keys and values are strings, note dictionary

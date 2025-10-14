@@ -9,7 +9,7 @@
 ```python
 def register_model_provider(
     provider_name: str,
-    chat_model: Union[Type[BaseChatModel], str],
+    chat_model: ChatModelType,
     base_url: Optional[str] = None
 ) -> None
 ```
@@ -89,7 +89,7 @@ model = load_chat_model("dashscope:qwen-flash")
 ```python
 def register_embeddings_provider(
     provider_name: str,
-    embeddings_model: Union[Type[Embeddings], str],
+    embeddings_model: EmbeddingsType,
     base_url: Optional[str] = None
 ) -> None
 ```
@@ -638,7 +638,6 @@ def parallel_pipeline(
     sub_graphs: list[SubGraph],
     state_schema: type[StateT],
     graph_name: Optional[str] = None,
-    parallel_entry_graph: Optional[str] = None,
     branches_fn: Optional[Callable[[StateT], list[Send]]] = None,
     context_schema: type[ContextT] | None = None,
     input_schema: type[InputT] | None = None,
@@ -651,7 +650,6 @@ def parallel_pipeline(
 - `sub_graphs`：SubGraph 列表类型，必填，要组合的状态图列表
 - `state_schema`：StateT 类型，必填，最终生成图的 State Schema
 - `graph_name`：可选字符串类型，最终生成图的名称
-- `parallel_entry_graph`：可选字符串类型，并行入口图，默认 "**start**"
 - `branches_fn`：可选可调用类型，并行分支函数，返回 Send 列表控制并行执行
 - `context_schema`：ContextT 类型或 None，可选，最终生成图的 Context Schema
 - `input_schema`：InputT 类型或 None，可选，最终生成图的输入 Schema
@@ -666,7 +664,6 @@ parallel_pipeline(
     sub_graphs=[graph1, graph2],
     state_schema=State,
     graph_name="parallel_pipeline",
-    parallel_entry_graph="__start__",
     branches_fn=lambda state: [Send("graph1", state), Send("graph2", state)],
     context_schema=Context,
     input_schema=Input,
@@ -739,6 +736,64 @@ agent = create_agent(model="moonshot:kimi-k2-0905-preview", tools=[get_current_t
 
 ## 类型定义
 
+### ChatModelType
+
+注册模型提供商时`chat_model`参数支持的类型。
+
+```python
+ChatModelType = Union[type[BaseChatModel], Literal["openai-compatible"]]
+```
+
+---
+
+### EmbeddingsType
+
+注册嵌入提供商时`embeddings_model`参数支持的类型。
+
+```python
+EmbeddingsType = Union[type[Embeddings], Literal["openai-compatible"]]
+```
+
+---
+
+### ChatModelProvider
+
+聊天模型提供者配置类型。
+
+```python
+class ChatModelProvider(TypedDict):
+    provider: str
+    chat_model: ChatModelType
+    base_url: NotRequired[str]
+```
+
+**字段说明：**
+
+- `provider`：字符串类型，必填，提供者名称
+- `chat_model`：BaseChatModel 类型或字符串类型，必填，聊天模型类或字符串
+- `base_url`：非必需字符串类型，基础 URL
+
+---
+
+### EmbeddingProvider
+
+嵌入模型提供者配置类型。
+
+```python
+class EmbeddingProvider(TypedDict):
+    provider: str
+    embeddings_model: EmbeddingsType
+    base_url: NotRequired[str]
+```
+
+**字段说明：**
+
+- `provider`：字符串类型，必填，提供者名称
+- `embeddings_model`：Embeddings 类型或字符串类型，必填，嵌入模型类或字符串
+- `base_url`：非必需字符串类型，基础 URL
+
+---
+
 ### InterruptParams
 
 传递给中断处理函数的参数类型。
@@ -767,44 +822,6 @@ class InterruptParams(TypedDict):
 ```python
 HumanInterruptHandler = Callable[[InterruptParams], Any]
 ```
-
----
-
-### ChatModelProvider
-
-聊天模型提供者配置类型。
-
-```python
-class ChatModelProvider(TypedDict):
-    provider: str
-    chat_model: Union[type[BaseChatModel], str]
-    base_url: NotRequired[str]
-```
-
-**字段说明：**
-
-- `provider`：字符串类型，必填，提供者名称
-- `chat_model`：BaseChatModel 类型或字符串类型，必填，聊天模型类或字符串
-- `base_url`：非必需字符串类型，基础 URL
-
----
-
-### EmbeddingProvider
-
-嵌入模型提供者配置类型。
-
-```python
-class EmbeddingProvider(TypedDict):
-    provider: str
-    embeddings_model: Union[type[Embeddings], str]
-    base_url: NotRequired[str]
-```
-
-**字段说明：**
-
-- `provider`：字符串类型，必填，提供者名称
-- `embeddings_model`：Embeddings 类型或字符串类型，必填，嵌入模型类或字符串
-- `base_url`：非必需字符串类型，基础 URL
 
 ---
 

@@ -85,7 +85,6 @@ Combine multiple state graphs in parallel, supporting flexible parallel executio
 
 - `sub_graphs`: List of state graphs to combine
 - `state_schema`: State Schema for the final graph
-- `parallel_entry_graph`: Entry state graph (defaults to `__start__`; when specified, this graph does not participate in parallel execution)
 - `branches_fn`: Parallel branching function that returns a list of Send objects to control parallel execution
 - `graph_name`: Name of the final graph (optional)
 - `context_schema`: Context Schema for the final graph (optional)
@@ -130,24 +129,6 @@ graph = parallel_pipeline(
 The final generated graph is as follows:
 ![Parallel Pipeline Diagram](/img/parallel.png)
 
-#### Parallel Example with Entry Graph
-
-```python
-# Specify graph1 as entry graph, other graphs execute in parallel
-graph = parallel_pipeline(
-    sub_graphs=[
-        make_graph("graph1"),
-        make_graph("graph2"),
-        make_graph("graph3"),
-    ],
-    state_schema=State,
-    parallel_entry_graph="graph1",
-)
-```
-
-The final generated flowchart is as follows:
-![Parallel Pipeline with Entry Diagram](/img/parallel_entry.png)
-
 #### Controlling Parallel Execution with Branch Function
 
 The branch function needs to return a list of `Send` objects. For details, refer to [Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send)
@@ -173,9 +154,8 @@ graph = parallel_pipeline(
 
 ### Important Notes
 
-- When `branches_fn` parameter is not provided, all subgraphs execute in parallel (except the entry graph)
+- When `branches_fn` parameter is not provided, all subgraphs execute in parallel
 - When `branches_fn` parameter is provided, which subgraphs to execute is determined by the function's return value
-- If both `parallel_entry_graph` and `branches_fn` are set, ensure the branch function does not include the entry node to avoid infinite loops
 
 ## Next Steps
 
