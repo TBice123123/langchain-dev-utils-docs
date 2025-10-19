@@ -178,7 +178,7 @@ def update_plan(
 
 文件系统则是另一种常用的上下文管理方式,可以用于大模型长期记忆的保存,多智能体的上下文隔离,以及上下文压缩。
 
-本库提供了针对文件系统的`write_file`,`read_file`,`ls_file`,`update_file`四个工具。
+本库提供了针对文件系统的`write_file`,`read_file`,`ls_file`,`update_file`四个工具。文件系统的部分内容代码参考了`langchain`的`deepagents`。
 
 具体表现为:
 

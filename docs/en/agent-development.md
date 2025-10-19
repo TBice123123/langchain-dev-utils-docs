@@ -178,7 +178,7 @@ def update_plan(
 
 The file system is another common context management method. It can be used for saving long-term memory for LLMs, context isolation for multiple agents, and context compression.
 
-This library provides four tools for the file system: `write_file`, `read_file`, `ls_file`, and `update_file`.
+This library provides four tools for the file system: `write_file`, `read_file`, `ls_file`, and `update_file`. The file system code is partially referenced from `langchain`'s `deepagents`.
 
 Specifically:
 

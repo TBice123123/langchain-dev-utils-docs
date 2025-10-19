@@ -84,7 +84,7 @@ register_model_provider(
 )
 ```
 
-::: Tip Supplement
+::: tip Supplement
 `vllm` is a well-known large model deployment framework that can deploy large models as OpenAI-compatible APIs. For example, to deploy the qwen3-4b model, you can use the following command:
 
 ```bash

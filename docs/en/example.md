@@ -576,7 +576,7 @@ async def summary_node(
 
 **Code location: `src/summary_agent/node.py`**
 
-## Prompt Development
+### Prompt Development
 
 ```markdown
 Your task is to summarize the content discussed by multiple agents.

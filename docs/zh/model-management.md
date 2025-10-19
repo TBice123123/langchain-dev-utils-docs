@@ -96,6 +96,7 @@ vllm serve Qwen/Qwen3-4B \
 ```
 
 完成后会提供一个 OpenAI 兼容 API，地址为`http://localhost:8000/v1`。
+:::
 
 ### 加载对话模型
 

@@ -576,7 +576,7 @@ async def summary_node(
 
 **代码位置：`src/summary_agent/node.py`**
 
-## Prompt 编写
+### Prompt 编写
 
 ```markdown
 你的任务是根据多个智能体讨论的内容进行总结。
