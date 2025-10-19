@@ -1,0 +1,315 @@
+# Agent 开发
+
+## create_agent
+
+预构建智能体函数，提供与 langchain 官方 `create_agent` 完全相同的功能，但拓展了字符串指定模型。
+
+```python
+def create_agent(  # noqa: PLR0915
+    model: str,
+    tools: Sequence[BaseTool | Callable | dict[str, Any]] | None = None,
+    *,
+    system_prompt: str | None = None,
+    middleware: Sequence[AgentMiddleware[AgentState[ResponseT], ContextT]] = (),
+    response_format: ResponseFormat[ResponseT] | type[ResponseT] | None = None,
+    state_schema: type[AgentState[ResponseT]] | None = None,
+    context_schema: type[ContextT] | None = None,
+    checkpointer: Checkpointer | None = None,
+    store: BaseStore | None = None,
+    interrupt_before: list[str] | None = None,
+    interrupt_after: list[str] | None = None,
+    debug: bool = False,
+    name: str | None = None,
+    cache: BaseCache | None = None,
+) -> CompiledStateGraph:
+```
+
+**参数说明：**
+
+- `model`：字符串类型，必填，可由 `load_chat_model` 加载的模型标识符字符串。可指定为 "provider:model-name" 格式
+- `tools`：BaseTool、Callable 或字典序列，或 ToolNode 类型，必填，智能体可用的工具列表
+- `system_prompt`：可选字符串类型，智能体的自定义系统提示词
+- `middleware`：可选 AgentMiddleware 类型，智能体的中间件
+- `response_format`：可选 ResponseFormat 类型，智能体的响应格式
+- `state_schema`：可选 StateSchemaType 类型，智能体的状态模式
+- `context_schema`：可选任意类型，智能体的上下文模式
+- `checkpointer`：可选 Checkpointer 类型，状态持久化的检查点
+- `store`：可选 BaseStore 类型，数据持久化的存储
+- `interrupt_before`：可选字符串列表类型，执行前要中断的节点
+- `interrupt_after`：可选字符串列表类型，执行后要中断的节点
+- `debug`：布尔类型，可选，启用调试模式，默认为 False
+- `name`：可选字符串类型，智能体名称
+- `cache`：可选 BaseCache 类型，缓存
+
+**返回值：** CompiledStateGraph 类型
+
+**注意：** 此函数提供与 `langchain` 官方 `create_agent` 完全相同的功能，但拓展了模型选择。主要区别在于 `model` 参数必须是可由 `load_chat_model` 函数加载的字符串，允许使用注册的模型提供者进行更灵活的模型选择。
+
+**示例：**
+
+```python
+agent = create_agent(model="vllm:qwen3-4b", tools=[get_current_time])
+```
+
+## create_write_plan_tool
+
+创建写计划工具。
+
+```python
+def create_write_plan_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    message_key: Optional[str] = None,
+) -> BaseTool
+```
+
+**参数说明：**
+
+- `name`：可选字符串类型，工具名称
+- `description`：可选字符串类型，工具描述
+- `message_key`：可选字符串类型，用于更新 messages 的键，默认 "messages"
+
+**返回值：** BaseTool 类型，写计划工具实例
+
+**示例：**
+
+```python
+write_plan_tool = create_write_plan_tool()
+```
+
+---
+
+## create_update_plan_tool
+
+创建更新计划工具。
+
+```python
+def create_update_plan_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    message_key: Optional[str] = None,
+) -> BaseTool
+```
+
+**参数说明：**
+
+- `name`：可选字符串类型，工具名称
+- `description`：可选字符串类型，工具描述
+- `message_key`：可选字符串类型，用于更新 messages 的键，默认 "messages"
+
+**返回值：** BaseTool 类型，更新计划工具实例
+
+**示例：**
+
+```python
+update_plan_tool = create_update_plan_tool()
+```
+
+---
+
+## create_write_file_tool
+
+创建写文件工具。
+
+```python
+def create_write_file_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    message_key: Optional[str] = None,
+) -> BaseTool
+```
+
+**参数说明：**
+
+- `name`：可选字符串类型，工具名称
+- `description`：可选字符串类型，工具描述
+- `message_key`：可选字符串类型，用于更新 messages 的键，默认 "messages"
+
+**返回值：** BaseTool 类型，写文件工具实例
+
+**示例：**
+
+```python
+write_file_tool = create_write_file_tool()
+```
+
+---
+
+## create_ls_file_tool
+
+创建列出文件工具。
+
+```python
+def create_ls_file_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> BaseTool
+```
+
+**参数说明：**
+
+- `name`：可选字符串类型，工具名称
+- `description`：可选字符串类型，工具描述
+
+**返回值：** BaseTool 类型，列出文件工具实例
+
+**示例：**
+
+```python
+ls_file_tool = create_ls_file_tool()
+```
+
+---
+
+## create_query_file_tool
+
+创建查询文件工具。
+
+```python
+def create_query_file_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> BaseTool
+```
+
+**参数说明：**
+
+- `name`：可选字符串类型，工具名称
+- `description`：可选字符串类型，工具描述
+
+**返回值：** BaseTool 类型，查询文件工具实例
+
+**示例：**
+
+```python
+query_file_tool = create_query_file_tool()
+```
+
+---
+
+## create_update_file_tool
+
+创建更新文件工具。
+
+```python
+def create_update_file_tool(
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    message_key: Optional[str] = None,
+) -> BaseTool
+```
+
+**参数说明：**
+
+- `name`：可选字符串类型，工具名称
+- `description`：可选字符串类型，工具描述
+- `message_key`：可选字符串类型，用于更新 messages 的键，默认 "messages"
+
+**返回值：** BaseTool 类型，更新文件工具实例
+
+**示例：**
+
+```python
+update_file_tool = create_update_file_tool()
+```
+
+---
+
+## PlanStateMixin
+
+计划状态混入类。
+
+```python
+class Plan(TypedDict):
+    content: str
+    status: Literal["pending", "in_progress", "done"]
+
+class PlanStateMixin(TypedDict):
+    plan: list[Plan]
+```
+
+**字段说明：**
+
+- `plan`：Plan 列表类型，计划列表
+- `Plan.content`：字符串类型，计划内容
+- `Plan.status`：字面量 "pending"、"in_progress" 或 "done" 类型，计划状态
+
+---
+
+## FileStateMixin
+
+文件状态混入类。
+
+```python
+class FileStateMixin(TypedDict):
+    file: Annotated[dict[str, str], file_reducer]
+```
+
+**字段说明：**
+
+- `file`：注解字典类型，键和值均为字符串，文件字典
+
+---
+
+## SummarizationMiddleware
+
+用于智能体上下文摘要的中间件。
+
+```python
+class SummarizationMiddleware(_SummarizationMiddleware):
+    def __init__(
+        self,
+        model: str,
+        max_tokens_before_summary: Optional[int] = None,
+        messages_to_keep: Optional[int] = None,
+        token_counter: Optional[TokenCounter] = None,
+        summary_prompt: Optional[str] = None,
+        summary_prefix: Optional[str] = None,
+    ) -> None:
+```
+
+**参数说明：**
+
+- `model`：字符串类型，必填，可由 `load_chat_model` 加载的模型标识符字符串。可指定为 "provider:model-name" 格式
+- `max_tokens_before_summary`：可选整数类型，摘要前保留的 token 数
+- `messages_to_keep`：可选整数类型，摘要前保留的消息数
+- `token_counter`：可选 TokenCounter 类型，token 计数器
+- `summary_prompt`：可选字符串类型，摘要提示词
+- `summary_prefix`：可选字符串类型，摘要前缀
+
+**示例：**
+
+```python
+summarization_middleware = SummarizationMiddleware(model="vllm:qwen3-4b")
+```
+
+---
+
+## LLMToolSelectorMiddleware
+
+用于智能体工具选择的中间件。
+
+```python
+class LLMToolSelectorMiddleware(_LLMToolSelectorMiddleware):
+    def __init__(
+        self,
+        *,
+        model: str,
+        system_prompt: Optional[str] = None,
+        max_tools: Optional[int] = None,
+        always_include: Optional[list[str]] = None,
+    ) -> None:
+```
+
+**参数说明：**
+
+- `model`：字符串类型，必填，可由 `load_chat_model` 加载的模型标识符字符串。可指定为 "provider:model-name" 格式
+- `system_prompt`：可选字符串类型，系统提示词
+- `max_tools`：可选整数类型，最大工具数
+- `always_include`：可选字符串列表类型，总是包含的工具
+
+**示例：**
+
+```python
+llm_tool_selector_middleware = LLMToolSelectorMiddleware(model="vllm:qwen3-4b")
+```

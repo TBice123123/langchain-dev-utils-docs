@@ -1,34 +1,36 @@
 # State Graph Orchestration
 
-This module provides two utility functions (called pipelines in this utils library) for combining multiple StateGraphs in parallel or sequential order to achieve complex multi-agent orchestration.
-
-## Overview
-
-Combine multiple StateGraphs through parallel or sequential approaches to build more complex multi-agent workflows.
+> [!NOTE]
+>
+> **Feature Overview**: Primarily used to achieve parallel and sequential composition of multiple state graphs.
+>
+> **Prerequisites**: Understand LangChain's [Subgraphs](https://docs.langchain.com/oss/python/langgraph/use-subgraphs) and [Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send).
+>
+> **Estimated Reading Time**: 5 minutes
 
 ## Sequential Pipeline
 
-Connect state graphs in sequence to form a serial execution flow.
+Connects state graphs sequentially, forming a linear execution flow.
 
-### Core Functions
+Implemented via the following function:
 
-- `sequential_pipeline` - Combines multiple state graphs sequentially
+- `sequential_pipeline` - Combines multiple state graphs in a sequential manner.
 
-### Parameters
+Supported parameters:
 
 - `sub_graphs`: List of state graphs to combine (must be StateGraph instances)
-- `state_schema`: State Schema for the final graph
-- `graph_name`: Name of the final graph (optional)
-- `context_schema`: Context Schema for the final graph (optional)
-- `input_schema`: Input Schema for the final graph (optional)
-- `output_schema`: Output Schema for the final graph (optional)
+- `state_schema`: The State Schema for the final generated graph
+- `graph_name`: Name of the final generated graph (optional)
+- `context_schema`: Context Schema for the final generated graph (optional)
+- `input_schema`: Input Schema for the final generated graph (optional)
+- `output_schema`: Output Schema for the final generated graph (optional)
 
-### Usage Example
+Usage Example:
 
 ```python
 from langgraph.graph import StateGraph
 from typing import Annotated, TypedDict
-from langchain_dev_utils import sequential_pipeline
+from langchain_dev_utils.pipeline import sequential_pipeline
 
 def replace(a: int, b: int):
     return b
@@ -46,7 +48,7 @@ def make_graph(name: str):
     sub_graph.add_edge("__start__", "add")
     return sub_graph.compile(name=name)
 
-# Build sequential pipeline
+# Build a sequential pipeline
 graph = sequential_pipeline(
     sub_graphs=[
         make_graph("graph1"),
@@ -57,11 +59,11 @@ graph = sequential_pipeline(
 )
 ```
 
-The final generated graph is as follows:
+The final generated graph structure is as follows:
 ![Sequential Pipeline Diagram](/img/sequential.png)
 
 ::: tip 📝
-For sequentially composed graphs, LangGraph's StateGraph provides the add_sequence method as a convenient shorthand. This method works best when each node is a function (rather than a subgraph). If the nodes are subgraphs, the code might look like this:
+For sequentially composed graphs, LangGraph's StateGraph provides the `add_sequence` method as a convenient shorthand. This method is most suitable when the nodes are functions (rather than subgraphs). If the nodes are subgraphs, the code might look like this:
 
 ```python
 graph = StateGraph(AgentState)
@@ -70,35 +72,35 @@ graph.add_edge("__start__", "graph1")
 graph = graph.compile()
 ```
 
-However, the above approach can still be somewhat verbose. Therefore, it's recommended to use the sequential_pipeline function instead, which allows you to quickly build a sequentially executed graph with just a single line of code—making it much more concise and efficient.
+However, the above approach can still be somewhat verbose. Therefore, using the `sequential_pipeline` function is recommended, as it allows for quickly building a sequential execution graph with a single line of code, making it more concise and efficient.
 :::
 
 ## Parallel Pipeline
 
-Combine multiple state graphs in parallel, supporting flexible parallel execution strategies.
+Combines multiple state graphs in parallel, supporting flexible parallel execution strategies.
 
-### Core Functions
+Implemented via the following function:
 
-- `parallel_pipeline` - Combines multiple state graphs in parallel
+- `parallel_pipeline` - Combines multiple state graphs in a parallel manner.
 
-### Parameters
+Supported parameters:
 
 - `sub_graphs`: List of state graphs to combine
-- `state_schema`: State Schema for the final graph
-- `branches_fn`: Parallel branching function that returns a list of Send objects to control parallel execution
-- `graph_name`: Name of the final graph (optional)
-- `context_schema`: Context Schema for the final graph (optional)
-- `input_schema`: Input Schema for the final graph (optional)
-- `output_schema`: Output Schema for the final graph (optional)
+- `state_schema`: The State Schema for the final generated graph
+- `branches_fn`: Parallel branch function that returns a list of Send objects to control parallel execution
+- `graph_name`: Name of the final generated graph (optional)
+- `context_schema`: Context Schema for the final generated graph (optional)
+- `input_schema`: Input Schema for the final generated graph (optional)
+- `output_schema`: Output Schema for the final generated graph (optional)
 
-### Usage Examples
+Usage Example:
 
-#### Basic Parallel Example
+**Basic Parallel Example**
 
 ```python
 from langgraph.graph import StateGraph
 from typing import Annotated, TypedDict
-from langchain_dev_utils import parallel_pipeline
+from langchain_dev_utils.pipeline import parallel_pipeline
 
 def replace(a: int, b: int):
     return b
@@ -115,7 +117,7 @@ def make_graph(name: str):
     sub_graph.add_edge("__start__", "add")
     return sub_graph.compile(name=name)
 
-# Build parallel pipeline (all subgraphs execute in parallel)
+# Build a parallel pipeline (all subgraphs execute in parallel)
 graph = parallel_pipeline(
     sub_graphs=[
         make_graph("graph1"),
@@ -126,17 +128,18 @@ graph = parallel_pipeline(
 )
 ```
 
-The final generated graph is as follows:
+The final generated graph structure is as follows:
 ![Parallel Pipeline Diagram](/img/parallel.png)
 
-#### Controlling Parallel Execution with Branch Function
+**Controlling Parallel Execution Using a Branch Function**
 
-The branch function needs to return a list of `Send` objects. For details, refer to [Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send)
+Sometimes it's necessary to specify which subgraphs execute in parallel based on conditions. In such cases, a branch function can be used.
+The branch function needs to return a list of `Send` objects.
 
 ```python
 from langgraph.prebuilt import Send
 
-# Use branch function to precisely control parallel execution
+# Use a branch function to precisely control parallel execution
 graph = parallel_pipeline(
     sub_graphs=[
         make_graph("graph1"),
@@ -152,13 +155,7 @@ graph = parallel_pipeline(
 )
 ```
 
-### Important Notes
+Important Notes
 
-- When `branches_fn` parameter is not provided, all subgraphs execute in parallel
-- When `branches_fn` parameter is provided, which subgraphs to execute is determined by the function's return value
-
-## Next Steps
-
-- [Prebuilt Agent](./prebuilt.md) — Effectively aligns with the prebuilt Agent of the official library, but extends its model selection.
-- [API Reference](./api-reference.md) — Complete API documentation
-- [Usage Examples](./example.md) — Practical code examples demonstrating real-world usage
+- When the `branches_fn` parameter is not provided, all subgraphs execute in parallel.
+- When the `branches_fn` parameter is provided, which subgraphs execute is determined by the return value of this function.

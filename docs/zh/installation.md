@@ -47,7 +47,7 @@ uv add langchain-dev-utils[standard]
 该包会自动安装以下依赖项：
 
 - `langchain`
-- `langgraph`
+- `langgraph` (安装`langchain`时会同时也会安装)
 
 如果是 standard 版本，还会安装以下依赖项：
 
@@ -73,15 +73,7 @@ uv sync --group test
 uv run pytest .
 ```
 
-## 后续步骤
+**注意：**
 
-安装后，您可以继续：
-
-- [模型管理](./model-management.md) - 提供统一的注册管理方式，方便开发者使用 chat 和 embeddings 模型。
-- [消息处理](./message-processing.md) - 提供与 Message 相关的工具函数，例如 chunk 拼接。
-- [工具增强](./tool-enhancement.md) - 在已定义的 tools 中添加新的功能。
-- [上下文工程](./context-engineering.md) - 提供用于帮助上下文工程管理的实用性 tools 以及相关的状态 Schema。
-- [状态图编排](./graph-orchestration.md) - 将多个状态图(StateGraph)以并行或者串行的方式组合在一起。
-- [预构建 Agent](./prebuilt.md) - 效果与官方预构建的 Agent 对齐，但是拓展了其模型选择。
-- [API 参考](./api-reference.md) - API 参考文档。
-- [使用示例](./example.md) - 介绍本库的使用示例。
+- 您需要新建一个 `.env` 文件，并写入相关的`API_KEY`。
+- 目前所有测试用例均已通过验证。若运行时出现个别与模型相关的失败，有可能是因为模型不稳定导致的，请尝试重新运行测试。

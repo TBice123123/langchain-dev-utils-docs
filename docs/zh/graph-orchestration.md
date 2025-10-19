@@ -1,20 +1,22 @@
 # 状态图编排
 
-本模块提供了两个工具函数（本工具库将其称为管道），用于将多个 StateGraph 状态图以并行或串行的方式进行组合，实现复杂的多智能体编排。
-
-## 概述
-
-通过并行或串行的方式组合多个 StateGraph 状态图，构建更复杂的多智能体工作流。
+> [!NOTE]
+>
+> **功能概述**：主要用于实现多个状态图的并行和串行组合。
+>
+> **前置要求**：了解 langchain 的[子图](https://docs.langchain.com/oss/python/langgraph/use-subgraphs),[Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send)。
+>
+> **预计阅读时间**：5 分钟
 
 ## 串行管道
 
 将状态图按照顺序依次连接，形成串行执行流程。
 
-### 核心函数
+通过下面函数实现:
 
 - `sequential_pipeline` - 以串行方式组合多个状态图
 
-### 参数说明
+支持的参数如下:
 
 - `sub_graphs`: 要组合的状态图列表（必须是 StateGraph 实例）
 - `state_schema`: 最终生成图的 State Schema
@@ -23,12 +25,12 @@
 - `input_schema`: 最终生成图的输入 Schema（可选）
 - `output_schema`: 最终生成图的输出 Schema（可选）
 
-### 使用示例
+使用示例:
 
 ```python
 from langgraph.graph import StateGraph
 from typing import Annotated, TypedDict
-from langchain_dev_utils import sequential_pipeline
+from langchain_dev_utils.pipeline import sequential_pipeline
 
 def replace(a: int, b: int):
     return b
@@ -77,11 +79,11 @@ graph = graph.compile()
 
 将多个状态图并行组合，支持灵活的并行执行策略。
 
-### 核心函数
+通过下面函数实现:
 
 - `parallel_pipeline` - 以并行方式组合多个状态图
 
-### 参数说明
+支持的参数如下:
 
 - `sub_graphs`: 要组合的状态图列表
 - `state_schema`: 最终生成图的 State Schema
@@ -91,14 +93,14 @@ graph = graph.compile()
 - `input_schema`: 最终生成图的输入 Schema（可选）
 - `output_schema`: 最终生成图的输出 Schema（可选）
 
-### 使用示例
+使用示例:
 
-#### 基础并行示例
+**基础并行示例**
 
 ```python
 from langgraph.graph import StateGraph
 from typing import Annotated, TypedDict
-from langchain_dev_utils import parallel_pipeline
+from langchain_dev_utils.pipeline import parallel_pipeline
 
 def replace(a: int, b: int):
     return b
@@ -129,9 +131,10 @@ graph = parallel_pipeline(
 最终生成的图结构如下：
 ![并行管道示意图](/img/parallel.png)
 
-#### 使用分支函数控制并行执行
+**使用分支函数控制并行执行**
 
-分支函数需要返回`Send`列表。具体参考[Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send)
+有些时候需要根据条件指定并行执行哪些子图，这时可以使用分支函数。
+分支函数需要返回`Send`列表。
 
 ```python
 from langgraph.prebuilt import Send
@@ -152,13 +155,7 @@ graph = parallel_pipeline(
 )
 ```
 
-### 重要注意事项
+重要注意事项
 
-- 不传入 `branches_fn` 参数时，所有子图都会并行执行
-- 传入 `branches_fn` 参数时，执行哪些子图由该函数的返回值决定
-
-## 下一步
-
-- [预构建 Agent](./prebuilt.md) - 效果与官方预构建的 Agent 对齐，但是拓展了其模型选择。
-- [API 参考](./api-reference.md) - API 参考文档。
-- [使用示例](./example.md) - 介绍本库的使用示例。
+- 不传入 `branches_fn` 参数时，所有子图都会并行执行。
+- 传入 `branches_fn` 参数时，执行哪些子图由该函数的返回值决定。

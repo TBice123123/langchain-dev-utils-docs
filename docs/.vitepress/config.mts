@@ -4,7 +4,7 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   base: "/langchain-dev-utils-docs/",
 
-  title: "langchain dev utils",
+  title: "Langchain-Dev-Utils Docs",
   description:
     "A comprehensive utility library for developers building applications with langchain and langgraph",
 
@@ -24,45 +24,61 @@ export default defineConfig({
       link: "/en/",
       themeConfig: {
         nav: [
-          { text: "Introduction", link: "/en/" },
-          { text: "Documentation", link: "/en/installation" },
+          { text: "Overview", link: "/en/" },
+          { text: "Learning", link: "/en/installation" },
           { text: "API Reference", link: "/en/api-reference" },
-          { text: "Usage Examples", link: "/en/example" },
+          { text: "Usage Cases", link: "/en/example" },
         ],
 
         sidebar: [
           {
-            text: "Introduction",
+            text: "Overview",
             items: [
-              { text: "Welcome to langchain dev utils", link: "/en/" },
-              { text: "Getting Started", link: "/en/getting-started" },
+              { text: "langchain-dev-utils", link: "/en/" },
+              { text: "Installation", link: "/en/installation" },
             ],
           },
           {
-            text: "Documentation",
+            text: "Learning",
             items: [
-              { text: "Installation", link: "/en/installation" },
               { text: "Model Management", link: "/en/model-management" },
-              { text: "Message Processing", link: "/en/message-processing" },
-              { text: "Tool Enhancement", link: "/en/tool-enhancement" },
-              { text: "Context Engineering", link: "/en/context-engineering" },
+              { text: "Message Conversion", link: "/en/message-conversion" },
+              { text: "Tool Calling", link: "/en/tool-calling" },
+              { text: "Agent Development", link: "/en/agent-development" },
               {
                 text: "StateGraph Orchestration",
                 link: "/en/graph-orchestration",
-              },
-              {
-                text: "Prebuilt Agent",
-                link: "/en/prebuilt",
               },
             ],
           },
           {
             text: "API Reference",
-            items: [{ text: "API Reference", link: "/en/api-reference" }],
+            items: [
+              {
+                text: "Model Management API Reference",
+                link: "/en/api-reference/model-management",
+              },
+              {
+                text: "Message Conversion API Reference",
+                link: "/en/api-reference/message-conversion",
+              },
+              {
+                text: "Tool Calling API Reference",
+                link: "/en/api-reference/tool-calling",
+              },
+              {
+                text: "Agent Development API Reference",
+                link: "/en/api-reference/agent-development",
+              },
+              {
+                text: "StateGraph Orchestration API Reference",
+                link: "/en/api-reference/graph-orchestration",
+              },
+            ],
           },
           {
-            text: "Usage Examples",
-            items: [{ text: "Example", link: "/en/example" }],
+            text: "Usage Cases",
+            items: [{ text: "Usage Cases", link: "/en/example" }],
           },
         ],
 
@@ -80,41 +96,57 @@ export default defineConfig({
       link: "/zh/",
       themeConfig: {
         nav: [
-          { text: "介绍", link: "/zh/" },
-          { text: "文档", link: "/zh/installation" },
+          { text: "概述", link: "/zh/" },
+          { text: "学习", link: "/zh/installation" },
           { text: "API 参考", link: "/zh/api-reference" },
           { text: "使用示例", link: "/zh/example" },
         ],
 
         sidebar: [
           {
-            text: "介绍",
+            text: "概述",
             items: [
-              { text: "欢迎使用 langchain dev utils", link: "/zh/" },
-              { text: "快速开始", link: "/zh/getting-started" },
+              { text: "langchain-dev-utils", link: "/zh/" },
+              { text: "安装", link: "/zh/installation" },
             ],
           },
           {
-            text: "文档",
+            text: "学习",
             items: [
-              { text: "安装", link: "/zh/installation" },
               { text: "模型管理", link: "/zh/model-management" },
-              { text: "消息处理", link: "/zh/message-processing" },
-              { text: "工具增强", link: "/zh/tool-enhancement" },
-              { text: "上下文工程", link: "/zh/context-engineering" },
+              { text: "消息转换", link: "/zh/message-conversion" },
+              { text: "工具调用", link: "/zh/tool-calling" },
+              { text: "Agent 开发", link: "/zh/agent-development" },
               {
                 text: "状态图编排",
                 link: "/zh/graph-orchestration",
-              },
-              {
-                text: "预构建 Agent",
-                link: "/zh/prebuilt",
               },
             ],
           },
           {
             text: "API 参考",
-            items: [{ text: "API 参考", link: "/zh/api-reference" }],
+            items: [
+              {
+                text: "模型管理API参考",
+                link: "/zh/api-reference/model-management",
+              },
+              {
+                text: "消息转换API参考",
+                link: "/zh/api-reference/message-conversion",
+              },
+              {
+                text: "工具调用API参考",
+                link: "/zh/api-reference/tool-calling",
+              },
+              {
+                text: "Agent 开发API参考",
+                link: "/zh/api-reference/agent-development",
+              },
+              {
+                text: "状态图编排API参考",
+                link: "/zh/api-reference/graph-orchestration",
+              },
+            ],
           },
           {
             text: "使用示例",

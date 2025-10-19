@@ -1,193 +1,464 @@
 # 模型管理
 
-模型管理模块提供了一个灵活的系统，用于注册和加载模型提供商。
+> [!NOTE]
+>
+> **功能概述**：提供更高效、更便捷的模型管理（包括对话模型和嵌入模型）。
+>
+> **前置要求**：了解 langchain 的[对话模型](https://docs.langchain.com/oss/python/langchain/models)和[嵌入模型](https://docs.langchain.com/oss/python/integrations/text_embedding/)。
+>
+> **预计阅读时间**：10 分钟
 
-## 概述
+## 对话模型管理
 
-langchain 官方的 `init_chat_model` 和 `init_embeddings` 函数很方便，但它们支持的模型提供商数量相对有限。该模块提供了 `register_model_provider`(`batch_register_model_provider`) 和 `register_embeddings_provider`(`batch_register_embeddings_provider`) 函数，使开发者能够通过统一的机制注册任何模型提供商。
+在 `langchain` 中，`init_chat_model` 函数可用于初始化对话模型实例，但其支持的模型提供商较为有限。如果你希望使用更多模型提供商（尤其是你偏好的提供商未被该函数支持），可以借助本库提供的对话模型管理功能来实现。
 
-## ChatModel 类
+使用对话模型时，需要先使用`register_model_provider`注册对话模型提供商，然后才能使用`load_chat_model`加载对话模型。
 
-### 核心函数
+### 注册对话模型提供商
 
-- `register_model_provider`：注册模型提供商
-- `batch_register_model_provider`：批量注册模型提供商
-- `load_chat_model`：加载聊天模型
+注册对话模型提供商的函数是`register_model_provider`，其接收以下参数：
 
-### 注册模型提供商
+- `provider_name`：对话模型提供商名称，类型为`str`
+- `chat_model`：对话模型，类型为`langchain`的`ChatModel`或者`str`
+- `base_url`：对话模型基础 URL，类型为`str`，仅在`chat_model`为`str`时生效
 
-#### `register_model_provider` 的参数
+对于`provider_name`你可以传入自定义的模型提供商名称，而`chat_model`则需要传入`langchain`的`ChatModel`或者`str`。对于这个参数的详细介绍如下：
 
-- `provider_name`：提供商名称；必须是自定义名称
-- `chat_model`：chat_model 类或字符串。如果是字符串，目前只支持`openai-compatible`。
-- `base_url`：可选的基础 URL。当 `chat_model` 是字符串时才有效。
+**1.类型为 ChatModel**
 
-#### `batch_register_model_provider` 的参数
+示例代码如下：
 
-- `poviders`: 一个字典的数组，每个字典包含了 `provider`、`chat_model` 和 `base_url`，每个参数的含义与 `register_model_provider` 相同。
+```python
+from langchain_core.language_models.fake_chat_models import FakeChatModel
+from langchain_dev_utils.chat_models import register_model_provider
 
-::: tip 📌
-`chat_model` 支持通过字符串参数 `openai-compatible` 指定使用兼容 OpenAI 风格的 API 进行模型调用，你可以参考`langchain`官方文档中的这段内容[设置 API_BASE](https://docs.langchain.com/oss/python/langchain/models#base-url-or-proxy)。
-使用此模式时，您必须同时提供 `base_url` 参数，或设置相应环境的 API_BASE 变量，以指定自定义模型的 API 服务地址。
-此外，本工具库已对 `openai-compatible` 对应的 ChatModel 类进行了功能增强，包括支持输出思维链内容（reasoning_content）等特性。
+register_model_provider(
+    provider_name="fakechat",
+    chat_model=FakeChatModel,
+)
+```
+
+在本示例中，我们使用的是 `langchain_core` 内置的 `FakeChatModel`，它仅用于测试，并不对接真实的模型提供商。在实际应用中，应传入一个具有实际功能的 `ChatModel` 类。
+
+**2.类型为 str**
+
+当 `chat_model` 参数为字符串时，其目前唯一取值为 `"openai-compatible"`，表示将通过模型提供商的 OpenAI 兼容 API 进行接入。因为目前很多模型提供商都支持 OpenAI 兼容 API，例如 vllm、openrouter、together 等。
+此时，本库会使用内置的 `OpenAICompatibleChatModel` 作为实际的聊天模型。
+
+`OpenAICompatibleChatModel` 继承自 `langchain-openai` 中的 `BaseChatOpenAI`，并在其基础上进行了多项兼容性优化。为确保功能正常，请务必安装标准版的 `langchain-dev-utils`（安装方法详见 [安装文档](./installation.md)）。
+
+相较于直接使用 `langchain-openai` 提供的 `ChatOpenAI`，本库的 `OpenAICompatibleChatModel` 具有以下优势：
+
+1. **支持输出更多类型的思维链内容（`reasoning_content`）**：  
+   `ChatOpenAI` 仅能输出官方 OpenAI 模型原生支持的思维链内容，而 `OpenAICompatibleChatModel` 可输出其它模型提供商的思维链内容（例如 openrouter 等）。
+
+2. **优化结构化输出的默认行为**：  
+   在调用 `with_structured_output` 时，`method` 参数的默认值被调整为 `"function_calling"`（而非 `ChatOpenAI` 默认的 `"json_schema"`），从而更好地兼容其它模型。
+
+对于`chat_model`为字符串（具体是`"openai-compatible"`）的情况，你必须提供`base_url`。你可以通过直接在本函数中传递`base_url`，或者设置模型的提供商的`API_BASE`。
+
+例如，假设我们要使用 vllm 部署的模型，那么可以这样设置：
+
+```python
+from langchain_dev_utils.chat_models import register_model_provider
+
+register_model_provider(
+    provider_name="vllm",
+    chat_model="openai-compatible",
+    base_url="http://localhost:8000/v1",
+)
+```
+
+或者这样设置：
+
+```bash
+export VLLM_API_BASE=http://localhost:8000/v1
+```
+
+```python
+from langchain_dev_utils.chat_models import register_model_provider
+
+register_model_provider(
+    provider_name="vllm",
+    chat_model="openai-compatible"
+)
+```
+
+::: tip 补充
+`vllm`是知名的大模型部署框架，其可以将大模型部署为 OpenAI 兼容 API。例如我们要部署 qwen3-4b 模型。则可以使用如下指令：
+
+```bash
+vllm serve Qwen/Qwen3-4B \
+--reasoning-parser qwen3 \
+--enable-auto-tool-choice --tool-call-parser hermes \
+--host 0.0.0.0 --port 8000 \
+--served-model-name qwen3-4b
+```
+
+完成后会提供一个 OpenAI 兼容 API，地址为`http://localhost:8000/v1`。
+
+### 加载对话模型
+
+加载对话模型的函数是`load_chat_model`，其接收以下参数：
+
+- `model`：对话模型名称，类型为`str`
+- `model_provider`：对话模型提供商名称，类型为`str`，可选
+- `kwargs`：其它额外的参数
+
+对于`model`参数，其支持的格式如下：
+
+- `provider_name:model_name`
+- `model_name`
+
+其中`provider_name`为`register_model_provider`函数中注册的`provider_name`。
+
+对于`model_provider`参数，含义和上述的`provider_name`相同，允许不传，但是此时`model`参数必须为`provider_name:model_name`格式，如果传入，则`model`参数必须为`model_name`格式。
+示例代码如下：
+
+```python
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_core.messages import HumanMessage
+
+model = load_chat_model("vllm:qwen3-4b")
+response = model.invoke([HumanMessage("Hello")])
+print(response)
+```
+
+也可以直接传入`model_provider`参数。
+
+```python
+from langchain_dev_utils.chat_models import load_chat_model
+
+model = load_chat_model("qwen3-4b", model_provider="vllm")
+```
+
+**注意**：虽然`vllm`本身可以不要求 api_key,但是由于这个`OpenAICompatibleChatModel`需要`api_key`，因此你必须设置`api_key`。
+
+```bash
+export VLLM_API_KEY=vllm
+```
+
+对于上面提到的`chat_model`为字符串（即`"openai-compatible"`）的情况，其提供了`langchain`的`ChatModel`的基本功能包括如下：
+
+::: details 普通调用
+例如：
+
+```python
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_core.messages import HumanMessage
+
+model = load_chat_model("vllm:qwen3-4b")
+response = model.invoke([HumanMessage("Hello")])
+print(response)
+```
+
+同样也支持异步
+
+```python
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_core.messages import HumanMessage
+
+model = load_chat_model("vllm:qwen3-4b")
+response = await model.ainvoke([HumanMessage("Hello")])
+print(response)
+```
+
 :::
 
-#### 加载聊天模型
-
-#### `load_chat_model` 的参数
-
-- `model`：模型名称，格式为 `model_name` 或 `provider_name:model_name`
-- `model_provider`：可选的模型提供商名称。如果未提供， `model`参数的格式必须是`provider_name:model_name`。
-- `kwargs`：可选的额外模型参数，如 `temperature`、`api_key`、`stop` 等。
-
-### 使用示例
+::: details 流式输出
+例如：
 
 ```python
-from langchain_dev_utils import register_model_provider, load_chat_model
-from langchain_qwq import ChatQwen
-from dotenv import load_dotenv
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_core.messages import HumanMessage
 
-load_dotenv()
-
-# 注册自定义模型提供商
-register_model_provider("dashscope", ChatQwen)
-register_model_provider("openrouter", "openai-compatible", base_url="https://openrouter.ai/api/v1")
-
-# 加载模型
-model = load_chat_model(model="dashscope:qwen-flash")
-print(model.invoke("Hello"))
-
-model = load_chat_model(model="openrouter:moonshotai/kimi-k2-0905")
-print(model.invoke("Hello"))
+model = load_chat_model("vllm:qwen3-4b")
+for chunk in model.stream([HumanMessage("Hello")]):
+    print(chunk)
 ```
 
-当然你也可以使用批量注册：
+同样也支持异步的流式调用
 
 ```python
-from langchain_dev_utils import batch_register_model_provider
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_core.messages import HumanMessage
 
-batch_register_model_provider([
-    {
-        "provider": "dashscope",
-        "chat_model": ChatQwen,
-    },
-    {
-        "provider": "openrouter",
-        "chat_model": "openai-compatible",
-        "base_url": "https://openrouter.ai/api/v1",
-    },
-])
-model = load_chat_model(model="dashscope:qwen-flash")
+model = load_chat_model("vllm:qwen3-4b")
+async for chunk in model.astream([HumanMessage("Hello")]):
+    print(chunk)
+```
+
+:::
+
+::: details 工具调用
+注意：需要保证模型支持工具调用
+
+```python
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_core.messages import HumanMessage
+from langchain_core.tools import tool
+import datetime
+
+@tool
+def get_current_time() -> str:
+    """获取当前时间戳"""
+    return str(datetime.datetime.now().timestamp())
+
+model = load_chat_model("vllm:qwen3-4b").bind_tools([get_current_time])
+response = model.invoke([HumanMessage("获取当前时间戳")])
+print(response)
+```
+
+:::
+::: details 结构化输出
+默认采用`function_calling`方法，因此模型需要支持工具调用
+
+```python
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_core.messages import HumanMessage
+from langchain_core.tools import tool
+from pydantic import BaseModel
+
+class User(BaseModel):
+    name: str
+    age: int
+
+model = load_chat_model("vllm:qwen3-4b").with_structured_output(User)
+response = model.invoke([HumanMessage("你好，我叫张三，今年25岁")])
+print(response)
+```
+
+:::
+除此之外，由于其采用的`ChatModel`继承了`BaseChatOpenAI`,因此支持传递`BaseChatOpenAI`的模型参数，例如`temperature`, `extra_body`等。
+示例代码如下：
+
+```python
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_core.messages import HumanMessage
+
+model = load_chat_model("vllm:qwen3-4b",extra_body={"chat_template_kwargs": {"enable_thinking": False}}) #利用extra_body传递额外参数，这里是关闭思考模式
+response = model.invoke([HumanMessage("Hello")])
+print(response)
+```
+
+另外，也支持传递多模态数据，你可以使用 OpenAI 兼容的多模态数据格式或者直接使用`langchain`中的`content_block`。例如：
+
+```python
+from langchain_core.messages import HumanMessage
+
+from langchain_dev_utils.chat_models import register_model_provider
+
+register_model_provider(
+    provider_name="openrouter",
+    chat_model="openai-compatible",
+    base_url="https://openrouter.ai/api/v1",
+)
+
+messages = [
+    HumanMessage(
+        content_blocks=[
+            {
+                "type": "image",
+                "url": "https://example.com/image.png",
+            },
+            {"type": "text", "text": "描述这张图片"},
+        ]
+    )
+]
+
+model = load_chat_model("openrouter:qwen/qwen3-vl-8b-thinking")
+response = model.invoke(messages)
+print(response)
+```
+
+### 批量注册
+
+如果你需要注册多个模型提供商，可以多次使用`register_model_provider`函数。但是这样显然特别麻烦，因此本库提供了一个批量注册的函数`batch_register_model_provider`。
+
+其接收的参数是 providers，其为一个字典列表，每个字典有三个键分别是`provider`、`chat_model`、`base_url`。
+
+示例代码如下：
+
+```python
+from langchain_dev_utils.chat_models import (
+    batch_register_model_provider,
+    load_chat_model,
+)
+from langchain_core.language_models.fake_chat_models import FakeChatModel
+
+batch_register_model_provider(
+    providers=[
+        {
+            "provider": "fakechat",
+            "chat_model": FakeChatModel,
+        },
+        {
+            "provider": "vllm",
+            "chat_model": "openai-compatible",
+            "base_url": "http://localhost:8000/v1",
+        },
+    ]
+)
+
+model = load_chat_model("vllm:qwen3-4b")
 print(model.invoke("Hello"))
 
-model = load_chat_model(model="openrouter:moonshotai/kimi-k2-0905")
+model = load_chat_model("fakechat:fake-chat")
 print(model.invoke("Hello"))
 ```
 
-### 重要说明
+## 嵌入模型管理
 
-- **全局注册**：由于底层实现使用全局字典，**所有模型提供商必须在应用程序启动时注册**。
-- **线程安全**：应避免在运行时进行修改，以防止多线程并发同步问题。
-- **初始化**：我们建议将 `register_model_provider` 调用放在应用程序的 `__init__.py` 文件中。
+与`init_chat_model`类似，`langchain`也提供了`init_embeddings`函数用于初始化嵌入模型，但是其支持的模型提供商仍然有限，因此你也可以使用本库的功能方便进行嵌入模型的管理。
 
-### 项目结构示例
+使用嵌入模型时，需要先使用`register_embeddings_provider`注册嵌入模型提供商，然后才能使用`load_embeddings`加载嵌入模型。
 
-```text
-langgraph-project/
-├── src
-│   ├── __init__.py
-│   └── graphs
-│       ├── __init__.py # 在这里调用 register_model_provider
-│       ├── graph1
-│       └── graph2
+### 注册嵌入模型提供商
+
+与注册对话模型提供商类似，注册嵌入模型提供商的函数是`register_embeddings_provider`，其接收以下参数：
+
+- `provider_name`：嵌入模型提供商名称，类型为`str`
+- `embeddings_model`：嵌入模型，类型为`langchain`的`Embeddings`或者`str`
+- `base_url`：嵌入模型基础 URL，类型为`str`，仅在`embeddings_model`为`str`时生效
+
+对于`provider_name`你可以传入自定义的模型提供商名称，而`embeddings_model`则需要传入`langchain`的`Embeddings`或者`str`。对于这个参数的详细介绍如下：
+
+**1.类型为 Embeddings**
+
+示例代码如下：
+
+```python
+from langchain_dev_utils.embeddings import load_embeddings, register_embeddings_provider
+from langchain_core.embeddings.fake import FakeEmbeddings
+
+register_embeddings_provider(
+    provider_name="fakeembeddings",
+    embeddings_model=FakeEmbeddings,
+)
 ```
 
----
+在本示例中，我们使用的是 `langchain_core` 内置的 `FakeEmbeddings`，它仅用于测试，并不对接真实的模型提供商。在实际应用中，应传入一个具有实际功能的 `Embeddings` 类。
 
-## Embeddings 类
+**2.类型为 str**
 
-### 核心函数
+与对话模型类型，当 `embeddings_model` 参数为字符串时，其目前唯一取值为 `"openai-compatible"`，表示将通过模型提供商的 OpenAI 兼容 API 进行接入。
+此时，本库会使用内置的 `OpenAIEmbeddings` 作为实际的嵌入模型。
+需要注意的是，`OpenAIEmbeddings` 默认会对输入文本进行 tokenize，这在接入其他兼容 OpenAI API 的嵌入模型时可能导致错误。为解决此问题，本库在加载模型时已显式将 `check_embedding_ctx_length` 参数设为 `False`，从而跳过 tokenize 步骤，避免兼容性问题。
+对于`embeddings_model`为字符串（具体是`"openai-compatible"`）的情况，你也必须提供`base_url`。你可以通过直接在本函数中传递`base_url`，或者设置模型的提供商的`API_BASE`。
 
-- `register_embeddings_provider`：注册嵌入模型提供商
-- `batch_register_embeddings_provider`：批量注册嵌入模型提供商
-- `load_embeddings`：加载嵌入模型
+例如，假设我们要使用 vllm 部署的模型，那么可以这样设置：
 
-### 注册嵌入提供商
+```python
+from langchain_dev_utils.embeddings import register_embeddings_provider
 
-#### `register_embeddings_provider` 的参数
+register_embeddings_provider(
+    provider_name="vllm",
+    embeddings_model="openai-compatible",
+    base_url="http://localhost:8000/v1",
+)
+```
 
-- `provider_name`：提供商名称；必须是自定义名称
-- `embeddings_model`：Embeddings 类或字符串。如果是字符串，目前只支持`openai-compatible`。
-- `base_url`：可选的基础 URL。当 `embeddings_model` 是字符串时才有效。
+或者这样设置：
 
-#### `batch_register_embeddings_provider` 的参数
+```bash
+export VLLM_API_BASE=http://localhost:8000/v1
+```
 
-- `poviders`: 一个字典的数组，每个字典包含了 `provider`、`embeddings_model` 和 `base_url`。
+```python
+from langchain_dev_utils.chat_models import register_model_provider
 
-::: tip 📌
-`embeddings_model` 支持通过字符串参数指定嵌入模型提供商，其取值目前只支持`openai-compatible`。此时会利用`init_embeddings`函数创建 Embeddings 实例。  
+register_model_provider(
+    provider_name="vllm",
+    chat_model="openai-compatible"
+)
+```
+
+::: tip 补充
+`vllm`同时可以部署 Embeddings 模型，参考的指令如下:
+
+```bash
+vllm serve Qwen/Qwen3-Embedding-4B \
+--task embed\
+--served-model-name qwen3-embedding-4b \
+--host 0.0.0.0 --port 8000
+```
+
+完成后会提供一个 OpenAI 兼容 API，地址为`http://localhost:8000/v1`。
 :::
 
 ### 加载嵌入模型
 
-#### `load_embeddings` 的参数
+加载嵌入模型的函数是`load_embeddings`，其接收以下参数：
 
-- `model`：嵌入模型名称，格式为 `model_name` 或 `provider_name:model_name`
-- `provider`：可选的嵌入模型提供商名称。如果未提供，`model`参数的格式必须是`provider_name:model_name`。
-- `kwargs`：可选的额外模型参数，如 `chunk_size`、`api_key`、`dimensions` 等。
+- `model`：嵌入模型名称，类型为`str`
+- `provider`：嵌入模型提供商名称，类型为`str`，可选
+- `kwargs`：其它额外的参数
 
-### 使用示例
+对于`model`参数，其支持的格式如下：
+
+- `provider_name:embeddings_name`
+- `embeddings_name`
+
+其中`provider_name`为`register_embeddings_provider`函数中注册的`provider_name`。
+
+对于`provider`参数，含义和上述的`provider_name`相同，允许不传，但是此时`model`参数必须为`provider_name:embeddings_name`格式，如果传入，则`model`参数必须为`embeddings_name`格式。
+示例代码如下：
 
 ```python
-from langchain_dev_utils import register_embeddings_provider, load_embeddings
-from langchain_siliconflow import SiliconFlowEmbeddings
+from langchain_dev_utils.embeddings import load_embeddings
 
-register_embeddings_provider(
-    "dashscope", "openai-compatible", base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
-)
-
-register_embeddings_provider(
-    "siliconflow", SiliconFlowEmbeddings
-)
-
-embeddings = load_embeddings("dashscope:text-embedding-v4")
-
-print(embeddings.embed_query("hello world"))
-
-embeddings = load_embeddings("siliconflow:text-embedding-v4")
-print(embeddings.embed_query("hello world"))
+embeddings = load_embeddings("vllm:qwen3-embedding-4b")
+emb = embeddings.embed_query("Hello")
+print(emb)
 ```
 
-也可以使用批量注册
+也可以直接传入`provider`参数。
 
 ```python
-from langchain_dev_utils import batch_register_embeddings_provider
+from langchain_dev_utils.embeddings import load_embeddings
+
+embeddings = load_embeddings("qwen3-embedding-4b", provider="vllm")
+emb = embeddings.embed_query("Hello")
+print(emb)
+```
+
+### 批量注册
+
+与对话模型类似,也提供了一个用于批量注册嵌入模型提供商的函数`batch_register_embeddings_provider`。
+参考代码如下:
+
+```python
+from langchain_dev_utils.embeddings import (
+    batch_register_embeddings_provider,
+    load_embeddings,
+)
+from langchain_core.embeddings.fake import FakeEmbeddings
+
 batch_register_embeddings_provider(
-    [
-        {"provider": "dashscope", "embeddings_model": "openai-compatible"},
-        {"provider": "siliconflow", "embeddings_model": SiliconFlowEmbeddings},
+    providers=[
+        {
+            "provider": "fakeembeddings",
+            "embeddings_model": FakeEmbeddings,
+        },
+        {
+            "provider": "vllm",
+            "embeddings_model": "openai-compatible",
+            "base_url": "http://localhost:8000/v1",
+        },
     ]
 )
-embeddings = load_embeddings("dashscope:text-embedding-v4")
-print(embeddings.embed_query("hello world"))
-embeddings = load_embeddings("siliconflow:text-embedding-v4")
-print(embeddings.embed_query("hello world"))
+
+embedding = load_embeddings("vllm:qwen3-embedding-4b")
+emb = embedding.embed_query("Hello")
+print(emb)
+
+embedding = load_embeddings(
+    "fakeembeddings:fake-emb", size=1024
+)  # size参数不是必须的,是FakeEmbeddings进行初始化必须要传入的,你的Embeddings模型可能不需要
+emb = embedding.embed_query("Hello")
+print(emb)
 ```
 
-### 重要说明
+## 注意
 
-- **全局注册**：同样，所有嵌入模型提供商必须在应用程序启动时注册。
-- **线程安全**：注册后不应进行修改，以避免多线程并发问题。
-- **初始化**：我们建议将 `register_embeddings_provider` 放在应用程序的 `__init__.py` 文件中。
-
-**注意**：`load_chat_model` 也可以用于加载`init_chat_model`支持的模型，使用方式与上文一样，且无需调用`register_chat_model`注册。`load_embeddings`也是如此。
-
-## 后续步骤
-
-- [消息处理](./message-processing.md) - 提供与 Message 相关的工具函数，例如 chunk 拼接。
-- [工具增强](./tool-enhancement.md) - 在已定义的 tools 中添加新的功能。
-- [上下文工程](./context-engineering.md) - 提供用于帮助上下文工程管理的实用性 tools 以及相关的状态 Schema。
-- [状态图编排](./graph-orchestration.md) - 将多个状态图(StateGraph)以并行或者串行的方式组合在一起。
-- [预构建 Agent](./prebuilt.md) - 效果与官方预构建的 Agent 对齐，但是拓展了其模型选择。
-- [API 参考](./api-reference.md) - API 参考文档。
-- [使用示例](./example.md) - 介绍本库的使用示例。
+`register_model_provider`、`register_embeddings_provider` 及其对应的批量注册函数 `batch_register_model_provider` 和 `batch_register_embeddings_provider` 均基于一个全局字典实现。为避免多线程并发问题，请务必在项目启动阶段完成所有注册操作，切勿在运行时动态注册。

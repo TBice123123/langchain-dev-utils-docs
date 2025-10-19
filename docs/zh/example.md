@@ -69,6 +69,7 @@ langchain-dev-utils-example/
 │   │   └── node.py
 │   └── talker_agents/
 │       ├── __init__.py
+│       ├── agent.py
 │       ├── graph.py
 │       └── state.py
 │   ├── __init__.py
@@ -88,41 +89,44 @@ langchain-dev-utils-example/
 
 ### 注册模型提供商
 
-首先注册模型提供商。根据[模型管理](./model-management.md)的建议，通常在项目的 `__init__.py` 文件中完成注册，确保项目启动时完成初始化。
+首先注册模型提供商。根据[模型管理](./model-management.md)中的内容，我们需要在项目启动的时候完成模型提供商的注册，故可以考虑在项目中的`__init__.py`文件中编写注册代码，确保项目启动时完成注册。
 
 本次使用四个开源模型：
-
-- `deepseek`：通过 `langchain-deepseek` 集成(其为官方`init_chat_model`支持的模型提供商，无需再次注册)
-- `qwen`：通过 `langchain-qwq` 集成 (需要注册，chat_model 传入 ChatQwen)
-- `kimi` 和 `glm`：通过 采用`OpenAI Compatible`风格进行集成 (需要注册，但没有适合的集成库，但提供商均支持 OpenAI 风格的 API，chat_model 传入`openai-compatible`)
+分别是`deepseek`、`qwen`、`kimi`和`glm`。
+这四个模型均提供了 OpenAI 兼容 API，故可以直接使用 chat_model 为`openai-compatible`来进行集成。但是要注意的是，由于 deepseek 是官方`init_chat_model`支持的模型提供商，无需再次注册。
 
 在 `src/__init__.py` 中注册模型提供商：
 
 ```python
-from langchain_dev_utils import batch_register_model_provider
-from langchain_qwq import ChatQwen
+from langchain_dev_utils.chat_models import batch_register_model_provider
+from dotenv import load_dotenv
+
+load_dotenv()
 
 batch_register_model_provider(
     [
-        {"provider": "dashscope", "chat_model": ChatQwen},
+        {
+            "provider": "dashscope",
+            "chat_model": "openai-compatible",
+        },
         {
             "provider": "zai",
             "chat_model": "openai-compatible",
-            "base_url": "https://open.bigmodel.cn/api/paas/v4/",
         },
         {
             "provider": "moonshot",
             "chat_model": "openai-compatible",
-            "base_url": "https://api.moonshot.cn/v1",
         },
     ]
 )
+
 ```
 
+**注意**：上述代码没有传入`base_url`，因为在`.env`文件中已经配置了。因此你需要在`.env`文件中配置`DASHSCOPE_API_BASE`、`ZAI_API_BASE`、`MOONSHOT_API_BASE`。同时也需要配置`DASHSCOPE_API_KEY`、`ZAI_API_KEY`、`MOONSHOT_API_KEY`。
 可通过以下代码测试注册是否成功：
 
 ```python
-from langchain_dev_utils import load_chat_model
+from langchain_dev_utils.chat_models import load_chat_model
 
 model = load_chat_model("dashscope:qwen3-235b-a22b-instruct-2507")
 print(model.invoke("hello"))
@@ -137,35 +141,42 @@ print(model.invoke("hello"))
 主智能体包含四个工具：
 
 - `ls`：列出已有笔记列表
-- `query_note`：查询笔记具体内容
+- `query_file`：查询笔记具体内容
 - `transfor_to_talk`：路由智能体，根据用户需求转交给多个智能体讨论
 - `ask_human_for_more_details`：向用户请求更多话题细节
 
-使用[上下文工程](./context-engineering.md)提供的工具函数创建前两个工具：
+使用[Agent 开发](./agent-development.md)提供的工具函数创建前两个工具：
 
 ```python
-from langchain_dev_utils import create_ls_tool, create_query_note_tool
+from langchain_dev_utils.agents.file_system import (
+    create_ls_file_tool,
+    create_query_file_tool
+)
 
-ls = create_ls_tool(
+
+ls = create_ls_file_tool(
     name="ls",
     description="""用于列出所有已保存的笔记名称。
 
     返回：
     list[str]: 包含所有笔记文件名的列表
+
     """,
 )
 
-query_note = create_query_note_tool(
-    name="query_note",
-    description="""用于查询笔记。
+query_file = create_query_file_tool(
+    name="query_file",
+    description="""用于查询文件。
 
     参数：
-    file_name: 笔记名称
+    file_name:文件名称
 
     返回：
-    str, 查询的笔记内容
+    str, 查询的文件内容
+
     """,
 )
+
 ```
 
 `transfor_to_talk` 工具实现如下：
@@ -184,16 +195,16 @@ async def transfor_to_talk(
     """用于将话题转交给子智能体进行进行讨论"""
 
     return "transfor success!"
-
 ```
 
 `ask_human_for_more_details` 工具实现：
 
 需要使用`langgraph`中的`interrupt`函数就能实现中途打断询问用户。你可以直接使用这个函数实现。也可以参照下面的实现。
-这个实现使用了[工具增强](./tool-enhancement.md)的装饰器`human_in_the_loop_async`。
+这个实现使用了[工具调用](./tool-calling.md)的装饰器`human_in_the_loop_async`。
 
 ```python
-from langchain_dev_utils import human_in_the_loop_async, InterruptParams
+from langchain_dev_utils.tool_calling import InterruptParams, human_in_the_loop_async
+
 async def handler(params: InterruptParams) -> Any:
     response = interrupt(
         f"对于该话题，我有一些疑问： {params['tool_call_args'].get('question')}。"
@@ -207,6 +218,7 @@ async def ask_human_for_more_details(
 ):
     """用于获取用户对当前讨论话题的更多细节"""
     return "ask human for more details"
+
 ```
 
 **代码位置：`src/tools.py`**
@@ -219,11 +231,11 @@ async def ask_human_for_more_details(
 from typing import Annotated, TypedDict
 
 from langchain_core.messages import AnyMessage
-from langchain_dev_utils import NoteStateMixin
+from langchain_dev_utils.agents.file_system import FileStateMixin
 from langgraph.graph import add_messages
 
 
-class State(NoteStateMixin):
+class State(FileStateMixin):
     talker_list: list[str]
     topic: str
     dispatcher_messages: Annotated[list[AnyMessage], add_messages]
@@ -234,7 +246,7 @@ class StateIn(TypedDict):
     topic: str
 
 
-class StateOut(NoteStateMixin):
+class StateOut(FileStateMixin):
     pass
 ```
 
@@ -245,7 +257,7 @@ class StateOut(NoteStateMixin):
 - `topic`：存储用户输入的话题主题
 - `talker_list`：存储参与讨论的智能体
 - `dispatcher_messages`：存储主智能体对话消息
-- `note`：存储笔记（继承 `NoteStateMixin`）
+- `file`：存储文件（继承 `FileStateMixin`）
 
 ### Node 编写
 
@@ -255,12 +267,9 @@ from langchain_core.messages import AIMessage, SystemMessage
 from langgraph.prebuilt.tool_node import ToolNode
 from langgraph.types import Command
 from src.state import State
-from src.tools import ask_human_for_more_details, transfor_to_talk, ls, query_note
-from langchain_dev_utils import (
-    has_tool_calling,
-    load_chat_model,
-    parse_tool_calling,
-)
+from src.tools import ask_human_for_more_details, transfor_to_talk, ls, query_file
+from langchain_dev_utils.tool_calling import has_tool_calling, parse_tool_calling
+from langchain_dev_utils.chat_models import load_chat_model
 from src.prompt import DISPATCHER_PROMPT
 
 
@@ -269,7 +278,7 @@ async def dispatcher(
 ) -> Command[Literal["__end__", "talker", "dispatcher_tools"]]:
     model = load_chat_model("deepseek:deepseek-chat")
     bind_model = model.bind_tools(
-        [transfor_to_talk, ls, query_note, ask_human_for_more_details]
+        [transfor_to_talk, ls, query_file, ask_human_for_more_details]
     )
 
     response = await bind_model.ainvoke(
@@ -304,13 +313,13 @@ async def dispatcher(
 
 
 dispatcher_tools = ToolNode(
-    [ls, query_note, ask_human_for_more_details], messages_key="dispatcher_messages"
+    [ls, query_file, ask_human_for_more_details], messages_key="dispatcher_messages"
 )
 ```
 
 **代码位置：`src/node.py`**
 
-使用[消息处理](./message-processing.md)中的 `has_tool_calling` 和 `parse_tool_calling` 函数：
+使用[工具调用](./tool-calling.md)中的 `has_tool_calling` 和 `parse_tool_calling` 函数：
 
 - `has_tool_calling`：判断消息是否包含工具调用
 - `parse_tool_calling`：解析工具调用，返回 `(name, args)` 元组列表
@@ -330,7 +339,7 @@ dispatcher_tools = ToolNode(
 
 附加说明：
 
-你拥有 `query_note` 和 `ls` 工具的使用权限。如果你想要强调某个子话题的讨论结果，可以使用`query_note`和`ls`工具。
+你拥有 `query_file` 和 `ls` 工具的使用权限。如果你想要强调某个子话题的讨论结果，可以使用`query_file`和`ls`工具。
 ```
 
 ## 讨论智能体
@@ -342,37 +351,33 @@ dispatcher_tools = ToolNode(
 安装依赖：
 
 ```bash
-uv add langchain-tavily
+uv add tavily-python
 ```
 
 对应的工具实现：
 
 ```python
-from langchain_community.tools.tavily_search import TavilySearch
-
-@tool
+from tavily import AsyncTavilyClient
 async def tavily_search(query: Annotated[str, "要搜索的内容"]):
     """互联网搜索工具，用于获取最新的网络信息和资料。注意：为控制上下文长度和降低调用成本，每个任务执行过程中仅可调用一次此工具。"""
-    tavily_search = TavilySearch(max_results=5)
-    result = await tavily_search.ainvoke({"query": query})
+    tavily_search = AsyncTavilyClient(
+        api_key=os.getenv("TAVILY_API_KEY"),
+    )
+    result = await tavily_search.search(query, max_results=3)
     return result
 ```
 
-此外还有一个用于写入笔记的工具
+此外还有一个用于写入文件的工具
 
 ```python
-from langchain_dev_utils import create_write_note_tool
-
-write_note = create_write_note_tool(
-    name="write_note",
-    description="""用于写入笔记。
+from langchain_dev_utils.agents.file_system import create_write_file_tool
+write_file = create_write_file_tool(
+    name="write_file",
+    description="""用于写入文件的工具。
 
     参数：
-    file_name: 笔记名称
-    content: 笔记内容
+    content: str, 文件内容
 
-    返回：
-    str, 写入的笔记内容
     """,
 )
 ```
@@ -385,16 +390,16 @@ write_note = create_write_note_tool(
 
 ```python
 from langchain_core.messages import AnyMessage
-from langgraph.graph import MessagesState, add_messages
+from langgraph.graph import add_messages
 from typing import Annotated
-from langchain_dev_utils import NoteStateMixin
+from langchain_dev_utils.agents.file_system import FileStateMixin
+from langchain.agents import AgentState
 
 
-class TalkState(MessagesState, NoteStateMixin):
+class TalkState(AgentState, FileStateMixin):
     talker_list: list[str]
     sub_topic: Annotated[str, lambda x, y: y]
     dispatcher_messages: Annotated[list[AnyMessage], add_messages]
-    remaining_steps: int
 ```
 
 **代码位置：`src/talker_agents/state.py`**
@@ -404,32 +409,75 @@ class TalkState(MessagesState, NoteStateMixin):
 - `sub_topic`：当前子智能体需要分析的子话题
 - `talker_list`：存储讨论参与者
 - `dispatcher_messages`：存储主智能体消息
-- `remaining_steps`：prebuilt agent 必须的键
-- `note`：存储笔记（继承 `NoteStateMixin`）
 - `messages`：子智能体执行的上下文窗口
 
 ### Graph 编写
 
-对于每个讨论智能体采用了[预构建智能体](./prebuilt.md)进行构建。
+#### talker agent 的编写
 
 ```python
-from typing import Any, cast
-from langchain_core.messages import AIMessage, HumanMessage
-from langchain_dev_utils import (
-    has_tool_calling,
-    parallel_pipeline,
-    parse_tool_calling,
-)
-from langchain_dev_utils.prebuilt import create_agent
-from langgraph.types import Send
+from typing import Literal
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_dev_utils.tool_calling import has_tool_calling
+from langgraph.graph import StateGraph
+from langgraph.prebuilt.tool_node import ToolNode
+from langgraph.types import Command
 from src.prompt import TALK_PROMPT
+from src.tools import tavily_search, write_file
 from src.talker_agents.state import TalkState
-from src.tools import tavily_search, write_note
+from langchain_core.messages import SystemMessage
+
+
+def create_talker_agent(model_name: str, agent_name: str):
+    model = load_chat_model(model_name).bind_tools([tavily_search, write_file])
+
+    async def call_model(
+        state: TalkState,
+    ) -> Command[Literal["__end__", "talker_tool_node"]]:
+        response = await model.ainvoke(
+            [
+                SystemMessage(
+                    content=TALK_PROMPT.format(
+                        topic=state["sub_topic"],
+                    )
+                ),
+                *state["messages"],
+            ]
+        )
+        if has_tool_calling(response):
+            return Command(
+                goto="talker_tool_node",
+                update={
+                    "messages": [response],
+                },
+            )
+
+        return Command(goto="__end__", update={"messages": [response]})
+
+    graph = StateGraph(TalkState)
+    graph.add_node("call_model", call_model)
+    graph.add_node("talker_tool_node", ToolNode([tavily_search, write_file]))
+    graph.add_edge("__start__", "call_model")
+    graph.add_edge("call_model", "__end__")
+    graph.add_edge("talker_tool_node", "call_model")
+    graph = graph.compile(
+        name=agent_name,
+    )
+    return graph
+```
+
+**代码位置：`src/talker_agents/agent.py`**
+
+### 并行组合 Talker Agent
+
+```python
+from src.talker_agents.state import TalkState
 
 talk_name_map = {
     "qwen": "dashscope:qwen3-235b-a22b-instruct-2507",
     "kimi": "moonshot:kimi-k2-0905-preview",
     "glm": "zai:glm-4.5",
+    "deepseek": "deepseek:deepseek-chat",
 }
 
 
@@ -447,6 +495,7 @@ def branch_talker(state: TalkState):
                 node=talk_name,
                 arg={
                     "sub_topic": sub_topic,
+                    "messages": [HumanMessage(content="请帮我讨论这个话题")],
                 },
             )
             for sub_topic, talk_name in zip(
@@ -458,30 +507,15 @@ def branch_talker(state: TalkState):
     return [Send(node="__end__", arg={})]
 
 
-def dynamic_prompt(state: TalkState):
-    messages = state["messages"]
-    return [
-        HumanMessage(content=TALK_PROMPT.format(topic=state["sub_topic"])),
-        *messages,
-    ]
-
-
 talkers = parallel_pipeline(
     [
-        create_agent(
-            model=talker_model,
-            tools=[tavily_search, write_note],
-            state_schema=TalkState,
-            prompt=dynamic_prompt,
-            name=talker_name,
-        )
+        create_talker_agent(talker_model, talker_name)
         for talker_name, talker_model in talk_name_map.items()
     ],
     state_schema=TalkState,
     branches_fn=branch_talker,
     graph_name="talk",
 )
-
 ```
 
 然后对于这些子智能体利用[状态图编排](./graph-orchestration.md) 构建并行智能体管道，通过 `branches_fn` 实现用户指定参与讨论的智能体。
@@ -494,7 +528,7 @@ talkers = parallel_pipeline(
 你的任务是根据用户的主题进行讨论。你可以使用`tavily_search`工具进行互联网搜索。
 用户的主题为{topic}
 
-完成后，必须使用`write_note`工具将最终结果写入笔记。
+完成后，必须使用`write_file`工具将最终结果写入笔记。
 ```
 
 ## 总结节点
@@ -504,7 +538,8 @@ talkers = parallel_pipeline(
 代码实现如下：
 
 ```python
-from langchain_dev_utils import load_chat_model, message_format
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_dev_utils.message_convert import format_sequence
 from langchain_core.messages import AIMessage, SystemMessage, ToolMessage
 from typing import cast
 from src.state import State
@@ -519,8 +554,8 @@ async def summary_node(
         [
             SystemMessage(
                 content=SUMMARY_PROMPT.format(
-                    result=message_format(
-                        [state["note"][note_name] for note_name in state["note"]],
+                    result=format_sequence(
+                        [state["file"][file_name] for file_name in state["file"]],
                         separator="-" * 10 + "\n",
                     )
                 )
@@ -550,7 +585,7 @@ async def summary_node(
 {result}
 ```
 
-这里使用了[消息处理](./message-processing.md)中的`message_format`函数将字符串列表格式化为字符串。
+这里使用了[消息处理](./message-conversion.md)中的`format_sequence`函数将字符串列表格式化为字符串。
 
 ## 最终图构建
 
