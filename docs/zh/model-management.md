@@ -342,7 +342,7 @@ register_embeddings_provider(
 
 **2.类型为 str**
 
-与对话模型类型，当 `embeddings_model` 参数为字符串时，其目前唯一取值为 `"openai-compatible"`，表示将通过模型提供商的 OpenAI 兼容 API 进行接入。
+与对话模型类似，当 `embeddings_model` 参数为字符串时，其目前唯一取值为 `"openai-compatible"`，表示将通过模型提供商的 OpenAI 兼容 API 进行接入。
 此时，本库会使用内置的 `OpenAIEmbeddings` 作为实际的嵌入模型。
 需要注意的是，`OpenAIEmbeddings` 默认会对输入文本进行 tokenize，这在接入其他兼容 OpenAI API 的嵌入模型时可能导致错误。为解决此问题，本库在加载模型时已显式将 `check_embedding_ctx_length` 参数设为 `False`，从而跳过 tokenize 步骤，避免兼容性问题。
 对于`embeddings_model`为字符串（具体是`"openai-compatible"`）的情况，你也必须提供`base_url`。你可以通过直接在本函数中传递`base_url`，或者设置模型的提供商的`API_BASE`。
@@ -366,11 +366,11 @@ export VLLM_API_BASE=http://localhost:8000/v1
 ```
 
 ```python
-from langchain_dev_utils.chat_models import register_model_provider
+from langchain_dev_utils.embeddings import register_embeddings_provider
 
-register_model_provider(
+register_embeddings_provider(
     provider_name="vllm",
-    chat_model="openai-compatible"
+    embeddings_model="openai-compatible"
 )
 ```
 

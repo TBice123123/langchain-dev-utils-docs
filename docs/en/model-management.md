@@ -368,11 +368,11 @@ export VLLM_API_BASE=http://localhost:8000/v1
 ```
 
 ```python
-from langchain_dev_utils.chat_models import register_model_provider
+from langchain_dev_utils.embeddings import register_embeddings_provider
 
-register_model_provider(
+register_embeddings_provider(
     provider_name="vllm",
-    chat_model="openai-compatible"
+    embeddings_model="openai-compatible"
 )
 ```
 

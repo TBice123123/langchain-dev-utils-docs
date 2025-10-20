@@ -1,8 +1,8 @@
-# Tool Calling
+# Tool Calling Module API Reference
 
 ## has_tool_calling
 
-Check if a message contains tool calls.
+Checks if a message contains tool calls.
 
 ```python
 def has_tool_calling(
@@ -12,9 +12,9 @@ def has_tool_calling(
 
 **Parameters:**
 
-- `message`: AIMessage type, required, the message to check
+- `message`: AIMessage type, required. The message to be checked.
 
-**Returns:** Boolean type, returns True if the message contains tool calls, otherwise False
+**Return Value:** Boolean type, returns True if the message contains tool calls, otherwise returns False.
 
 **Example:**
 
@@ -28,7 +28,7 @@ if has_tool_calling(response):
 
 ## parse_tool_calling
 
-Parse tool call parameters from a message.
+Parses tool call arguments from a message.
 
 ```python
 def parse_tool_calling(
@@ -39,10 +39,10 @@ def parse_tool_calling(
 
 **Parameters:**
 
-- `message`: AIMessage type, required, the message to parse
-- `first_tool_call_only`: Boolean type, optional, whether to return only the first tool call, default False
+- `message`: AIMessage type, required. The message to be parsed.
+- `first_tool_call_only`: Boolean type, optional. Whether to return only the first tool call, defaults to False.
 
-**Returns:** A tuple of tool call name and parameters, or a list of tuples of tool call names and parameters
+**Return Value:** A tuple of tool call name and parameters, or a list of tuples containing tool call names and parameters.
 
 **Example:**
 
@@ -56,7 +56,7 @@ name, args = parse_tool_calling(response, first_tool_call_only=True)
 
 ## human_in_the_loop
 
-A decorator to add "human-in-the-loop" manual review capability to **synchronous tool functions**.
+A decorator that adds "human-in-the-loop" manual review capability to **synchronous tool functions**.
 
 ```python
 def human_in_the_loop(
@@ -68,10 +68,10 @@ def human_in_the_loop(
 
 **Parameters:**
 
-- `func`: Optional callable type, the synchronous function to be decorated (decorator syntax sugar)
-- `handler`: Optional HumanInterruptHandler type, custom interrupt handler function
+- `func`: Optional callable type. The synchronous function to be decorated (decorator syntax sugar).
+- `handler`: Optional HumanInterruptHandler type. Custom interrupt handler function.
 
-**Returns:** BaseTool type, the decorated tool instance
+**Return Value:** BaseTool type, the decorated tool instance.
 
 **Example:**
 
@@ -86,7 +86,7 @@ def get_current_time():
 
 ## human_in_the_loop_async
 
-A decorator to add "human-in-the-loop" manual review capability to **asynchronous tool functions**.
+A decorator that adds "human-in-the-loop" manual review capability to **asynchronous tool functions**.
 
 ```python
 def human_in_the_loop_async(
@@ -98,10 +98,10 @@ def human_in_the_loop_async(
 
 **Parameters:**
 
-- `func`: Optional callable type, the asynchronous function to be decorated (decorator syntax sugar)
-- `handler`: Optional HumanInterruptHandler type, custom interrupt handler function
+- `func`: Optional callable type. The asynchronous function to be decorated (decorator syntax sugar).
+- `handler`: Optional HumanInterruptHandler type. Custom interrupt handler function.
 
-**Returns:** BaseTool type, the decorated asynchronous tool instance
+**Return Value:** BaseTool type, the decorated asynchronous tool instance.
 
 **Example:**
 
@@ -116,7 +116,7 @@ async def get_current_time():
 
 ## InterruptParams
 
-Parameter type passed to the interrupt handler function.
+Parameter type passed to interrupt handler functions.
 
 ```python
 class InterruptParams(TypedDict):
@@ -125,11 +125,11 @@ class InterruptParams(TypedDict):
     tool: BaseTool
 ```
 
-**Fields:**
+**Field Descriptions:**
 
-- `tool_call_name`: String type, tool call name
-- `tool_call_args`: Dictionary type mapping strings to any values, tool call arguments
-- `tool`: BaseTool type, tool instance
+- `tool_call_name`: String type. Tool call name.
+- `tool_call_args`: Dictionary mapping strings to any values. Tool call arguments.
+- `tool`: BaseTool type. Tool instance.
 
 ---
 

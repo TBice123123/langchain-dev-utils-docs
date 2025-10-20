@@ -1,8 +1,8 @@
-# Message Transformation
+# Message Convert Module API Reference
 
 ## convert_reasoning_content_for_ai_message
 
-Merges chain-of-thought reasoning into the final response.
+Merges reasoning chains into the final response.
 
 ```python
 def convert_reasoning_content_for_ai_message(
@@ -16,7 +16,7 @@ def convert_reasoning_content_for_ai_message(
 - `model_response`: AIMessage type, required. AI message containing reasoning content.
 - `think_tag`: Tuple of strings, optional. Start and end tags for reasoning content, defaults to `("<think>", "</think>")`.
 
-**Returns:** AIMessage type, message with merged reasoning content.
+**Return Value:** AIMessage type, message with merged reasoning content.
 
 **Example:**
 
@@ -44,7 +44,7 @@ def convert_reasoning_content_for_chunk_iterator(
 - `model_response`: Iterator of BaseMessageChunk type, required. Iterator of message chunks.
 - `think_tag`: Tuple of strings, optional. Start and end tags for reasoning content, defaults to `("<think>", "</think>")`.
 
-**Returns:** Iterator of BaseMessageChunk type, processed message chunk iterator.
+**Return Value:** Iterator of BaseMessageChunk type, processed message chunk iterator.
 
 **Example:**
 
@@ -73,7 +73,7 @@ async def aconvert_reasoning_content_for_chunk_iterator(
 - `model_response`: AsyncIterator of BaseMessageChunk type, required. Async iterator of message chunks.
 - `think_tag`: Tuple of strings, optional. Start and end tags for reasoning content, defaults to `("<think>", "</think>")`.
 
-**Returns:** AsyncIterator of BaseMessageChunk type, processed async message chunk iterator.
+**Return Value:** AsyncIterator of BaseMessageChunk type, processed async message chunk iterator.
 
 **Example:**
 
@@ -100,7 +100,7 @@ def merge_ai_message_chunk(
 
 - `chunks`: Sequence of AIMessageChunk type, required. List of message chunks to be merged.
 
-**Returns:** AIMessage type, merged message.
+**Return Value:** AIMessage type, merged message.
 
 **Example:**
 
@@ -113,7 +113,7 @@ merged = merge_ai_message_chunk(chunks)
 
 ## format_sequence
 
-Formats a list of BaseMessage, Document, or string items into a single string.
+Formats a list of BaseMessage, Document, or strings into a single string.
 
 ```python
 def format_sequence(
@@ -125,11 +125,11 @@ def format_sequence(
 
 **Parameters:**
 
-- `inputs`: List of Message, Document, or string type, required. List of items to be formatted.
-- `separator`: str, optional. Separator string, defaults to "-".
-- `with_num`: bool, optional. Whether to add numeric prefixes, defaults to False.
+- `inputs`: List of Message, Document, or string types, required. List of items to be formatted.
+- `separator`: String type, optional. Separator string, defaults to "-".
+- `with_num`: Boolean type, optional. Whether to add numeric prefixes, defaults to False.
 
-**Returns:** str type, formatted string.
+**Return Value:** String type, formatted string.
 
 **Example:**
 

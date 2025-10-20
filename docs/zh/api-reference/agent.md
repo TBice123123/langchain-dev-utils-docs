@@ -1,4 +1,4 @@
-# Agent 开发
+# Agent 模块的 API 参考
 
 ## create_agent
 
@@ -107,150 +107,6 @@ update_plan_tool = create_update_plan_tool()
 
 ---
 
-## create_write_file_tool
-
-创建写文件工具。
-
-```python
-def create_write_file_tool(
-    name: Optional[str] = None,
-    description: Optional[str] = None,
-    message_key: Optional[str] = None,
-) -> BaseTool
-```
-
-**参数说明：**
-
-- `name`：可选字符串类型，工具名称
-- `description`：可选字符串类型，工具描述
-- `message_key`：可选字符串类型，用于更新 messages 的键，默认 "messages"
-
-**返回值：** BaseTool 类型，写文件工具实例
-
-**示例：**
-
-```python
-write_file_tool = create_write_file_tool()
-```
-
----
-
-## create_ls_file_tool
-
-创建列出文件工具。
-
-```python
-def create_ls_file_tool(
-    name: Optional[str] = None,
-    description: Optional[str] = None,
-) -> BaseTool
-```
-
-**参数说明：**
-
-- `name`：可选字符串类型，工具名称
-- `description`：可选字符串类型，工具描述
-
-**返回值：** BaseTool 类型，列出文件工具实例
-
-**示例：**
-
-```python
-ls_file_tool = create_ls_file_tool()
-```
-
----
-
-## create_query_file_tool
-
-创建查询文件工具。
-
-```python
-def create_query_file_tool(
-    name: Optional[str] = None,
-    description: Optional[str] = None,
-) -> BaseTool
-```
-
-**参数说明：**
-
-- `name`：可选字符串类型，工具名称
-- `description`：可选字符串类型，工具描述
-
-**返回值：** BaseTool 类型，查询文件工具实例
-
-**示例：**
-
-```python
-query_file_tool = create_query_file_tool()
-```
-
----
-
-## create_update_file_tool
-
-创建更新文件工具。
-
-```python
-def create_update_file_tool(
-    name: Optional[str] = None,
-    description: Optional[str] = None,
-    message_key: Optional[str] = None,
-) -> BaseTool
-```
-
-**参数说明：**
-
-- `name`：可选字符串类型，工具名称
-- `description`：可选字符串类型，工具描述
-- `message_key`：可选字符串类型，用于更新 messages 的键，默认 "messages"
-
-**返回值：** BaseTool 类型，更新文件工具实例
-
-**示例：**
-
-```python
-update_file_tool = create_update_file_tool()
-```
-
----
-
-## PlanStateMixin
-
-计划状态混入类。
-
-```python
-class Plan(TypedDict):
-    content: str
-    status: Literal["pending", "in_progress", "done"]
-
-class PlanStateMixin(TypedDict):
-    plan: list[Plan]
-```
-
-**字段说明：**
-
-- `plan`：Plan 列表类型，计划列表
-- `Plan.content`：字符串类型，计划内容
-- `Plan.status`：字面量 "pending"、"in_progress" 或 "done" 类型，计划状态
-
----
-
-## FileStateMixin
-
-文件状态混入类。
-
-```python
-class FileStateMixin(TypedDict):
-    file: Annotated[dict[str, str], file_reducer]
-```
-
-**字段说明：**
-
-- `file`：注解字典类型，键和值均为字符串，文件字典
-
----
-
 ## SummarizationMiddleware
 
 用于智能体上下文摘要的中间件。
@@ -313,3 +169,50 @@ class LLMToolSelectorMiddleware(_LLMToolSelectorMiddleware):
 ```python
 llm_tool_selector_middleware = LLMToolSelectorMiddleware(model="vllm:qwen3-4b")
 ```
+
+---
+
+## PlanMiddleware
+
+用于智能体计划管理的中间件。
+
+```python
+class PlanMiddleware(AgentMiddleware):
+    state_schema = PlanState
+
+    def __init__(
+        self,
+        *,
+        system_prompt: str = WRITE_PLAN_TOOL_DESCRIPTION,
+        tools: Optional[list[BaseTool]] = None,
+    ) -> None:
+```
+
+**参数说明：**
+
+- `system_prompt`：可选字符串类型，系统提示词
+- `tools`：可选 BaseTool 列表类型，工具列表
+
+**示例：**
+
+```python
+plan_middleware = PlanMiddleware()
+```
+
+## PlanState
+
+用于 Plan 的状态 Schema。
+
+```python
+class Plan(TypedDict):
+    content: str
+    status: Literal["pending", "in_progress", "done"]
+
+
+class PlanState(AgentState):
+    plan: NotRequired[list[Plan]]
+```
+
+- `plan`：可选列表类型，计划列表
+- `plan.content`：计划内容
+- `plan.status`：计划状态,取值为`pending`、`in_progress`、`done`

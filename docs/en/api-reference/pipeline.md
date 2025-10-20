@@ -1,8 +1,8 @@
-# State Graph Orchestration
+# Pipeline Module API Reference
 
 ## sequential_pipeline
 
-Combines multiple subgraphs with the same state in a sequential manner.
+Combines multiple subgraphs with identical states in a sequential manner.
 
 ```python
 def sequential_pipeline(
@@ -18,13 +18,13 @@ def sequential_pipeline(
 **Parameters:**
 
 - `sub_graphs`: List of SubGraph type, required. List of state graphs to be combined.
-- `state_schema`: StateT type, required. The State Schema of the final generated graph.
-- `graph_name`: Optional str, name of the final generated graph.
-- `context_schema`: ContextT type or None, optional. The Context Schema of the final generated graph.
-- `input_schema`: InputT type or None, optional. The input Schema of the final generated graph.
-- `output_schema`: OutputT type or None, optional. The output Schema of the final generated graph.
+- `state_schema`: StateT type, required. State Schema for the final generated graph.
+- `graph_name`: Optional string. Name of the final generated graph.
+- `context_schema`: ContextT type or None, optional. Context Schema for the final generated graph.
+- `input_schema`: InputT type or None, optional. Input Schema for the final generated graph.
+- `output_schema`: OutputT type or None, optional. Output Schema for the final generated graph.
 
-**Returns:** CompiledStateGraph type, the created sequential state graph.
+**Return Value:** CompiledStateGraph type, the created sequential state graph.
 
 **Example:**
 
@@ -43,7 +43,7 @@ sequential_pipeline(
 
 ## parallel_pipeline
 
-Combines multiple subgraphs with the same state in a parallel manner.
+Combines multiple subgraphs with identical states in a parallel manner.
 
 ```python
 def parallel_pipeline(
@@ -64,14 +64,14 @@ def parallel_pipeline(
 **Parameters:**
 
 - `sub_graphs`: List of SubGraph type, required. List of state graphs to be combined.
-- `state_schema`: StateT type, required. The State Schema of the final generated graph.
-- `graph_name`: Optional str, name of the final generated graph.
-- `branches_fn`: Optional callable type, parallel branch function that returns a list of Send to control parallel execution.
-- `context_schema`: ContextT type or None, optional. The Context Schema of the final generated graph.
-- `input_schema`: InputT type or None, optional. The input Schema of the final generated graph.
-- `output_schema`: OutputT type or None, optional. The output Schema of the final generated graph.
+- `state_schema`: StateT type, required. State Schema for the final generated graph.
+- `graph_name`: Optional string. Name of the final generated graph.
+- `branches_fn`: Optional callable type. Parallel branch function that returns a list of Send to control parallel execution.
+- `context_schema`: ContextT type or None, optional. Context Schema for the final generated graph.
+- `input_schema`: InputT type or None, optional. Input Schema for the final generated graph.
+- `output_schema`: OutputT type or None, optional. Output Schema for the final generated graph.
 
-**Returns:** CompiledStateGraph type, the created parallel state graph.
+**Return Value:** CompiledStateGraph type, the created parallel state graph.
 
 **Example:**
 

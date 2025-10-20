@@ -27,7 +27,6 @@ export default defineConfig({
           { text: "Overview", link: "/en/" },
           { text: "Learning", link: "/en/installation" },
           { text: "API Reference", link: "/en/api-reference" },
-          { text: "Usage Cases", link: "/en/example" },
         ],
 
         sidebar: [
@@ -54,31 +53,16 @@ export default defineConfig({
           {
             text: "API Reference",
             items: [
+              { text: "agent", link: "/en/api-reference/agent" },
+              { text: "chat_model", link: "/en/api-reference/chat_model" },
+              { text: "embeddings", link: "/en/api-reference/embeddings" },
               {
-                text: "Model Management API Reference",
-                link: "/en/api-reference/model-management",
+                text: "message_convert",
+                link: "/en/api-reference/message_convert",
               },
-              {
-                text: "Message Conversion API Reference",
-                link: "/en/api-reference/message-conversion",
-              },
-              {
-                text: "Tool Calling API Reference",
-                link: "/en/api-reference/tool-calling",
-              },
-              {
-                text: "Agent Development API Reference",
-                link: "/en/api-reference/agent-development",
-              },
-              {
-                text: "StateGraph Orchestration API Reference",
-                link: "/en/api-reference/graph-orchestration",
-              },
+              { text: "pipeline", link: "/en/api-reference/pipeline" },
+              { text: "tool-calling", link: "/en/api-reference/tool-calling" },
             ],
-          },
-          {
-            text: "Usage Cases",
-            items: [{ text: "Usage Cases", link: "/en/example" }],
           },
         ],
 
@@ -99,7 +83,6 @@ export default defineConfig({
           { text: "概述", link: "/zh/" },
           { text: "学习", link: "/zh/installation" },
           { text: "API 参考", link: "/zh/api-reference" },
-          { text: "使用示例", link: "/zh/example" },
         ],
 
         sidebar: [
@@ -127,30 +110,30 @@ export default defineConfig({
             text: "API 参考",
             items: [
               {
-                text: "模型管理API参考",
-                link: "/zh/api-reference/model-management",
+                text: "agent",
+                link: "/zh/api-reference/agent",
               },
               {
-                text: "消息转换API参考",
-                link: "/zh/api-reference/message-conversion",
+                text: "chat_model",
+                link: "/zh/api-reference/chat_model",
               },
               {
-                text: "工具调用API参考",
+                text: "embeddings",
+                link: "/zh/api-reference/embeddings",
+              },
+              {
+                text: "message_convert",
+                link: "/zh/api-reference/message_convert",
+              },
+              {
+                text: "pipeline",
+                link: "/zh/api-reference/pipeline",
+              },
+              {
+                text: "tool-calling",
                 link: "/zh/api-reference/tool-calling",
               },
-              {
-                text: "Agent 开发API参考",
-                link: "/zh/api-reference/agent-development",
-              },
-              {
-                text: "状态图编排API参考",
-                link: "/zh/api-reference/graph-orchestration",
-              },
             ],
-          },
-          {
-            text: "使用示例",
-            items: [{ text: "使用示例", link: "/zh/example" }],
           },
         ],
 
