@@ -24,6 +24,7 @@
 ### 使用示例
 
 ```python
+from langchain_core.messages import HumanMessage
 from langchain_dev_utils.chat_models import register_model_provider
 from langchain_dev_utils.agents import create_agent
 from langchain_core.tools import tool
@@ -43,20 +44,19 @@ def get_current_time() -> str:
     return str(datetime.datetime.now().timestamp())
 
 
-agent = create_agent("vllm:qwen3-4b", tools=[get_current_time], name="time-agent")
+agent = create_agent("vllm:qwen3-4b", tools=[get_current_time])
 # 使用方式与 langchain的create_agent完全一致
-response = agent.invoke({"messages": [{"role": "user", "content": "现在几点了？"}]})
+response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")]})
 print(response)
-
 ```
 
 ## 中间件
 
 目前有三个中间件,均继承于官方的中间件.分别是:
 
-- `SummarizationMiddleware`：摘要中间件,主要用于上下文压缩
-- `LLMToolSelectorMiddleware`：LLM 工具选择中间件,用于选择合适的工具
-- `PlanMiddleware`：任务规划中间件,用于任务规划
+- `SummarizationMiddleware`：摘要中间件，主要用于上下文压缩
+- `LLMToolSelectorMiddleware`：LLM 工具选择中间件，用于选择合适的工具
+- `PlanMiddleware`：任务规划中间件，用于任务规划
 
 ### SummarizationMiddleware
 
@@ -64,23 +64,29 @@ print(response)
 使用示例:
 
 ```python
-from langchain_dev_utils.agents.middleware import (
-    SummarizationMiddleware
-)
-from langchain_dev_utils.agents import create_agent
+from langchain_core.messages import AIMessage
+from langchain_dev_utils.agents.middleware import SummarizationMiddleware
 
 agent = create_agent(
-    "vllm:qwen3-4b",
-    tools=[get_current_time],
-    name="time-agent",
+    model="vllm:qwen3-4b",
     middleware=[
-        SummarizationMiddleware(model="vllm:qwen3-4b"),
+        SummarizationMiddleware(
+            model="vllm:qwen3-4b",
+            max_tokens_before_summary=100,
+            messages_to_keep=1,
+        )
     ],
+    system_prompt="你是一个智能的AI助手，可以解决用户的问题",
 )
-
-# BIG_TEXT 是一个包含大量内容的文本，这里省略
-
-response = agent.invoke({"messages": [{"role": "user", "content": f"{BIG_TEXT}，分析这段内容"}]})
+# big_text 是一个包含大量内容的文本，这里省略
+big_messages = [
+    HumanMessage(content="你好，你是谁"),
+    AIMessage(content="我是你的AI助手"),
+    HumanMessage(content="写一段优美的长文本"),
+    AIMessage(content=f"好的，我会写一段优美的长文本，内容是：{big_text}"),
+    HumanMessage(content="你为啥要写这段长文本呢？"),
+]
+response = agent.invoke({"messages": big_messages})
 print(response)
 ```
 
@@ -93,18 +99,35 @@ print(response)
 from langchain_dev_utils.agents.middleware import (
     LLMToolSelectorMiddleware,
 )
-from langchain_dev_utils.agents import create_agent
+
+@tool
+def get_current_weather() -> str:
+    """获取当前天气"""
+    return "今天天气晴朗"
+
+
+@tool
+def search() -> str:
+    """搜索"""
+    return "搜索结果"
+
+
+@tool
+def run_python() -> str:
+    """运行Python代码"""
+    return "运行Python代码"
+
 
 agent = create_agent(
     "vllm:qwen3-4b",
-    tools=[get_current_time,get_current_weather,search,run_shell],
-    name="time-agent",
+    tools=[get_current_time, get_current_weather, search, run_python],
+    name="agent",
     middleware=[
-        LLMToolSelectorMiddleware(model="vllm:qwen3-4b", max_tools=3),
+        LLMToolSelectorMiddleware(model="vllm:qwen3-4b", max_tools=2),
     ],
 )
 
-response = agent.invoke({"messages": [{"role": "user", "content": "现在几点了？"}]})
+response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")]})
 print(response)
 ```
 
@@ -139,10 +162,9 @@ from langchain_dev_utils.agents.middleware.plan import (
     create_update_plan_tool,
     PlanState,
 )
-from langchain_dev_utils.agents import create_agent
 
 agent = create_agent(
-    model="zai:glm-4.5",
+    model="vllm:qwen3-4b",
     state_schema=PlanState,
     tools=[create_write_plan_tool(), create_update_plan_tool()],
 )
@@ -232,13 +254,12 @@ PlanMiddleware 的参数说明如下:
 - `tools`：可选 BaseTool 列表类型，工具列表，指定后会加入到 tools 中，必须是通过 create_write_plan_tool 和 create_update_plan_tool 创建的工具
 
 ```python
-from langchain_core.messages import HumanMessage
 from langchain_dev_utils.agents.middleware import (
     create_write_plan_tool,
     create_update_plan_tool,
     PlanMiddleware,
 )
-from langchain_dev_utils.agents import create_agent
+
 
 agent = create_agent(
     model="vllm:qwen3-4b",
@@ -250,5 +271,8 @@ agent = create_agent(
 )
 
 
-agent.invoke({"messages": [HumanMessage(content="我要去New York玩几天，帮我规划行程")]})
+response = agent.invoke(
+    {"messages": [HumanMessage(content="我要去New York玩几天，帮我规划行程")]}
+)
+print(response)
 ```
