@@ -24,8 +24,6 @@ if has_tool_calling(response):
     pass
 ```
 
----
-
 ## parse_tool_calling
 
 从消息中解析工具调用参数。
@@ -82,8 +80,6 @@ def get_current_time():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 ```
 
----
-
 ## human_in_the_loop_async
 
 为**异步工具函数**添加"人在回路"人工审核能力的装饰器。
@@ -112,8 +108,6 @@ async def get_current_time():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 ```
 
----
-
 ## InterruptParams
 
 传递给中断处理函数的参数类型。
@@ -130,8 +124,6 @@ class InterruptParams(TypedDict):
 - `tool_call_name`：字符串类型，工具调用名称
 - `tool_call_args`：字符串到任意值的字典类型，工具调用参数
 - `tool`：BaseTool 类型，工具实例
-
----
 
 ## HumanInterruptHandler
 

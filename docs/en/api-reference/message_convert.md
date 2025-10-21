@@ -26,8 +26,6 @@ response = convert_reasoning_content_for_ai_message(
 )
 ```
 
----
-
 ## convert_reasoning_content_for_chunk_iterator
 
 Merges reasoning content for streaming message chunks.
@@ -54,8 +52,6 @@ for chunk in convert_reasoning_content_for_chunk_iterator(
 ):
     print(chunk.content, end="", flush=True)
 ```
-
----
 
 ## aconvert_reasoning_content_for_chunk_iterator
 
@@ -84,8 +80,6 @@ async for chunk in aconvert_reasoning_content_for_chunk_iterator(
     print(chunk.content, end="", flush=True)
 ```
 
----
-
 ## merge_ai_message_chunk
 
 Merges streaming output chunks into a single AIMessage.
@@ -108,8 +102,6 @@ def merge_ai_message_chunk(
 chunks = list(model.stream("Hello"))
 merged = merge_ai_message_chunk(chunks)
 ```
-
----
 
 ## format_sequence
 

@@ -39,8 +39,6 @@ sequential_pipeline(
 )
 ```
 
----
-
 ## parallel_pipeline
 
 Combines multiple subgraphs with identical states in a parallel manner.

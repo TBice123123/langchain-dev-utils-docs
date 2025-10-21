@@ -24,8 +24,6 @@ if has_tool_calling(response):
     pass
 ```
 
----
-
 ## parse_tool_calling
 
 Parses tool call arguments from a message.
@@ -82,8 +80,6 @@ def get_current_time():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 ```
 
----
-
 ## human_in_the_loop_async
 
 A decorator that adds "human-in-the-loop" manual review capability to **asynchronous tool functions**.
@@ -112,8 +108,6 @@ async def get_current_time():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 ```
 
----
-
 ## InterruptParams
 
 Parameter type passed to interrupt handler functions.
@@ -130,8 +124,6 @@ class InterruptParams(TypedDict):
 - `tool_call_name`: String type. Tool call name.
 - `tool_call_args`: Dictionary mapping strings to any values. Tool call arguments.
 - `tool`: BaseTool type. Tool instance.
-
----
 
 ## HumanInterruptHandler
 

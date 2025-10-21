@@ -77,8 +77,6 @@ def create_write_plan_tool(
 write_plan_tool = create_write_plan_tool()
 ```
 
----
-
 ## create_update_plan_tool
 
 创建更新计划工具。
@@ -104,8 +102,6 @@ def create_update_plan_tool(
 ```python
 update_plan_tool = create_update_plan_tool()
 ```
-
----
 
 ## SummarizationMiddleware
 
@@ -139,8 +135,6 @@ class SummarizationMiddleware(_SummarizationMiddleware):
 summarization_middleware = SummarizationMiddleware(model="vllm:qwen3-4b")
 ```
 
----
-
 ## LLMToolSelectorMiddleware
 
 用于智能体工具选择的中间件。
@@ -170,8 +164,6 @@ class LLMToolSelectorMiddleware(_LLMToolSelectorMiddleware):
 llm_tool_selector_middleware = LLMToolSelectorMiddleware(model="vllm:qwen3-4b")
 ```
 
----
-
 ## PlanMiddleware
 
 用于智能体计划管理的中间件。
@@ -197,6 +189,59 @@ class PlanMiddleware(AgentMiddleware):
 
 ```python
 plan_middleware = PlanMiddleware()
+```
+
+## ModelFallbackMiddleware
+
+用于智能体模型回退的中间件。
+
+```python
+class ModelFallbackMiddleware(_ModelFallbackMiddleware):
+    def __init__(
+        self,
+        first_model: str,
+        *additional_models: str,
+    ) -> None:
+```
+
+**参数说明：**
+
+- `first_model`：字符串类型，必填，可由 `load_chat_model` 加载的模型标识符字符串。可指定为 "provider:model-name" 格式
+- `additional_models`：可选字符串列表类型，备用模型列表
+
+**示例：**
+
+```python
+model_fallback_middleware = ModelFallbackMiddleware(
+    "vllm:qwen3-4b",
+    "vllm:qwen3-8b"
+)
+```
+
+## LLMToolEmulator
+
+用于使用大模型来模拟工具调用的中间件。
+
+```python
+
+class LLMToolEmulator(_LLMToolEmulator):
+    def __init__(
+        self,
+        *,
+        model: str,
+        tools: list[str | BaseTool] | None = None,
+    ) -> None:
+```
+
+**参数说明：**
+
+- `model`：字符串类型，必填，可由 `load_chat_model` 加载的模型标识符字符串。可指定为 "provider:model-name" 格式
+- `tools`：可选 BaseTool 列表类型，工具列表
+
+**示例：**
+
+```python
+llm_tool_emulator = LLMToolEmulator(model="vllm:qwen3-4b", tools=[get_current_time])
 ```
 
 ## PlanState

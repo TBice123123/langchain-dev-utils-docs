@@ -25,8 +25,6 @@ register_embeddings_provider("fakeembeddings", FakeEmbeddings)
 register_embeddings_provider("vllm", "openai-compatible", base_url="http://localhost:8000/v1")
 ```
 
----
-
 ## batch_register_embeddings_provider
 
 Bulk registers embedding model providers.
@@ -49,8 +47,6 @@ batch_register_embeddings_provider([
     {"provider": "vllm", "embeddings_model": "openai-compatible", "base_url": "http://localhost:8000/v1"},
 ])
 ```
-
----
 
 ## load_embeddings
 
@@ -79,8 +75,6 @@ def load_embeddings(
 embeddings = load_embeddings("vllm:qwen3-embedding-4b")
 ```
 
----
-
 ## EmbeddingsType
 
 Supported types for the `embeddings_model` parameter when registering an embedding provider.
@@ -88,8 +82,6 @@ Supported types for the `embeddings_model` parameter when registering an embeddi
 ```python
 EmbeddingsType = Union[type[Embeddings], Literal["openai-compatible"]]
 ```
-
----
 
 ## EmbeddingProvider
 

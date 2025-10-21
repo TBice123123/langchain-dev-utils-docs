@@ -26,8 +26,6 @@ register_model_provider("fakechat",FakeChatModel)
 register_model_provider("vllm", "openai-compatible", base_url="http://localhost:8000/v1")
 ```
 
----
-
 ## batch_register_model_provider
 
 批量注册模型提供者。
@@ -50,8 +48,6 @@ batch_register_model_provider([
     {"provider": "vllm", "chat_model": "openai-compatible", "base_url": "http://localhost:8000/v1"},
 ])
 ```
-
----
 
 ## load_chat_model
 
@@ -80,8 +76,6 @@ def load_chat_model(
 model = load_chat_model("vllm:qwen3-4b")
 ```
 
----
-
 ## ChatModelType
 
 注册模型提供商时`chat_model`参数支持的类型。
@@ -89,8 +83,6 @@ model = load_chat_model("vllm:qwen3-4b")
 ```python
 ChatModelType = Union[type[BaseChatModel], Literal["openai-compatible"]]
 ```
-
----
 
 ## ChatModelProvider
 

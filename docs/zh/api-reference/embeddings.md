@@ -25,8 +25,6 @@ register_embeddings_provider("fakeembeddings", FakeEmbeddings)
 register_embeddings_provider("vllm", "openai-compatible", base_url="http://localhost:8000/v1")
 ```
 
----
-
 ## batch_register_embeddings_provider
 
 批量注册嵌入模型提供者。
@@ -49,8 +47,6 @@ batch_register_embeddings_provider([
     {"provider": "vllm", "embeddings_model": "openai-compatible", "base_url": "http://localhost:8000/v1"},
 ])
 ```
-
----
 
 ## load_embeddings
 
@@ -79,8 +75,6 @@ def load_embeddings(
 embeddings = load_embeddings("vllm:qwen3-embedding-4b")
 ```
 
----
-
 ## EmbeddingsType
 
 注册嵌入提供商时`embeddings_model`参数支持的类型。
@@ -88,8 +82,6 @@ embeddings = load_embeddings("vllm:qwen3-embedding-4b")
 ```python
 EmbeddingsType = Union[type[Embeddings], Literal["openai-compatible"]]
 ```
-
----
 
 ## EmbeddingProvider
 

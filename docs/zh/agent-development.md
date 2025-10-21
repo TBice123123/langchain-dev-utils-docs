@@ -52,11 +52,13 @@ print(response)
 
 ## 中间件
 
-目前有三个中间件,均继承于官方的中间件.分别是:
+目前有五个中间件,其中四个继承于官方的中间件（与官方中间件同名）.分别是:
 
 - `SummarizationMiddleware`：摘要中间件，主要用于上下文压缩
 - `LLMToolSelectorMiddleware`：LLM 工具选择中间件，用于选择合适的工具
 - `PlanMiddleware`：任务规划中间件，用于任务规划
+- `ModelFallbackMiddleware`：模型回退中间件，用于调用模型时候如果失败则回退到备用模型
+- `LLMToolEmulator`：LLM 工具模拟中间件，用于模拟工具调用
 
 ### SummarizationMiddleware
 
@@ -274,5 +276,51 @@ agent = create_agent(
 response = agent.invoke(
     {"messages": [HumanMessage(content="我要去New York玩几天，帮我规划行程")]}
 )
+print(response)
+```
+
+### ModelFallbackMiddleware
+
+用于在调用模型失败时回退到备用模型的中间件。功能与官方[ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback)完全一致。但是同样只允许字符串指定模型，与上面的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册。使用示例:
+
+```python
+from langchain_dev_utils.agents.middleware import (
+    ModelFallbackMiddleware,
+)
+
+agent = create_agent(
+    model="vllm:qwen3-4b",
+    middleware=[
+        ModelFallbackMiddleware(
+           "vllm:qwen3-8b",
+           "openrouter:meta-llama/llama-3.3-8b-instruct:free",
+        )
+    ],
+)
+
+response = agent.invoke({"messages": [HumanMessage(content="你好。")]}),
+print(response)
+```
+
+### LLMToolEmulator
+
+用于使用大模型来模拟工具调用的中间件。功能与官方[LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator)完全一致。但是同样只允许字符串指定模型，与上面的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册。使用示例:
+
+```python
+from langchain_dev_utils.agents.middleware import (
+    LLMToolEmulator,
+)
+
+agent = create_agent(
+    model="vllm:qwen3-4b",
+    tools=[get_current_time],
+    middleware=[
+        LLMToolEmulator(
+            model="vllm:qwen3-4b"
+        )
+    ],
+)
+
+response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")]}),
 print(response)
 ```

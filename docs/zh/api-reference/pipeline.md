@@ -39,8 +39,6 @@ sequential_pipeline(
 )
 ```
 
----
-
 ## parallel_pipeline
 
 将多个状态相同的子图以并行方式组合。
