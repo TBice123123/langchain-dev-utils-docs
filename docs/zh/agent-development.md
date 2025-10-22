@@ -211,23 +211,21 @@ finish_sub_plan 则是仅用于更新当前子任务的状态，以及设置下�
 
 ```python
 @tool(description=description or _DEFAULT_FINISH_SUB_PLAN_TOOL_DESCRIPTION,)
-def finish_sub_plan(
-    runtime: ToolRuntime,
-):
+def finish_sub_plan(runtime: ToolRuntime,):
     msg_key = message_key or "messages"
     plan_list = runtime.state.get("plan", [])
 
     sub_finish_plan = ""
-    sub_next_plan = ""
+    sub_next_plan = ",all sub plan are done"
     for plan in plan_list:
         if plan["status"] == "in_progress":
             plan["status"] = "done"
-            sub_finish_plan = plan["content"]
+            sub_finish_plan = f"finish sub plan:**{plan['content']}**"
 
     for plan in plan_list:
         if plan["status"] == "pending":
             plan["status"] = "in_progress"
-            sub_next_plan = plan["content"]
+            sub_next_plan = f",next plan:**{plan['content']}**"
             break
 
     return Command(
@@ -235,7 +233,7 @@ def finish_sub_plan(
             "plan": plan_list,
             msg_key: [
                 ToolMessage(
-                    content=f"finish sub plan {sub_finish_plan}, next plan {sub_next_plan}",
+                    content=sub_finish_plan + sub_next_plan,
                     tool_call_id=runtime.tool_call_id,
                 )
             ],

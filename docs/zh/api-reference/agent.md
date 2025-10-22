@@ -189,11 +189,10 @@ llm_tool_selector_middleware = LLMToolSelectorMiddleware(model="vllm:qwen3-4b")
 ```python
 class PlanMiddleware(AgentMiddleware):
     state_schema = PlanState
-
     def __init__(
         self,
         *,
-        system_prompt: str = WRITE_PLAN_TOOL_DESCRIPTION,
+        system_prompt: Optional[str] = None,
         tools: Optional[list[BaseTool]] = None,
     ) -> None:
 ```

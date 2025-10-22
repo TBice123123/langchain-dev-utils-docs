@@ -189,11 +189,10 @@ Middleware for agent plan management.
 ```python
 class PlanMiddleware(AgentMiddleware):
     state_schema = PlanState
-
     def __init__(
         self,
         *,
-        system_prompt: str = WRITE_PLAN_TOOL_DESCRIPTION,
+        system_prompt: Optional[str] = None,
         tools: Optional[list[BaseTool]] = None,
     ) -> None:
 ```
