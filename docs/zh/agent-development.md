@@ -141,110 +141,119 @@ print(response)
 任务规划是一种高效的上下文工程管理策略。在执行任务之前，大模型首先将整体任务拆解为多个有序的子任务，形成任务规划列表（在本库中称为 plan）。随后按顺序执行各子任务，并在每完成一个步骤后动态更新任务状态，直至所有子任务执行完毕。
 :::
 
-本中间件与 LangChain 官方提供的 [Plan 中间件](https://docs.langchain.com/oss/python/langchain/middleware#planning)功能定位相似，但在工具设计上存在差异。官方中间件仅提供 `write_todo` 工具，面向的是待办清单（todo list）结构；而本库则提供了 `write_plan` 与 `update_plan` 两个专用工具，专门用于对规划列表（plan list）进行写入与更新操作。
+本中间件与 LangChain 官方提供的 [Plan 中间件](https://docs.langchain.com/oss/python/langchain/middleware#planning)功能定位相似，但在工具设计上存在差异。官方中间件仅提供 `write_todo` 工具，面向的是待办清单（todo list）结构；而本库则提供了 `write_plan` 、`finish_sub_plan`、`read_plan` 三个专用工具，专门用于对规划列表（plan list）进行写入、修改、查询等操作。
 
-无论是`todo`还是`plan`其本质都是同一个，因此本中间件区别于官方的关键点在于提供的工具，官方的添加和修改是通过一个工具来完成的，而本库则提供了两个工具，一个用于添加，一个用于修改。
+无论是`todo`还是`plan`其本质都是同一个，因此本中间件区别于官方的关键点在于提供的工具，官方的添加和修改是通过一个工具来完成的，而本库则提供了三个工具，其中`write_plan`可用于写入计划或者更新计划内容，`finish_sub_plan`则用于在完成某个子任务后更新其状态，`read_plan`用于查询计划内容。
 
-具体表现为如下的两个函数:
+具体表现为如下的三个函数:
 
 - `create_write_plan_tool`：创建一个用于写计划的工具的函数
-- `create_update_plan_tool`：创建一个用于更新计划的工具的函数
+- `create_finish_sub_plan_tool`：创建一个用于完成子任务的工具的函数
+- `create_read_plan_tool`：创建一个用于查询计划的工具的函数
 
-这两个函数接收的参数如下:
+这三个函数接收的参数如下:
 
-- `name`：自定义工具名称，如果不传则 create_write_plan_tool 默认为`write_plan`，create_update_plan_tool 默认为`update_plan`
 - `description`：工具描述,如果不传则采用默认的工具描述
-- `message_key`：用于更新 messages 的键，若不传入则使用默认的`messages`
+- `message_key`：用于更新 messages 的键，若不传入则使用默认的`messages` （`read_plan`工具无此参数）
 
 使用示例如下:
 
 ```python
 from langchain_dev_utils.agents.middleware.plan import (
     create_write_plan_tool,
-    create_update_plan_tool,
+    create_finish_sub_plan_tool,
+    create_read_plan_tool,
     PlanState,
 )
 
 agent = create_agent(
     model="vllm:qwen3-4b",
     state_schema=PlanState,
-    tools=[create_write_plan_tool(), create_update_plan_tool()],
+    tools=[create_write_plan_tool(), create_finish_sub_plan_tool(), create_read_plan_tool()],
 )
 ```
 
-需要注意的是,要使用这两个工具,你必须要保证状态 Schema 中包含 plan 这个键,否则会报错,对此你可以使用本库提供的`PlanState`来继承状态 Schema。
+需要注意的是,要使用这三个工具,你必须要保证状态 Schema 中包含 plan 这个键,否则会报错,对此你可以使用本库提供的`PlanState`来继承状态 Schema。
 
 ::: details write_plan
 
+write_plan 有两个作用：1 是第一次进行计划的写入。2 是在计划的执行过程中，如果发现现有计划有问题，可以进行更新。
+
 ```python
- def write_plan(plan: list[str], tool_call_id: Annotated[str, InjectedToolCallId]):
-        msg_key = message_key or "messages"
-        return Command(
-            update={
-                "plan": [
-                    {
-                        "content": content,
-                        "status": "pending" if index > 0 else "in_progress",
-                    }
-                    for index, content in enumerate(plan)
-                ],
-                msg_key: [
-                    ToolMessage(
-                        content=f"Plan successfully written, please first execute the {plan[0]} task (no need to change the status to in_process)",
-                        tool_call_id=tool_call_id,
-                    )
-                ],
-            }
-        )
+@tool(description=description or _DEFAULT_WRITE_PLAN_TOOL_DESCRIPTION,)
+def write_plan(plan: list[str], runtime: ToolRuntime):
+    msg_key = message_key or "messages"
+    return Command(
+        update={
+            "plan": [
+                {
+                    "content": content,
+                    "status": "pending" if index > 0 else "in_progress",
+                }
+                for index, content in enumerate(plan)
+            ],
+            msg_key: [
+                ToolMessage(
+                    content=f"Plan successfully written, please first execute the {plan[0]} task (no need to change the status to in_process)",
+                    tool_call_id=runtime.tool_call_id,
+                )
+            ],
+        }
+    )
+
 ```
 
 :::
 
-::: details update_plan
+::: details finish_sub_plan
+
+finish_sub_plan 则是仅用于更新当前子任务的状态，以及设置下一个子任务。
 
 ```python
-def update_plan(
-        update_plans: list[Plan],
-        tool_call_id: Annotated[str, InjectedToolCallId],
-        state: Annotated[PlanStateMixin, InjectedState],
-    ):
-        plan_list = state.get("plan", [])
+@tool(description=description or _DEFAULT_FINISH_SUB_PLAN_TOOL_DESCRIPTION,)
+def finish_sub_plan(
+    runtime: ToolRuntime,
+):
+    msg_key = message_key or "messages"
+    plan_list = runtime.state.get("plan", [])
 
-        updated_plan_list = []
+    sub_finish_plan = ""
+    sub_next_plan = ""
+    for plan in plan_list:
+        if plan["status"] == "in_progress":
+            plan["status"] = "done"
+            sub_finish_plan = plan["content"]
 
-        for update_plan in update_plans:
-            for plan in plan_list:
-                if plan["content"] == update_plan["content"]:
-                    plan["status"] = update_plan["status"]
-                    updated_plan_list.append(plan)
+    for plan in plan_list:
+        if plan["status"] == "pending":
+            plan["status"] = "in_progress"
+            sub_next_plan = plan["content"]
+            break
 
-        if len(updated_plan_list) < len(update_plans):
-            raise ValueError(
-                "Not fullly updated plan, missing:"
-                + ",".join(
-                    [
-                        plan["content"]
-                        for plan in update_plans
-                        if plan not in updated_plan_list
-                    ]
+    return Command(
+        update={
+            "plan": plan_list,
+            msg_key: [
+                ToolMessage(
+                    content=f"finish sub plan {sub_finish_plan}, next plan {sub_next_plan}",
+                    tool_call_id=runtime.tool_call_id,
                 )
-                + "\nPlease check the plan list, the current plan list is:"
-                + "\n".join(
-                    [plan["content"] for plan in plan_list if plan["status"] != "done"]
-                )
-            )
-        msg_key = message_key or "messages"
+            ],
+        }
+    )
+```
 
-        return Command(
-            update={
-                "plan": plan_list,
-                msg_key: [
-                    ToolMessage(
-                        content="Plan updated successfully", tool_call_id=tool_call_id
-                    )
-                ],
-            }
-        )
+:::
+
+::: details read_plan
+
+read_plan 则是仅用于读取当前的计划。
+
+```python
+@tool(description=description or _DEFAULT_READ_PLAN_TOOL_DESCRIPTION)
+def read_plan(runtime: ToolRuntime):
+    plan_list = runtime.state.get("plan", [])
+    return json.dumps(plan_list)
 ```
 
 :::
@@ -253,12 +262,13 @@ def update_plan(
 PlanMiddleware 的参数说明如下:
 
 - `system_prompt`：可选字符串类型，系统提示词，功能上与官方的 TodoListMiddleware 相同
-- `tools`：可选 BaseTool 列表类型，工具列表，指定后会加入到 tools 中，必须是通过 create_write_plan_tool 和 create_update_plan_tool 创建的工具
+- `tools`：可选 BaseTool 列表类型，工具列表，指定后会加入到 tools 中，必须是通过 `create_write_plan_tool`、`create_finish_sub_plan_tool` 以及 `create_read_plan_tool` 创建的工具
 
 ```python
 from langchain_dev_utils.agents.middleware import (
     create_write_plan_tool,
-    create_update_plan_tool,
+    create_finish_sub_plan_tool,
+    create_read_plan_tool,
     PlanMiddleware,
 )
 
@@ -267,7 +277,7 @@ agent = create_agent(
     model="vllm:qwen3-4b",
     middleware=[
         PlanMiddleware(
-            tools=[create_write_plan_tool(), create_update_plan_tool()],
+            tools=[create_write_plan_tool(), create_finish_sub_plan_tool(), create_read_plan_tool()],
         )
     ],
 )
@@ -278,6 +288,12 @@ response = agent.invoke(
 )
 print(response)
 ```
+
+**注意:**
+
+1. `PlanMiddleware` 的两个参数均为可选。若不传入任何参数，系统将默认使用 `_DEFAULT_PLAN_SYSTEM_PROMPT` 作为系统提示词，并自动加载由 `create_write_plan_tool`、`create_finish_sub_plan_tool` 及 `create_read_plan_tool` 创建的工具集。
+
+2. 对于 `tools` 参数，仅支持使用 `create_write_plan_tool`、`create_finish_sub_plan_tool` 和 `create_read_plan_tool` 所创建的工具。其中，`create_read_plan_tool`为可选工具，仅传入前两者时，此中间件仍可正常运行，但将不具备读取计划的功能。
 
 ### ModelFallbackMiddleware
 

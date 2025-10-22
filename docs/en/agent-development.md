@@ -10,11 +10,11 @@
 
 ## Pre-built Agents
 
-The pre-built agent module primarily provides a function that is functionally identical to LangChain's `create_agent` function, but allows specifying more models via strings (which require registration).
+The pre-built agent module primarily provides a function identical in functionality to LangChain's `create_agent` function, but allows specifying more models via strings (which require registration).
 
 Core Function:
 
-- `create_agent`: Creates a single agent
+- `create_agent`: Creates a single agent.
 
 Parameters:
 
@@ -30,7 +30,7 @@ from langchain_dev_utils.agents import create_agent
 from langchain_core.tools import tool
 import datetime
 
-# Register a model provider
+# Register model provider
 register_model_provider(
     provider_name="vllm",
     chat_model="openai-compatible",
@@ -40,7 +40,7 @@ register_model_provider(
 
 @tool
 def get_current_time() -> str:
-    """Get the current timestamp."""
+    """Get the current timestamp"""
     return str(datetime.datetime.now().timestamp())
 
 
@@ -52,18 +52,17 @@ print(response)
 
 ## Middleware
 
-There are currently five middleware components, four of which inherit from the official middleware (sharing the same names). They are:
+Currently, there are five middleware components, four of which inherit from the official middleware (sharing the same names). They are:
 
 - `SummarizationMiddleware`: Summarization middleware, primarily used for context compression.
 - `LLMToolSelectorMiddleware`: LLM tool selection middleware, used for selecting appropriate tools.
 - `PlanMiddleware`: Task planning middleware, used for task planning.
 - `ModelFallbackMiddleware`: Model fallback middleware, used to fall back to a backup model if the primary model call fails.
-- `LLMToolEmulator`: LLM tool emulator middleware, used to simulate tool calls.
+- `LLMToolEmulator`: LLM tool emulator middleware, used to emulate tool calls.
 
 ### SummarizationMiddleware
 
-Its core function is to compress conversation content. Its functionality is identical to the official [SummarizationMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#summarization). However, it only allows specifying the model via a string parameter, similar to the `create_agent` above. This allows for a wider selection of models, but they require registration.
-
+The core function is to compress conversation content. Its functionality is identical to the official [SummarizationMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#summarization). However, it only allows specifying the model via a string parameter, similar to the `create_agent` above. The model selection range is larger, but registration is required.
 Usage Example:
 
 ```python
@@ -81,12 +80,12 @@ agent = create_agent(
     ],
     system_prompt="You are an intelligent AI assistant capable of solving user problems.",
 )
-# big_text is a text containing a large amount of content, omitted here.
+# big_text is a text containing a large amount of content, omitted here
 big_messages = [
     HumanMessage(content="Hello, who are you?"),
     AIMessage(content="I am your AI assistant."),
-    HumanMessage(content="Write a beautiful, long piece of text."),
-    AIMessage(content=f"Okay, I will write a beautiful, long text. The content is: {big_text}"),
+    HumanMessage(content="Write a beautiful long text."),
+    AIMessage(content=f"Okay, I will write a beautiful long text. The content is: {big_text}"),
     HumanMessage(content="Why did you write this long text?"),
 ]
 response = agent.invoke({"messages": big_messages})
@@ -95,8 +94,7 @@ print(response)
 
 ### LLMToolSelectorMiddleware
 
-Its core function is to allow the LLM to select tools itself when there are a large number of tools available. Its functionality is identical to the official [LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-selector). Similarly, it only allows specifying the model via a string, like the `create_agent` above, offering a wider model selection that requires registration.
-
+The core function is to allow the LLM to select tools itself when there are a large number of tools. Its functionality is identical to the official [LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-selector). Similarly, it only allows specifying the model via a string, like the `create_agent` above. The model selection range is larger, but registration is required.
 Usage Example:
 
 ```python
@@ -106,19 +104,19 @@ from langchain_dev_utils.agents.middleware import (
 
 @tool
 def get_current_weather() -> str:
-    """Get the current weather."""
+    """Get the current weather"""
     return "The weather is sunny today."
 
 
 @tool
 def search() -> str:
-    """Search."""
+    """Search"""
     return "Search results"
 
 
 @tool
 def run_python() -> str:
-    """Run Python code."""
+    """Run Python code"""
     return "Running Python code"
 
 
@@ -137,130 +135,139 @@ print(response)
 
 ### PlanMiddleware
 
-A middleware for task planning, used for structured decomposition and process management before executing complex tasks.
+Task planning middleware, used for structured decomposition and process management before executing complex tasks.
 
 ::: tip 📝
-Task planning is an efficient strategy for managing contextual engineering. Before executing a task, the large language model first breaks down the overall task into multiple ordered subtasks, forming a task plan list (referred to as a 'plan' in this library). It then executes each subtask in sequence, dynamically updating the task status after completing each step until all subtasks are finished.
+Task planning is an efficient context engineering management strategy. Before executing a task, the large language model first breaks down the overall task into multiple ordered subtasks, forming a task plan list (referred to as a 'plan' in this library). It then executes each subtask in sequence, dynamically updating the task status after completing each step until all subtasks are finished.
 :::
 
-This middleware is similar in function and positioning to the official LangChain [Plan middleware](https://docs.langchain.com/oss/python/langchain/middleware#planning), but differs in tool design. The official middleware only provides a `write_todo` tool, oriented towards a todo list structure. This library, however, provides two dedicated tools: `write_plan` and `update_plan`, specifically for writing to and updating the plan list.
+This middleware is similar in function and positioning to the official LangChain [Plan middleware](https://docs.langchain.com/oss/python/langchain/middleware#planning), but differs in tool design. The official middleware only provides the `write_todo` tool, which is oriented towards a todo list structure. This library, however, provides three dedicated tools: `write_plan`, `finish_sub_plan`, and `read_plan`, specifically designed for writing, modifying, and querying the plan list.
 
-Whether it's `todo` or `plan`, their essence is the same. Therefore, the key difference between this middleware and the official one lies in the tools provided. The official middleware handles addition and modification through a single tool, whereas this library provides two separate tools: one for adding and one for modifying.
+Whether it's `todo` or `plan`, their essence is the same. Therefore, the key difference between this middleware and the official one lies in the provided tools. The official middleware uses one tool for both adding and modifying, whereas this library provides three tools: `write_plan` can be used to write or update the plan content, `finish_sub_plan` is used to update the status of a subtask after its completion, and `read_plan` is used to query the plan content.
 
-This is specifically manifested in the following two functions:
+Specifically, they are represented by the following three functions:
 
-- `create_write_plan_tool`: A function to create a tool for writing the plan.
-- `create_update_plan_tool`: A function to create a tool for updating the plan.
+- `create_write_plan_tool`: A function that creates a tool for writing the plan.
+- `create_finish_sub_plan_tool`: A function that creates a tool for marking a subtask as finished.
+- `create_read_plan_tool`: A function that creates a tool for reading the plan.
 
-The parameters these functions accept are as follows:
+These three functions accept the following parameters:
 
-- `name`: Custom tool name. If not provided, `create_write_plan_tool` defaults to `write_plan` and `create_update_plan_tool` defaults to `update_plan`.
-- `description`: Tool description. If not provided, the default tool description is used.
-- `message_key`: The key used to update messages. If not provided, the default `messages` is used.
+- `description`: The tool description. If not provided, the default tool description is used.
+- `message_key`: The key used to update messages. If not provided, the default `messages` is used (the `read_plan` tool does not have this parameter).
 
 Usage Example:
 
 ```python
 from langchain_dev_utils.agents.middleware.plan import (
     create_write_plan_tool,
-    create_update_plan_tool,
+    create_finish_sub_plan_tool,
+    create_read_plan_tool,
     PlanState,
 )
 
 agent = create_agent(
     model="vllm:qwen3-4b",
     state_schema=PlanState,
-    tools=[create_write_plan_tool(), create_update_plan_tool()],
+    tools=[create_write_plan_tool(), create_finish_sub_plan_tool(), create_read_plan_tool()],
 )
 ```
 
-It's important to note that to use these two tools, you must ensure that the state Schema includes the `plan` key, otherwise an error will occur. You can use the `PlanState` provided by this library to inherit the state Schema for this purpose.
+Note: To use these three tools, you must ensure that the state Schema includes the `plan` key; otherwise, an error will occur. You can use the `PlanState` provided by this library to inherit the state Schema.
 
 ::: details write_plan
 
+`write_plan` has two purposes: 1. Writing the plan for the first time. 2. Updating the plan during execution if problems are found with the existing plan.
+
 ```python
- def write_plan(plan: list[str], tool_call_id: Annotated[str, InjectedToolCallId]):
-        msg_key = message_key or "messages"
-        return Command(
-            update={
-                "plan": [
-                    {
-                        "content": content,
-                        "status": "pending" if index > 0 else "in_progress",
-                    }
-                    for index, content in enumerate(plan)
-                ],
-                msg_key: [
-                    ToolMessage(
-                        content=f"Plan successfully written, please first execute the {plan[0]} task (no need to change the status to in_process)",
-                        tool_call_id=tool_call_id,
-                    )
-                ],
-            }
-        )
+@tool(description=description or _DEFAULT_WRITE_PLAN_TOOL_DESCRIPTION,)
+def write_plan(plan: list[str], runtime: ToolRuntime):
+    msg_key = message_key or "messages"
+    return Command(
+        update={
+            "plan": [
+                {
+                    "content": content,
+                    "status": "pending" if index > 0 else "in_progress",
+                }
+                for index, content in enumerate(plan)
+            ],
+            msg_key: [
+                ToolMessage(
+                    content=f"Plan successfully written, please first execute the {plan[0]} task (no need to change the status to in_process)",
+                    tool_call_id=runtime.tool_call_id,
+                )
+            ],
+        }
+    )
 ```
 
 :::
 
-::: details update_plan
+::: details finish_sub_plan
+
+`finish_sub_plan` is used only to update the status of the current subtask and set the next subtask.
 
 ```python
-def update_plan(
-        update_plans: list[Plan],
-        tool_call_id: Annotated[str, InjectedToolCallId],
-        state: Annotated[PlanStateMixin, InjectedState],
-    ):
-        plan_list = state.get("plan", [])
+@tool(description=description or _DEFAULT_FINISH_SUB_PLAN_TOOL_DESCRIPTION,)
+def finish_sub_plan(
+    runtime: ToolRuntime,
+):
+    msg_key = message_key or "messages"
+    plan_list = runtime.state.get("plan", [])
 
-        updated_plan_list = []
+    sub_finish_plan = ""
+    sub_next_plan = ""
+    for plan in plan_list:
+        if plan["status"] == "in_progress":
+            plan["status"] = "done"
+            sub_finish_plan = plan["content"]
 
-        for update_plan in update_plans:
-            for plan in plan_list:
-                if plan["content"] == update_plan["content"]:
-                    plan["status"] = update_plan["status"]
-                    updated_plan_list.append(plan)
+    for plan in plan_list:
+        if plan["status"] == "pending":
+            plan["status"] = "in_progress"
+            sub_next_plan = plan["content"]
+            break
 
-        if len(updated_plan_list) < len(update_plans):
-            raise ValueError(
-                "Not fullly updated plan, missing:"
-                + ",".join(
-                    [
-                        plan["content"]
-                        for plan in update_plans
-                        if plan not in updated_plan_list
-                    ]
+    return Command(
+        update={
+            "plan": plan_list,
+            msg_key: [
+                ToolMessage(
+                    content=f"finish sub plan {sub_finish_plan}, next plan {sub_next_plan}",
+                    tool_call_id=runtime.tool_call_id,
                 )
-                + "\nPlease check the plan list, the current plan list is:"
-                + "\n".join(
-                    [plan["content"] for plan in plan_list if plan["status"] != "done"]
-                )
-            )
-        msg_key = message_key or "messages"
-
-        return Command(
-            update={
-                "plan": plan_list,
-                msg_key: [
-                    ToolMessage(
-                        content="Plan updated successfully", tool_call_id=tool_call_id
-                    )
-                ],
-            }
-        )
+            ],
+        }
+    )
 ```
 
 :::
 
-However, the usage method described above is not recommended in this library. The best practice is to use the `PlanMiddleware`.
-The parameters for `PlanMiddleware` are explained below:
+::: details read_plan
 
-- `system_prompt`: Optional string type, the system prompt. Functionally the same as the official `TodoListMiddleware`.
-- `tools`: Optional list of `BaseTool` type, the list of tools. If specified, they will be added to the tools. Must be tools created via `create_write_plan_tool` and `create_update_plan_tool`.
+`read_plan` is used only to read the current plan.
+
+```python
+@tool(description=description or _DEFAULT_READ_PLAN_TOOL_DESCRIPTION)
+def read_plan(runtime: ToolRuntime):
+    plan_list = runtime.state.get("plan", [])
+    return json.dumps(plan_list)
+```
+
+:::
+
+However, the usage described above is not recommended in this library. The best practice is to use the `PlanMiddleware`.
+Parameters for `PlanMiddleware`:
+
+- `system_prompt`: Optional string type, the system prompt. Functionally similar to the official TodoListMiddleware.
+- `tools`: Optional list of BaseTool type, the list of tools. If specified, they will be added to the tools. Must be tools created by `create_write_plan_tool`, `create_finish_sub_plan_tool`, and `create_read_plan_tool`.
 
 ```python
 from langchain_dev_utils.agents.middleware import (
     create_write_plan_tool,
-    create_update_plan_tool,
+    create_finish_sub_plan_tool,
+    create_read_plan_tool,
     PlanMiddleware,
 )
 
@@ -269,7 +276,7 @@ agent = create_agent(
     model="vllm:qwen3-4b",
     middleware=[
         PlanMiddleware(
-            tools=[create_write_plan_tool(), create_update_plan_tool()],
+            tools=[create_write_plan_tool(), create_finish_sub_plan_tool(), create_read_plan_tool()],
         )
     ],
 )
@@ -281,11 +288,15 @@ response = agent.invoke(
 print(response)
 ```
 
+**Notes:**
+
+1.  Both parameters of `PlanMiddleware` are optional. If no parameters are passed, the system will default to using `_DEFAULT_PLAN_SYSTEM_PROMPT` as the system prompt and automatically load the toolset created by `create_write_plan_tool`, `create_finish_sub_plan_tool`, and `create_read_plan_tool`.
+
+2.  For the `tools` parameter, only tools created by `create_write_plan_tool`, `create_finish_sub_plan_tool`, and `create_read_plan_tool` are supported. Among them, `create_read_plan_tool` is optional; the middleware can still function normally if only the first two are provided, but it will lack the ability to read the plan.
+
 ### ModelFallbackMiddleware
 
-Middleware used to fall back to a backup model when the primary model call fails. Its functionality is identical to the official [ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback). Similarly, it only allows specifying the model via a string, like the `create_agent` above, offering a wider model selection that requires registration.
-
-Usage Example:
+Middleware used to fall back to a backup model when the primary model call fails. Its functionality is identical to the official [ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback). Similarly, it only allows specifying the model via a string, like the `create_agent` above. The model selection range is larger, but registration is required. Usage Example:
 
 ```python
 from langchain_dev_utils.agents.middleware import (
@@ -308,9 +319,7 @@ print(response)
 
 ### LLMToolEmulator
 
-Middleware used to simulate tool calls using a large language model. Its functionality is identical to the official [LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator). Similarly, it only allows specifying the model via a string, like the `create_agent` above, offering a wider model selection that requires registration.
-
-Usage Example:
+Middleware used to emulate tool calls using a large language model. Its functionality is identical to the official [LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator). Similarly, it only allows specifying the model via a string, like the `create_agent` above. The model selection range is larger, but registration is required. Usage Example:
 
 ```python
 from langchain_dev_utils.agents.middleware import (

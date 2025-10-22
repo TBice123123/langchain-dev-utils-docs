@@ -53,23 +53,21 @@ agent = create_agent(model="vllm:qwen3-4b", tools=[get_current_time])
 
 ## create_write_plan_tool
 
-创建写计划工具。
+创建用于写计划或者更新计划的工具。
 
 ```python
 def create_write_plan_tool(
-    name: Optional[str] = None,
     description: Optional[str] = None,
     message_key: Optional[str] = None,
-) -> BaseTool
+) -> BaseTool:
 ```
 
 **参数说明：**
 
-- `name`：可选字符串类型，工具名称
 - `description`：可选字符串类型，工具描述
 - `message_key`：可选字符串类型，用于更新 messages 的键，默认 "messages"
 
-**返回值：** BaseTool 类型，写计划工具实例
+**返回值：** BaseTool 类型，工具实例
 
 **示例：**
 
@@ -77,30 +75,50 @@ def create_write_plan_tool(
 write_plan_tool = create_write_plan_tool()
 ```
 
-## create_update_plan_tool
+## create_finish_sub_plan_tool
 
-创建更新计划工具。
+创建用于完成子任务后更新执行状态的工具。
 
 ```python
-def create_update_plan_tool(
-    name: Optional[str] = None,
+def create_finish_sub_plan_tool(
     description: Optional[str] = None,
     message_key: Optional[str] = None,
-) -> BaseTool
+) -> BaseTool:
 ```
 
 **参数说明：**
 
-- `name`：可选字符串类型，工具名称
 - `description`：可选字符串类型，工具描述
 - `message_key`：可选字符串类型，用于更新 messages 的键，默认 "messages"
 
-**返回值：** BaseTool 类型，更新计划工具实例
+**返回值：** BaseTool 类型，工具实例
 
 **示例：**
 
 ```python
-update_plan_tool = create_update_plan_tool()
+finish_sub_plan_tool = create_finish_sub_plan_tool()
+```
+
+## create_read_plan_tool
+
+创建用于读取执行状态的工具。
+
+```python
+def create_read_plan_tool(
+    description: Optional[str] = None,
+) -> BaseTool:
+```
+
+**参数说明：**
+
+- `description`：可选字符串类型，工具描述
+
+**返回值：** BaseTool 类型，工具实例
+
+**示例：**
+
+```python
+read_plan_tool = create_read_plan_tool()
 ```
 
 ## SummarizationMiddleware
