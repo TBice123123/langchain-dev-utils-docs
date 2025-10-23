@@ -61,7 +61,7 @@ export default defineConfig({
                 link: "/en/api-reference/message_convert",
               },
               { text: "pipeline", link: "/en/api-reference/pipeline" },
-              { text: "tool_calling", link: "/en/api-reference/tool-calling" },
+              { text: "tool_calling", link: "/en/api-reference/tool_calling" },
             ],
           },
         ],
@@ -131,7 +131,7 @@ export default defineConfig({
               },
               {
                 text: "tool_calling",
-                link: "/zh/api-reference/tool-calling",
+                link: "/zh/api-reference/tool_calling",
               },
             ],
           },

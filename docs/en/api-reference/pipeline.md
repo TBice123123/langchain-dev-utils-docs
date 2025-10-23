@@ -12,7 +12,10 @@ def sequential_pipeline(
     context_schema: type[ContextT] | None = None,
     input_schema: type[InputT] | None = None,
     output_schema: type[OutputT] | None = None,
-) -> CompiledStateGraph[StateT, ContextT, InputT, OutputT]
+    checkpointer: Checkpointer | None = None,
+    store: BaseStore | None = None,
+    cache: BaseCache | None = None,
+) -> CompiledStateGraph[StateT, ContextT, InputT, OutputT]:
 ```
 
 **Parameters:**
@@ -23,6 +26,9 @@ def sequential_pipeline(
 - `context_schema`: ContextT type or None, optional. Context Schema for the final generated graph.
 - `input_schema`: InputT type or None, optional. Input Schema for the final generated graph.
 - `output_schema`: OutputT type or None, optional. Output Schema for the final generated graph.
+- `checkpointer`: Optional LangGraph checkpointer for the final constructed graph
+- `store`: Optional LangGraph store for the final constructed graph
+- `cache`: Optional LangGraph cache for the final constructed graph
 
 **Return Value:** CompiledStateGraph type, the created sequential state graph.
 
@@ -57,6 +63,10 @@ def parallel_pipeline(
     context_schema: type[ContextT] | None = None,
     input_schema: type[InputT] | None = None,
     output_schema: type[OutputT] | None = None,
+    checkpointer: Checkpointer | None = None,
+    store: BaseStore | None = None,
+    cache: BaseCache | None = None,
+) -> CompiledStateGraph[StateT, ContextT, InputT, OutputT]:
 ```
 
 **Parameters:**
@@ -68,6 +78,9 @@ def parallel_pipeline(
 - `context_schema`: ContextT type or None, optional. Context Schema for the final generated graph.
 - `input_schema`: InputT type or None, optional. Input Schema for the final generated graph.
 - `output_schema`: OutputT type or None, optional. Output Schema for the final generated graph.
+- `checkpointer`: Optional LangGraph checkpointer for the final constructed graph
+- `store`: Optional LangGraph store for the final constructed graph
+- `cache`: Optional LangGraph cache for the final constructed graph.
 
 **Return Value:** CompiledStateGraph type, the created parallel state graph.
 

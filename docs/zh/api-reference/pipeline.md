@@ -12,7 +12,10 @@ def sequential_pipeline(
     context_schema: type[ContextT] | None = None,
     input_schema: type[InputT] | None = None,
     output_schema: type[OutputT] | None = None,
-) -> CompiledStateGraph[StateT, ContextT, InputT, OutputT]
+    checkpointer: Checkpointer | None = None,
+    store: BaseStore | None = None,
+    cache: BaseCache | None = None,
+) -> CompiledStateGraph[StateT, ContextT, InputT, OutputT]:
 ```
 
 **参数说明：**
@@ -23,6 +26,9 @@ def sequential_pipeline(
 - `context_schema`：ContextT 类型或 None，可选，最终生成图的 Context Schema
 - `input_schema`：InputT 类型或 None，可选，最终生成图的输入 Schema
 - `output_schema`：OutputT 类型或 None，可选，最终生成图的输出 Schema
+- `checkpointer`：LangGraph checkpointer 类型或 None，最终生成图的 Checkpointer
+- `store`：LangGraph store 类型或 None，最终生成图的 Store
+- `cache`：LangGraph cache 类型或 None，最终生成图的 Cache
 
 **返回值：** CompiledStateGraph 类型，创建的串行状态图
 
@@ -57,6 +63,10 @@ def parallel_pipeline(
     context_schema: type[ContextT] | None = None,
     input_schema: type[InputT] | None = None,
     output_schema: type[OutputT] | None = None,
+    checkpointer: Checkpointer | None = None,
+    store: BaseStore | None = None,
+    cache: BaseCache | None = None,
+) -> CompiledStateGraph[StateT, ContextT, InputT, OutputT]:
 ```
 
 **参数说明：**
@@ -68,6 +78,9 @@ def parallel_pipeline(
 - `context_schema`：ContextT 类型或 None，可选，最终生成图的 Context Schema
 - `input_schema`：InputT 类型或 None，可选，最终生成图的输入 Schema
 - `output_schema`：OutputT 类型或 None，可选，最终生成图的输出 Schema
+- `checkpointer`：LangGraph checkpointer 类型或 None，最终生成图的 Checkpointer
+- `store`：LangGraph store 类型或 None，最终生成图的 Store
+- `cache`：LangGraph cache 类型或 None，最终生成图的 Cache
 
 **返回值：** CompiledStateGraph 类型，创建的并行状态图
 
