@@ -52,13 +52,14 @@ print(response)
 
 ## 中间件
 
-目前有五个中间件,其中四个继承于官方的中间件（与官方中间件同名）.分别是:
+目前有六个中间件,其中五个继承于官方的中间件（与官方中间件同名）.分别是:
 
 - `SummarizationMiddleware`：摘要中间件，主要用于上下文压缩
 - `LLMToolSelectorMiddleware`：LLM 工具选择中间件，用于选择合适的工具
 - `PlanMiddleware`：任务规划中间件，用于任务规划
 - `ModelFallbackMiddleware`：模型回退中间件，用于调用模型时候如果失败则回退到备用模型
 - `LLMToolEmulator`：LLM 工具模拟中间件，用于模拟工具调用
+- `ModelRouterMiddleware`：模型路由中间件，用于动态路由到合适的模型
 
 ### SummarizationMiddleware
 
@@ -337,4 +338,45 @@ agent = create_agent(
 
 response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")]}),
 print(response)
+```
+
+### ModelRouterMiddleware
+
+用于根据输入内容动态路由到合适模型的中间件。
+
+对于此中间件，你需要传入两个参数:
+
+- `router_model`: 用于路由的模型
+- `model_list`: 模型列表，每个模型需要包含`model_name`和`model_description`两个键
+- `router_prompt`: 路由模型的提示词，如果为 None 则使用默认的提示词
+
+使用示例:
+
+```python
+from langchain_dev_utils.agents.middleware import ModelRouterMiddleware
+
+agent = create_agent(
+    model="vllm:qwen3-4b",
+    tools=[],
+    middleware=[
+        ModelRouterMiddleware(
+            router_model="vllm:qwen3-4b",
+            model_list=[
+                {
+                    "model_name": "vllm:qwen3-8b",
+                    "model_description": "适合普通任务，如对话、文本生成等",
+                },
+                {
+                    "model_name": "openrouter:qwen/qwen3-vl-32b-instruct",
+                    "model_description": "适合视觉任务",
+                },
+                {
+                    "model_name": "openrouter:qwen/qwen3-coder-plus",
+                    "model_description": "适合代码生成任务",
+                },
+            ],
+        )
+    ],
+)
+print(agent.invoke({"messages": [HumanMessage(content="帮我写一个冒泡排序代码")]}))
 ```

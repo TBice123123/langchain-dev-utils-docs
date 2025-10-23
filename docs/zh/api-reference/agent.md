@@ -240,7 +240,6 @@ model_fallback_middleware = ModelFallbackMiddleware(
 用于使用大模型来模拟工具调用的中间件。
 
 ```python
-
 class LLMToolEmulator(_LLMToolEmulator):
     def __init__(
         self,
@@ -259,6 +258,44 @@ class LLMToolEmulator(_LLMToolEmulator):
 
 ```python
 llm_tool_emulator = LLMToolEmulator(model="vllm:qwen3-4b", tools=[get_current_time])
+```
+
+## ModelRouterMiddleware
+
+用于根据输入内容动态路由到合适模型的中间件。
+
+```python
+class ModelRouterMiddleware(AgentMiddleware):
+    def __init__(
+        self,
+        router_model: str,
+        model_list: list[ModelDict],
+        router_prompt: Optional[str] = None,
+    ) -> None:
+```
+
+**参数说明：**
+
+- `router_model`: 用于路由的模型
+- `model_list`: 模型列表，每个模型需要包含`model_name`和`model_description`两个键
+- `router_prompt`: 路由模型的提示词，如果为 None 则使用默认的提示词
+
+**示例：**
+
+```python
+model_router_middleware = ModelRouterMiddleware(
+    router_model="vllm:qwen3-4b",
+    model_list=[
+        {
+            "model_name": "vllm:qwen3-4b",
+            "model_description": "适合普通任务，如对话、文本生成等",
+        },
+        {
+            "model_name": "vllm:qwen3-8b",
+            "model_description": "适合复杂任务，如代码生成、数据分析等",
+        },
+    ]
+)
 ```
 
 ## PlanState
