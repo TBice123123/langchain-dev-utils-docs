@@ -44,7 +44,7 @@ In this example, we use the built-in `FakeChatModel` from `langchain_core`, whic
 When the `chat_model` parameter is a string, its only currently accepted value is `"openai-compatible"`, indicating that it will connect via the model provider's OpenAI-compatible API. This is because many model providers currently support OpenAI-compatible APIs, such as vllm, openrouter, together, etc.
 In this case, the library will use the built-in `OpenAICompatibleChatModel` as the actual chat model.
 
-`OpenAICompatibleChatModel` inherits from `BaseChatOpenAI` in `langchain-openai` and includes several compatibility optimizations on top of it. To ensure proper functionality, please make sure to install the standard version of `langchain-dev-utils` (see [Installation Documentation](./installation.md) for installation methods).
+`OpenAICompatibleChatModel` inherits from `BaseChatOpenAI` in `langchain-openai` and includes several compatibility optimizations on top of it. To ensure proper functionality, please make sure to install the standard version of `langchain-dev-utils` (see [Installation Documentation](../installation.md) for installation methods).
 
 Compared to directly using `ChatOpenAI` provided by `langchain-openai`, this library's `OpenAICompatibleChatModel` offers the following advantages:
 

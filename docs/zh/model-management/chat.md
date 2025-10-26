@@ -44,7 +44,7 @@ register_model_provider(
 当 `chat_model` 参数为字符串时，其目前唯一取值为 `"openai-compatible"`，表示将通过模型提供商的 OpenAI 兼容 API 进行接入。因为目前很多模型提供商都支持 OpenAI 兼容 API，例如 vllm、openrouter、together 等。
 此时，本库会使用内置的 `OpenAICompatibleChatModel` 作为实际的聊天模型。
 
-`OpenAICompatibleChatModel` 继承自 `langchain-openai` 中的 `BaseChatOpenAI`，并在其基础上进行了多项兼容性优化。为确保功能正常，请务必安装标准版的 `langchain-dev-utils`（安装方法详见 [安装文档](./installation.md)）。
+`OpenAICompatibleChatModel` 继承自 `langchain-openai` 中的 `BaseChatOpenAI`，并在其基础上进行了多项兼容性优化。为确保功能正常，请务必安装标准版的 `langchain-dev-utils`（安装方法详见 [安装文档](../installation.md)）。
 
 相较于直接使用 `langchain-openai` 提供的 `ChatOpenAI`，本库的 `OpenAICompatibleChatModel` 具有以下优势：
 
