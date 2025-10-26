@@ -32,6 +32,7 @@ export default defineConfig({
         sidebar: [
           {
             text: "Overview",
+            collapsed: true,
             items: [
               { text: "langchain-dev-utils", link: "/en/" },
               { text: "Installation", link: "/en/installation" },
@@ -39,19 +40,71 @@ export default defineConfig({
           },
           {
             text: "Learning",
+            collapsed: true,
             items: [
-              { text: "Model Management", link: "/en/model-management" },
-              { text: "Message Conversion", link: "/en/message-conversion" },
-              { text: "Tool Calling", link: "/en/tool-calling" },
-              { text: "Agent Development", link: "/en/agent-development" },
               {
-                text: "StateGraph Orchestration",
-                link: "/en/graph-orchestration",
+                text: "model-management",
+                items: [
+                  { text: "chat", link: "/en/model-management/chat" },
+                  {
+                    text: "embedding",
+                    link: "/en/model-management/embedding",
+                  },
+                ],
+              },
+              {
+                text: "message-conversion",
+                items: [
+                  {
+                    text: "message process",
+                    link: "/en/message-conversion/message",
+                  },
+                  {
+                    text: "format sequence",
+                    link: "/en/message-conversion/format",
+                  },
+                ],
+              },
+              {
+                text: "tool-calling",
+                items: [
+                  {
+                    text: "human-in-loop",
+                    link: "/en/tool-calling/human-in-loop",
+                  },
+                  {
+                    text: "tool calling process",
+                    link: "/en/tool-calling/tool",
+                  },
+                ],
+              },
+              {
+                text: "agent-development",
+                items: [
+                  {
+                    text: "prebuilt agent",
+                    link: "/en/agent-development/prebuilt",
+                  },
+                  {
+                    text: "middleware",
+                    link: "/en/agent-development/middleware",
+                  },
+                ],
+              },
+              {
+                text: "graph-orchestration",
+                items: [
+                  {
+                    text: "pipeline",
+                    link: "/en/graph-orchestration/pipeline",
+                  },
+                ],
               },
             ],
           },
           {
             text: "API Reference",
+            collapsed: true,
             items: [
               { text: "agent", link: "/en/api-reference/agent" },
               { text: "chat_model", link: "/en/api-reference/chat_model" },
@@ -88,6 +141,7 @@ export default defineConfig({
         sidebar: [
           {
             text: "概述",
+            collapsed: true,
             items: [
               { text: "langchain-dev-utils", link: "/zh/" },
               { text: "安装", link: "/zh/installation" },
@@ -95,19 +149,68 @@ export default defineConfig({
           },
           {
             text: "学习",
+            collapsed: true,
             items: [
-              { text: "模型管理", link: "/zh/model-management" },
-              { text: "消息转换", link: "/zh/message-conversion" },
-              { text: "工具调用", link: "/zh/tool-calling" },
-              { text: "Agent 开发", link: "/zh/agent-development" },
+              {
+                text: "模型管理",
+                items: [
+                  { text: "对话模型管理", link: "/zh/model-management/chat" },
+                  {
+                    text: "嵌入模型管理",
+                    link: "/zh/model-management/embedding",
+                  },
+                ],
+              },
+              {
+                text: "消息转换",
+                items: [
+                  {
+                    text: "消息处理",
+                    link: "/zh/message-conversion/message",
+                  },
+                  {
+                    text: "格式化列表内容",
+                    link: "/zh/message-conversion/format",
+                  },
+                ],
+              },
+              {
+                text: "工具调用",
+                items: [
+                  {
+                    text: "人在环路支持",
+                    link: "/zh/tool-calling/human-in-loop",
+                  },
+                  {
+                    text: "工具调用处理",
+                    link: "/zh/tool-calling/tool",
+                  },
+                ],
+              },
+              {
+                text: "Agent 开发",
+                items: [
+                  {
+                    text: "预构建 Agent",
+                    link: "/zh/agent-development/prebuilt",
+                  },
+                  { text: "中间件", link: "/zh/agent-development/middleware" },
+                ],
+              },
               {
                 text: "状态图编排",
-                link: "/zh/graph-orchestration",
+                items: [
+                  {
+                    text: "编排管道",
+                    link: "/zh/graph-orchestration/pipeline",
+                  },
+                ],
               },
             ],
           },
           {
             text: "API 参考",
+            collapsed: true,
             items: [
               {
                 text: "agent",

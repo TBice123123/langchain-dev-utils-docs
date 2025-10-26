@@ -1,67 +1,16 @@
-# Agent 开发
+# 中间件
 
 > [!NOTE]
 >
 > **功能概述**：提供方便进行 Agent 开发的实用工具。
 >
-> **前置要求**：了解 langchain 的[Agent](https://docs.langchain.com/oss/python/langchain/agents)、[中间件](https://docs.langchain.com/oss/python/langchain/middleware)。
+> **前置要求**：了解 langchain 的[中间件](https://docs.langchain.com/oss/python/langchain/middleware)。
 >
 > **预计阅读时间**：10 分钟
 
-## 预构建 Agent
+中间件是专门针对`langchain`预构建的 Agent 而构建的组件。官方提供了一些内置的中间件。本库则根据实际情况和本库的使用场景，提供了更多的中间件。
 
-预构建智能体模块主要是提供一个和`langchain`的`create_agent`函数功能上完全相同的函数，但是通过字符串指定更多的模型(需要进行注册)。
-
-核心函数:
-
-- `create_agent`：创建单智能体
-
-参数如下:
-
-- model: 模型名称，取值必须为字符串，且格式是`provider_name:model_name`,同时支持`init_chat_model`以及`load_chat_model`支持的格式，其中`load_chat_model`的 provider_name 需要使用`register_model_provider`完成注册。
-- 其它参数与`langchain`的`create_agent`完全相同。
-
-### 使用示例
-
-```python
-from langchain_core.messages import HumanMessage
-from langchain_dev_utils.chat_models import register_model_provider
-from langchain_dev_utils.agents import create_agent
-from langchain_core.tools import tool
-import datetime
-
-# 注册模型提供商
-register_model_provider(
-    provider_name="vllm",
-    chat_model="openai-compatible",
-    base_url="http://localhost:8000/v1",
-)
-
-
-@tool
-def get_current_time() -> str:
-    """获取当前时间戳"""
-    return str(datetime.datetime.now().timestamp())
-
-
-agent = create_agent("vllm:qwen3-4b", tools=[get_current_time])
-# 使用方式与 langchain的create_agent完全一致
-response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")]})
-print(response)
-```
-
-## 中间件
-
-目前有六个中间件,其中五个继承于官方的中间件（与官方中间件同名）.分别是:
-
-- `SummarizationMiddleware`：摘要中间件，主要用于上下文压缩
-- `LLMToolSelectorMiddleware`：LLM 工具选择中间件，用于选择合适的工具
-- `PlanMiddleware`：任务规划中间件，用于任务规划
-- `ModelFallbackMiddleware`：模型回退中间件，用于调用模型时候如果失败则回退到备用模型
-- `LLMToolEmulator`：LLM 工具模拟中间件，用于模拟工具调用
-- `ModelRouterMiddleware`：模型路由中间件，用于动态路由到合适的模型
-
-### SummarizationMiddleware
+## SummarizationMiddleware
 
 核心作用是压缩对话内容，功能与官方[SummarizationMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#summarization)完全一致。但是只允许字符串参数指定模型，与上面的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册。
 使用示例:
@@ -93,7 +42,7 @@ response = agent.invoke({"messages": big_messages})
 print(response)
 ```
 
-### LLMToolSelectorMiddleware
+## LLMToolSelectorMiddleware
 
 核心作用是用于大量工具的情况下，由 LLM 自己选择工具，功能与官方[LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-selector)完全一致。但是同样只允许字符串指定模型，与上面的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册。
 使用示例:
@@ -134,7 +83,7 @@ response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")
 print(response)
 ```
 
-### PlanMiddleware
+## PlanMiddleware
 
 任务规划的中间件，用于在执行复杂任务前进行结构化分解与过程管理。
 
@@ -294,7 +243,7 @@ print(response)
 
 2. 对于 `tools` 参数，仅支持使用 `create_write_plan_tool`、`create_finish_sub_plan_tool` 和 `create_read_plan_tool` 所创建的工具。其中，`create_read_plan_tool`为可选工具，仅传入前两者时，此中间件仍可正常运行，但将不具备读取计划的功能。
 
-### ModelFallbackMiddleware
+## ModelFallbackMiddleware
 
 用于在调用模型失败时回退到备用模型的中间件。功能与官方[ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback)完全一致。但是同样只允许字符串指定模型，与上面的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册。使用示例:
 
@@ -317,7 +266,7 @@ response = agent.invoke({"messages": [HumanMessage(content="你好。")]}),
 print(response)
 ```
 
-### LLMToolEmulator
+## LLMToolEmulator
 
 用于使用大模型来模拟工具调用的中间件。功能与官方[LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator)完全一致。但是同样只允许字符串指定模型，与上面的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册。使用示例:
 
@@ -340,7 +289,7 @@ response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")
 print(response)
 ```
 
-### ModelRouterMiddleware
+## ModelRouterMiddleware
 
 用于根据输入内容动态路由到合适模型的中间件。
 

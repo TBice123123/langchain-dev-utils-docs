@@ -32,7 +32,7 @@ Additionally, if you want to learn more about installation methods, please refer
 - [Message Conversion](./message-conversion.md) - Provides utility functions related to the Message class, including reasoning chain concatenation, chunk merging, list string formatting, etc.
 - [Tool Calling](./tool-calling.md) - Provides utility functions related to tool calling, including tool call detection and parameter parsing, adding human review to tool calls, etc.
 - [Agent Development](./agent-development.md) - Provides utility functions to facilitate Agent development, including further encapsulation of official Agent creation functions, common middleware, etc.
-- [State Graph Orchestration](./graph-orchestration.md) - Provides pipeline utility functions to combine multiple state subgraphs (StateGraph) in parallel or sequential manner.
+- [State Graph Orchestration Pipeline](./graph-orchestration.md) - Provides pipeline utility functions to combine multiple state subgraphs (StateGraph) in parallel or sequential manner.
 
 ### 🛠️ Key Features
 

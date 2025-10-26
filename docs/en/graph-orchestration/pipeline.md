@@ -1,8 +1,8 @@
-# State Graph Orchestration
+# State Graph Orchestration Pipeline
 
 > [!NOTE]
 >
-> **Feature Overview**: Primarily used to achieve parallel and sequential combinations of multiple state graphs.
+> **Feature Overview**: Mainly used to implement parallel and sequential combinations of multiple state graphs.
 >
 > **Prerequisites**: Understand LangChain's [Subgraphs](https://docs.langchain.com/oss/python/langgraph/use-subgraphs) and [Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send).
 >
@@ -10,25 +10,25 @@
 
 ## Sequential Pipeline
 
-Connects state graphs sequentially, one after another, forming a linear execution flow.
+Connects state graphs in sequence to form a serial execution flow.
 
-Implemented via the following function:
+Implemented through the following function:
 
-- `sequential_pipeline` - Combines multiple state graphs in a sequential manner.
+- `sequential_pipeline` - Combines multiple state graphs in sequential order
 
 Supported parameters:
 
 - `sub_graphs`: List of state graphs to combine (must be StateGraph instances)
-- `state_schema`: The State Schema for the final generated graph
+- `state_schema`: State Schema for the final generated graph
 - `graph_name`: Name of the final generated graph (optional)
 - `context_schema`: Context Schema for the final generated graph (optional)
 - `input_schema`: Input Schema for the final generated graph (optional)
 - `output_schema`: Output Schema for the final generated graph (optional)
-- `checkpoint`: LangGraph persistence Checkpoint (optional)
-- `store`: LangGraph persistence Store (optional)
-- `cache`: LangGraph Cache (optional)
+- `checkpoint`: LangGraph's persistence Checkpoint (optional)
+- `store`: LangGraph's persistence Store (optional)
+- `cache`: LangGraph's Cache (optional)
 
-Usage Example:
+Usage example:
 
 ```python
 import datetime
@@ -47,41 +47,41 @@ register_model_provider(
 
 @tool
 def get_current_time():
-    """Get the current time"""
+    """Get current time"""
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 @tool
 def get_current_weather():
-    """Get the current weather"""
+    """Get current weather"""
     return "Sunny"
 
 
 @tool
 def get_current_user():
-    """Get the current user"""
-    return "Tom"
+    """Get current user"""
+    return "Zhang San"
 
 
-# Build a sequential pipeline (all subgraphs execute in order)
+# Build sequential pipeline (all subgraphs execute in order)
 graph = sequential_pipeline(
     sub_graphs=[
         create_agent(
             model="vllm:qwen3-4b",
             tools=[get_current_time],
-            system_prompt="You are a time query assistant. You can only answer the current time. If the question is unrelated to time, please directly reply that you cannot answer.",
+            system_prompt="You are a time query assistant, can only answer current time. If the question is unrelated to time, please directly reply that you cannot answer",
             name="time_agent",
         ),
         create_agent(
             model="vllm:qwen3-4b",
             tools=[get_current_weather],
-            system_prompt="You are a weather query assistant. You can only answer the current weather. If the question is unrelated to weather, please directly reply that you cannot answer.",
+            system_prompt="You are a weather query assistant, can only answer current weather. If the question is unrelated to weather, please directly reply that you cannot answer",
             name="weather_agent",
         ),
         create_agent(
             model="vllm:qwen3-4b",
             tools=[get_current_user],
-            system_prompt="You are a user query assistant. You can only answer the current user. If the question is unrelated to the user, please directly reply that you cannot answer.",
+            system_prompt="You are a user query assistant, can only answer current user. If the question is unrelated to user, please directly reply that you cannot answer",
             name="user_agent",
         ),
     ],
@@ -96,7 +96,7 @@ The final generated graph structure is as follows:
 ![Sequential Pipeline Diagram](/img/sequential.png)
 
 ::: tip 📝
-For sequentially combined graphs, LangGraph's StateGraph provides the `add_sequence` method as a convenient shorthand. This method is most suitable when the nodes are functions (rather than subgraphs). If the nodes are subgraphs, the code might look like this:
+For sequentially combined graphs, LangGraph's StateGraph provides the add_sequence method as a convenient shorthand. This method is most suitable when nodes are functions (rather than subgraphs). If nodes are subgraphs, the code might look like this:
 
 ```python
 graph = StateGraph(AgentState)
@@ -105,56 +105,56 @@ graph.add_edge("__start__", "graph1")
 graph = graph.compile()
 ```
 
-However, the above approach can still be somewhat verbose. Therefore, using the `sequential_pipeline` function is recommended, as it allows for quick construction of a sequential execution graph with a single line of code, making it more concise and efficient.
+However, the above approach is still somewhat verbose. Therefore, it's recommended to use the sequential_pipeline function, which can quickly build a sequential execution graph with a single line of code, making it more concise and efficient.
 :::
 
 ## Parallel Pipeline
 
 Combines multiple state graphs in parallel, supporting flexible parallel execution strategies.
 
-Implemented via the following function:
+Implemented through the following function:
 
-- `parallel_pipeline` - Combines multiple state graphs in a parallel manner.
+- `parallel_pipeline` - Combines multiple state graphs in parallel
 
 Supported parameters:
 
 - `sub_graphs`: List of state graphs to combine
-- `state_schema`: The State Schema for the final generated graph
-- `branches_fn`: Parallel branch function, returns a list of Send objects to control parallel execution
+- `state_schema`: State Schema for the final generated graph
+- `branches_fn`: Parallel branch function that returns a list of Send objects to control parallel execution
 - `graph_name`: Name of the final generated graph (optional)
 - `context_schema`: Context Schema for the final generated graph (optional)
 - `input_schema`: Input Schema for the final generated graph (optional)
 - `output_schema`: Output Schema for the final generated graph (optional)
-- `checkpoint`: LangGraph persistence Checkpoint (optional)
-- `store`: LangGraph persistence Store (optional)
-- `cache`: LangGraph Cache (optional)
+- `checkpoint`: LangGraph's persistence Checkpoint (optional)
+- `store`: LangGraph's persistence Store (optional)
+- `cache`: LangGraph's Cache (optional)
 
-Usage Example:
+Usage example:
 
 **Basic Parallel Example**
 
 ```python
 from langchain_dev_utils.pipeline import parallel_pipeline
 
-# Build a parallel pipeline (all subgraphs execute in parallel)
+# Build parallel pipeline (all subgraphs execute in parallel)
 graph = parallel_pipeline(
     sub_graphs=[
         create_agent(
             model="vllm:qwen3-4b",
             tools=[get_current_time],
-            system_prompt="You are a time query assistant. You can only answer the current time. If the question is unrelated to time, please directly reply that you cannot answer.",
+            system_prompt="You are a time query assistant, can only answer current time. If the question is unrelated to time, please directly reply that you cannot answer",
             name="time_agent",
         ),
         create_agent(
             model="vllm:qwen3-4b",
             tools=[get_current_weather],
-            system_prompt="You are a weather query assistant. You can only answer the current weather. If the question is unrelated to weather, please directly reply that you cannot answer.",
+            system_prompt="You are a weather query assistant, can only answer current weather. If the question is unrelated to weather, please directly reply that you cannot answer",
             name="weather_agent",
         ),
         create_agent(
             model="vllm:qwen3-4b",
             tools=[get_current_user],
-            system_prompt="You are a user query assistant. You can only answer the current user. If the question is unrelated to the user, please directly reply that you cannot answer.",
+            system_prompt="You are a user query assistant, can only answer current user. If the question is unrelated to user, please directly reply that you cannot answer",
             name="user_agent",
         ),
     ],
@@ -169,11 +169,11 @@ The final generated graph structure is as follows:
 
 **Using Branch Functions to Control Parallel Execution**
 
-Sometimes it's necessary to specify which subgraphs to execute in parallel based on conditions. In such cases, you can use a branch function.
-The branch function needs to return a list of `Send` objects.
+Sometimes you need to specify which subgraphs to execute in parallel based on conditions. In such cases, you can use branch functions.
+Branch functions need to return a list of `Send` objects.
 
 ```python
-# Build a parallel pipeline (all subgraphs execute in parallel)
+# Build parallel pipeline (all subgraphs execute in parallel)
 from langgraph.types import Send
 
 graph = parallel_pipeline(
@@ -181,29 +181,28 @@ graph = parallel_pipeline(
         create_agent(
             model="vllm:qwen3-4b",
             tools=[get_current_time],
-            system_prompt="You are a time query assistant. You can only answer the current time. If the question is unrelated to time, please directly reply that you cannot answer.",
+            system_prompt="You are a time query assistant, can only answer current time. If the question is unrelated to time, please directly reply that you cannot answer",
             name="time_agent",
         ),
         create_agent(
             model="vllm:qwen3-4b",
             tools=[get_current_weather],
-            system_prompt="You are a weather query assistant. You can only answer the current weather. If the question is unrelated to weather, please directly reply that you cannot answer.",
+            system_prompt="You are a weather query assistant, can only answer current weather. If the question is unrelated to weather, please directly reply that you cannot answer",
             name="weather_agent",
         ),
         create_agent(
             model="vllm:qwen3-4b",
             tools=[get_current_user],
-            system_prompt="You are a user query assistant. You can only answer the current user. If the question is unrelated to the user, please directly reply that you cannot answer.",
+            system_prompt="You are a user query assistant, can only answer current user. If the question is unrelated to user, please directly reply that you cannot answer",
             name="user_agent",
         ),
     ],
     state_schema=AgentState,
     branches_fn=lambda e: [
-        Send("weather_agent", arg={"messages": [HumanMessage("Get the current weather in New York")]}),
-        Send("time_agent", arg={"messages": [HumanMessage("Get the current time")]}),
+        Send("weather_agent", arg={"messages": [HumanMessage("Get current New York weather")]}),
+        Send("time_agent", arg={"messages": [HumanMessage("Get current time")]}),
     ],
 )
-
 
 response = graph.invoke({"messages": [HumanMessage("Hello")]})
 print(response)
@@ -211,5 +210,5 @@ print(response)
 
 Important Notes
 
-- When the `branches_fn` parameter is _not_ provided, all subgraphs execute in parallel.
-- When the `branches_fn` parameter _is_ provided, the execution of subgraphs is determined by the return value of this function.
+- When the `branches_fn` parameter is not provided, all subgraphs will execute in parallel.
+- When the `branches_fn` parameter is provided, which subgraphs execute is determined by the return value of this function.

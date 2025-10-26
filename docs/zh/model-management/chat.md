@@ -1,26 +1,25 @@
-# 模型管理
+# 对话模型管理
 
 > [!NOTE]
 >
-> **功能概述**：提供更高效、更便捷的模型管理（包括对话模型和嵌入模型）。
+> **功能概述**：提供更高效、更便捷的对话模型管理。
 >
-> **前置要求**：了解 langchain 的[对话模型](https://docs.langchain.com/oss/python/langchain/models)和[嵌入模型](https://docs.langchain.com/oss/python/integrations/text_embedding/)。
+> **前置要求**：了解 langchain 的[对话模型](https://docs.langchain.com/oss/python/langchain/models)。
 >
 > **预计阅读时间**：10 分钟
-
-## 对话模型管理
 
 在 `langchain` 中，`init_chat_model` 函数可用于初始化对话模型实例，但其支持的模型提供商较为有限。如果你希望使用更多模型提供商（尤其是你偏好的提供商未被该函数支持），可以借助本库提供的对话模型管理功能来实现。
 
 使用对话模型时，需要先使用`register_model_provider`注册对话模型提供商，然后才能使用`load_chat_model`加载对话模型。
 
-### 注册对话模型提供商
+## 注册对话模型提供商
 
 注册对话模型提供商的函数是`register_model_provider`，其接收以下参数：
 
 - `provider_name`：对话模型提供商名称，类型为`str`
 - `chat_model`：对话模型，类型为`langchain`的`ChatModel`或者`str`
 - `base_url`：对话模型基础 URL，类型为`str`，仅在`chat_model`为`str`时生效
+- `tool_choice`：针对大模型的`tool_choice`参数，类型为字符串列表，每个元素的取值只能说`auto`、`none`、`any`、`required`、`specific`。与`base_url`相同，仅在`chat_model`为`str`时生效
 
 对于`provider_name`你可以传入自定义的模型提供商名称，而`chat_model`则需要传入`langchain`的`ChatModel`或者`str`。对于这个参数的详细介绍如下：
 
@@ -98,7 +97,26 @@ vllm serve Qwen/Qwen3-4B \
 完成后会提供一个 OpenAI 兼容 API，地址为`http://localhost:8000/v1`。
 :::
 
-### 加载对话模型
+**tool_choice 参数的设置**
+
+在 `langchain` 中，`bind_tools` 方法支持通过 `tool_choice` 参数来指定工具调用策略。该参数通常接受字符串类型的取值，如 `"auto"`、`"none"`、`"any"`、`"required"` 或具体工具名称等。不过，不同模型提供商对该参数的支持程度可能有所差异，因此我们设置了这个参数，代表了该模型提供商所支持的`tool_choice`参数，以提升兼容性。大多数情况下，你无需设置此参数即可满足使用需求。
+
+该参数是一个字符串列表，每个字符串的取值只能是：`"auto"`、`"none"`、`"any"`、`"required"` 以及 `"specific"`。其中，前四项为常用的`tool_choice`取值，而 `"specific"` 是本库特有的选项，意为强制模型调用指定工具。
+
+默认情况下，若不传递 `tool_choice` 参数，模型提供商通常采用 `"auto"` 策略，即由模型自主决定是否调用工具。但在某些高层封装库（如 `langmem`）中，可能会主动传入 `tool_choice` 参数。为避免因模型不支持该参数取值而导致的错误，本库提供了此参数。当传入的值不在支持范围内时，系统将自动回退为 `None`，即不传递 `tool_choice` 参数。
+
+例如，若你的模型提供商仅支持 `"auto"`、`"none"` 和 `"required"`，而不支持强制调用特定工具，如果你需要显式设置上述的这些参数，则可以按如下方式注册：
+
+```python
+from langchain_dev_utils.chat_models import register_model_provider
+
+register_model_provider(
+    # 注册模型提供商，别的参数略。
+    tool_choice=["auto", "none", "required"]
+)
+```
+
+## 加载对话模型
 
 加载对话模型的函数是`load_chat_model`，其接收以下参数：
 
@@ -272,11 +290,11 @@ response = model.invoke(messages)
 print(response)
 ```
 
-### 批量注册
+## 批量注册
 
 如果你需要注册多个模型提供商，可以多次使用`register_model_provider`函数。但是这样显然特别麻烦，因此本库提供了一个批量注册的函数`batch_register_model_provider`。
 
-其接收的参数是 providers，其为一个字典列表，每个字典有三个键分别是`provider`、`chat_model`、`base_url`。
+其接收的参数是 providers，其为一个字典列表，每个字典有四个键分别是`provider`、`chat_model`、`base_url`(可选)、`tool_choice`(可选)。每个键的意义与`register_model_provider`函数中的参数意义相同。
 
 示例代码如下：
 
@@ -308,158 +326,6 @@ model = load_chat_model("fakechat:fake-chat")
 print(model.invoke("Hello"))
 ```
 
-## 嵌入模型管理
-
-与`init_chat_model`类似，`langchain`也提供了`init_embeddings`函数用于初始化嵌入模型，但是其支持的模型提供商仍然有限，因此你也可以使用本库的功能方便进行嵌入模型的管理。
-
-使用嵌入模型时，需要先使用`register_embeddings_provider`注册嵌入模型提供商，然后才能使用`load_embeddings`加载嵌入模型。
-
-### 注册嵌入模型提供商
-
-与注册对话模型提供商类似，注册嵌入模型提供商的函数是`register_embeddings_provider`，其接收以下参数：
-
-- `provider_name`：嵌入模型提供商名称，类型为`str`
-- `embeddings_model`：嵌入模型，类型为`langchain`的`Embeddings`或者`str`
-- `base_url`：嵌入模型基础 URL，类型为`str`，仅在`embeddings_model`为`str`时生效
-
-对于`provider_name`你可以传入自定义的模型提供商名称，而`embeddings_model`则需要传入`langchain`的`Embeddings`或者`str`。对于这个参数的详细介绍如下：
-
-**1.类型为 Embeddings**
-
-示例代码如下：
-
-```python
-from langchain_dev_utils.embeddings import load_embeddings, register_embeddings_provider
-from langchain_core.embeddings.fake import FakeEmbeddings
-
-register_embeddings_provider(
-    provider_name="fakeembeddings",
-    embeddings_model=FakeEmbeddings,
-)
-```
-
-在本示例中，我们使用的是 `langchain_core` 内置的 `FakeEmbeddings`，它仅用于测试，并不对接真实的模型提供商。在实际应用中，应传入一个具有实际功能的 `Embeddings` 类。
-
-**2.类型为 str**
-
-与对话模型类似，当 `embeddings_model` 参数为字符串时，其目前唯一取值为 `"openai-compatible"`，表示将通过模型提供商的 OpenAI 兼容 API 进行接入。
-此时，本库会使用内置的 `OpenAIEmbeddings` 作为实际的嵌入模型。
-需要注意的是，`OpenAIEmbeddings` 默认会对输入文本进行 tokenize，这在接入其他兼容 OpenAI API 的嵌入模型时可能导致错误。为解决此问题，本库在加载模型时已显式将 `check_embedding_ctx_length` 参数设为 `False`，从而跳过 tokenize 步骤，避免兼容性问题。
-对于`embeddings_model`为字符串（具体是`"openai-compatible"`）的情况，你也必须提供`base_url`。你可以通过直接在本函数中传递`base_url`，或者设置模型的提供商的`API_BASE`。
-
-例如，假设我们要使用 vllm 部署的模型，那么可以这样设置：
-
-```python
-from langchain_dev_utils.embeddings import register_embeddings_provider
-
-register_embeddings_provider(
-    provider_name="vllm",
-    embeddings_model="openai-compatible",
-    base_url="http://localhost:8000/v1",
-)
-```
-
-或者这样设置：
-
-```bash
-export VLLM_API_BASE=http://localhost:8000/v1
-```
-
-```python
-from langchain_dev_utils.embeddings import register_embeddings_provider
-
-register_embeddings_provider(
-    provider_name="vllm",
-    embeddings_model="openai-compatible"
-)
-```
-
-::: tip 补充
-`vllm`同时可以部署 Embeddings 模型，参考的指令如下:
-
-```bash
-vllm serve Qwen/Qwen3-Embedding-4B \
---task embed\
---served-model-name qwen3-embedding-4b \
---host 0.0.0.0 --port 8000
-```
-
-完成后会提供一个 OpenAI 兼容 API，地址为`http://localhost:8000/v1`。
-:::
-
-### 加载嵌入模型
-
-加载嵌入模型的函数是`load_embeddings`，其接收以下参数：
-
-- `model`：嵌入模型名称，类型为`str`
-- `provider`：嵌入模型提供商名称，类型为`str`，可选
-- `kwargs`：其它额外的参数
-
-对于`model`参数，其支持的格式如下：
-
-- `provider_name:embeddings_name`
-- `embeddings_name`
-
-其中`provider_name`为`register_embeddings_provider`函数中注册的`provider_name`。
-
-对于`provider`参数，含义和上述的`provider_name`相同，允许不传，但是此时`model`参数必须为`provider_name:embeddings_name`格式，如果传入，则`model`参数必须为`embeddings_name`格式。
-示例代码如下：
-
-```python
-from langchain_dev_utils.embeddings import load_embeddings
-
-embeddings = load_embeddings("vllm:qwen3-embedding-4b")
-emb = embeddings.embed_query("Hello")
-print(emb)
-```
-
-也可以直接传入`provider`参数。
-
-```python
-from langchain_dev_utils.embeddings import load_embeddings
-
-embeddings = load_embeddings("qwen3-embedding-4b", provider="vllm")
-emb = embeddings.embed_query("Hello")
-print(emb)
-```
-
-### 批量注册
-
-与对话模型类似,也提供了一个用于批量注册嵌入模型提供商的函数`batch_register_embeddings_provider`。
-参考代码如下:
-
-```python
-from langchain_dev_utils.embeddings import (
-    batch_register_embeddings_provider,
-    load_embeddings,
-)
-from langchain_core.embeddings.fake import FakeEmbeddings
-
-batch_register_embeddings_provider(
-    providers=[
-        {
-            "provider": "fakeembeddings",
-            "embeddings_model": FakeEmbeddings,
-        },
-        {
-            "provider": "vllm",
-            "embeddings_model": "openai-compatible",
-            "base_url": "http://localhost:8000/v1",
-        },
-    ]
-)
-
-embedding = load_embeddings("vllm:qwen3-embedding-4b")
-emb = embedding.embed_query("Hello")
-print(emb)
-
-embedding = load_embeddings(
-    "fakeembeddings:fake-emb", size=1024
-)  # size参数不是必须的,是FakeEmbeddings进行初始化必须要传入的,你的Embeddings模型可能不需要
-emb = embedding.embed_query("Hello")
-print(emb)
-```
-
 ## 注意
 
-`register_model_provider`、`register_embeddings_provider` 及其对应的批量注册函数 `batch_register_model_provider` 和 `batch_register_embeddings_provider` 均基于一个全局字典实现。为避免多线程并发问题，请务必在项目启动阶段完成所有注册操作，切勿在运行时动态注册。
+`register_model_provider` 及其对应的批量注册函数 `batch_register_model_provider` 均基于一个全局字典实现。为避免多线程并发问题，请务必在项目启动阶段完成所有注册操作，切勿在运行时动态注册。

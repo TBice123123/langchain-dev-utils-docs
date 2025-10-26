@@ -315,3 +315,27 @@ class PlanState(AgentState):
 - `plan`：可选列表类型，计划列表
 - `plan.content`：计划内容
 - `plan.status`：计划状态,取值为`pending`、`in_progress`、`done`
+
+## ModelDict
+
+模型列表的类型。
+
+```python
+class ModelDict(TypedDict):
+    model_name: str
+    model_description: str
+```
+
+## SelectModel
+
+用于选择模型的工具类。
+
+```python
+class SelectModel(BaseModel):
+    """Tool for model selection - Must call this tool to return the finally selected model"""
+
+    model_name: str = Field(
+        ...,
+        description="Selected model name (must be the full model name, for example, openai:gpt-4o)",
+    )
+```

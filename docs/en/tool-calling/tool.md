@@ -1,0 +1,78 @@
+# Tool Calling Processing
+
+> [!NOTE]
+>
+> **Overview**: Provides utility functions for parsing tool calling parameters.
+>
+> **Prerequisites**: Familiarity with Langchain's [Tools](https://docs.langchain.com/oss/python/langchain/tools) and [Messages](https://docs.langchain.com/oss/python/langchain/messages).
+>
+> **Estimated Reading Time**: 3 minutes
+
+## Detecting Tool Calls
+
+Detect whether a message contains tool calls.
+The core function is:
+
+- `has_tool_calling`: Check if a message contains tool calls
+
+Supported parameters:
+
+- `message`: AIMessage object
+
+Usage example:
+
+```python
+import datetime
+from langchain_core.tools import tool
+from langchain_dev_utils.tool_calling import has_tool_calling
+from langchain_core.messages import AIMessage
+from typing import cast
+
+
+@tool
+def get_current_time() -> str:
+    """Get the current timestamp"""
+    return str(datetime.datetime.now().timestamp())
+
+
+response = model.bind_tools([get_current_time]).invoke("What time is it now?")
+print(has_tool_calling(cast(AIMessage, response)))
+```
+
+## Parsing Tool Calling Parameters
+
+Provides a utility function to parse tool calling parameters and extract argument information from messages.
+
+The core function is:
+
+- `parse_tool_calling`: Parse tool calling parameters
+
+Supported parameters:
+
+- `message`: AIMessage object
+- `first_tool_call_only`: Whether to parse only the first tool call. If `True`, returns a single tuple; if `False`, returns a list of tuples.
+
+Usage example:
+
+```python
+import datetime
+from langchain_core.tools import tool
+from langchain_dev_utils.tool_calling import has_tool_calling, parse_tool_calling
+from langchain_core.messages import AIMessage
+from typing import cast
+
+
+@tool
+def get_current_time() -> str:
+    """Get the current timestamp"""
+    return str(datetime.datetime.now().timestamp())
+
+
+response = model.bind_tools([get_current_time]).invoke("What time is it now?")
+
+if has_tool_calling(cast(AIMessage, response)):
+    name, args = parse_tool_calling(
+        cast(AIMessage, response), first_tool_call_only=True
+    )
+    print(name, args)
+```

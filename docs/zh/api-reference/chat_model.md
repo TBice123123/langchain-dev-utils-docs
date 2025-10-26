@@ -18,6 +18,7 @@ def register_model_provider(
 - `provider_name`：字符串类型，必填，自定义提供者名称
 - `chat_model`：ChatModel 类或支持的提供者字符串类型，必填
 - `base_url`：可选字符串类型，提供者的 BaseURL
+- `tool_choice`：可选列表类型,代表模型提供商支持的`tool_choice`参数
 
 **示例：**
 
@@ -93,6 +94,7 @@ class ChatModelProvider(TypedDict):
     provider: str
     chat_model: ChatModelType
     base_url: NotRequired[str]
+    tool_choice: NotRequired[ToolChoiceType]
 ```
 
 **字段说明：**
@@ -100,3 +102,12 @@ class ChatModelProvider(TypedDict):
 - `provider`：字符串类型，必填，提供者名称
 - `chat_model`：BaseChatModel 类型或字符串类型，必填，聊天模型类或字符串
 - `base_url`：非必需字符串类型，基础 URL
+- `tool_choice`：非必需列表类型,代表模型提供商支持的`tool_choice`参数
+
+## ToolChoiceType
+
+`tool_choice`参数支持的类型。
+
+```python
+ToolChoiceType = list[Literal["auto", "none", "any", "required", "specific"]]
+```

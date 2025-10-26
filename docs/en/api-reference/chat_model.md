@@ -2,23 +2,25 @@
 
 ## register_model_provider
 
-Registers a provider for chat models.
+Registers a chat model provider.
 
 ```python
 def register_model_provider(
     provider_name: str,
     chat_model: ChatModelType,
     base_url: Optional[str] = None,
+    tool_choice: Optional[ToolChoiceType] = None,
 ) -> None:
 ```
 
 **Parameters:**
 
-- `provider_name`: String, required. Custom provider name.
-- `chat_model`: ChatModel class or supported provider string type, required.
-- `base_url`: Optional string. Provider's BaseURL.
+- `provider_name`: string, required, custom provider name
+- `chat_model`: ChatModel class or supported provider string type, required
+- `base_url`: optional string, provider's BaseURL
+- `tool_choice`: optional list type, represents the `tool_choice` parameters supported by the model provider
 
-**Example:**
+**Examples:**
 
 ```python
 register_model_provider("fakechat", FakeChatModel)
@@ -27,7 +29,7 @@ register_model_provider("vllm", "openai-compatible", base_url="http://localhost:
 
 ## batch_register_model_provider
 
-Bulk registers model providers.
+Batch registers model providers.
 
 ```python
 def batch_register_model_provider(
@@ -37,7 +39,7 @@ def batch_register_model_provider(
 
 **Parameters:**
 
-- `providers`: List of ChatModelProvider type, required. List of provider configurations.
+- `providers`: list of ChatModelProvider type, required, list of provider configurations
 
 **Example:**
 
@@ -63,11 +65,11 @@ def load_chat_model(
 
 **Parameters:**
 
-- `model`: String, required. Model name in the format `model_name` or `provider_name:model_name`.
-- `model_provider`: Optional string. Model provider name.
-- `**kwargs`: Any type, optional. Additional model parameters.
+- `model`: string, required, model name in format `model_name` or `provider_name:model_name`
+- `model_provider`: optional string, model provider name
+- `**kwargs`: any type, optional, additional model parameters
 
-**Return Value:** BaseChatModel type, the loaded chat model instance.
+**Return Value:** BaseChatModel type, loaded chat model instance
 
 **Example:**
 
@@ -92,10 +94,20 @@ class ChatModelProvider(TypedDict):
     provider: str
     chat_model: ChatModelType
     base_url: NotRequired[str]
+    tool_choice: NotRequired[ToolChoiceType]
 ```
 
 **Field Descriptions:**
 
-- `provider`: String, required. Provider name.
-- `chat_model`: BaseChatModel type or string type, required. Chat model class or string.
-- `base_url`: Not required string type. Base URL.
+- `provider`: string, required, provider name
+- `chat_model`: BaseChatModel type or string type, required, chat model class or string
+- `base_url`: not required string, base URL
+- `tool_choice`: not required list type, represents the `tool_choice` parameters supported by the model provider
+
+## ToolChoiceType
+
+Supported types for the `tool_choice` parameter.
+
+```python
+ToolChoiceType = list[Literal["auto", "none", "any", "required", "specific"]]
+```
