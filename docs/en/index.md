@@ -28,11 +28,11 @@ Additionally, if you want to learn more about installation methods, please refer
 
 ## 📚 Documentation
 
-- [Model Management] - Provides a unified registration and management approach, making it convenient for developers to use chat and embeddings models.
-- [Message Conversion] - Provides utility functions related to the Message class, including reasoning chain concatenation, chunk merging, list string formatting, etc.
-- [Tool Calling] - Provides utility functions related to tool calling, including tool call detection and parameter parsing, adding human review to tool calls, etc.
-- [Agent Development] - Provides utility functions to facilitate Agent development, including further encapsulation of official Agent creation functions, common middleware, etc.
-- [State Graph Orchestration Pipeline] - Provides pipeline utility functions to combine multiple state subgraphs (StateGraph) in parallel or sequential manner.
+- **Model Management** - Provides a unified registration and management approach, making it convenient for developers to use chat and embeddings models.
+- **Message Conversion** - Provides utility functions related to the Message class, including reasoning chain concatenation, chunk merging, list string formatting, etc.
+- **Tool Calling** - Provides utility functions related to tool calling, including tool call detection and parameter parsing, adding human review to tool calls, etc.
+- **Agent Development** - Provides utility functions to facilitate Agent development, including further encapsulation of official Agent creation functions, common middleware, etc.
+- **State Graph Orchestration Pipeline** - Provides pipeline utility functions to combine multiple state subgraphs (StateGraph) in parallel or sequential manner.
 
 ### 🛠️ Key Features
 

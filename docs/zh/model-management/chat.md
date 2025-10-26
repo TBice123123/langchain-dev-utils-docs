@@ -19,7 +19,7 @@
 - `provider_name`：对话模型提供商名称，类型为`str`
 - `chat_model`：对话模型，类型为`langchain`的`ChatModel`或者`str`
 - `base_url`：对话模型基础 URL，类型为`str`，仅在`chat_model`为`str`时生效
-- `tool_choice`：针对大模型的`tool_choice`参数，类型为字符串列表，每个元素的取值只能说`auto`、`none`、`any`、`required`、`specific`。与`base_url`相同，仅在`chat_model`为`str`时生效
+- `tool_choice`：针对大模型的`tool_choice`参数，类型为字符串列表，每个元素的取值只能是`auto`、`none`、`any`、`required`、`specific`。与`base_url`相同，仅在`chat_model`为`str`时生效
 
 对于`provider_name`你可以传入自定义的模型提供商名称，而`chat_model`则需要传入`langchain`的`ChatModel`或者`str`。对于这个参数的详细介绍如下：
 

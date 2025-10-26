@@ -13,7 +13,7 @@ export default defineConfig({
 
   themeConfig: {
     outline: {
-      level: [2, 3],
+      level: [1, 2],
     },
   },
 
@@ -25,8 +25,8 @@ export default defineConfig({
       themeConfig: {
         nav: [
           { text: "Overview", link: "/en/" },
-          { text: "Learning", link: "/en/installation" },
-          { text: "API Reference", link: "/en/api-reference" },
+          { text: "Learning", link: "/en/model-management/chat" },
+          { text: "API Reference", link: "/en/api-reference/agent" },
         ],
 
         sidebar: [
@@ -134,8 +134,8 @@ export default defineConfig({
       themeConfig: {
         nav: [
           { text: "概述", link: "/zh/" },
-          { text: "学习", link: "/zh/installation" },
-          { text: "API 参考", link: "/zh/api-reference" },
+          { text: "学习", link: "/zh/model-management/chat" },
+          { text: "API 参考", link: "/zh/api-reference/agent" },
         ],
 
         sidebar: [
