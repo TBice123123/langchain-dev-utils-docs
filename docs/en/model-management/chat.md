@@ -19,7 +19,7 @@ The function to register a chat model provider is `register_model_provider`, whi
 - `provider_name`: The name of the chat model provider, type `str`
 - `chat_model`: The chat model, type is `langchain`'s `ChatModel` or `str`
 - `base_url`: The base URL for the chat model, type `str`, only takes effect when `chat_model` is `str`
-- `tool_choice`: Parameter for the LLM's `tool_choice`, type is a list of strings, each element can only be `auto`, `none`, `any`, `required`, `specific`. Similar to `base_url`, only takes effect when `chat_model` is `str`
+- `tool_choice`: The provider's supported `tool_choice` values, type is a list of strings. Similar to `base_url`, only takes effect when `chat_model` is `str`
 
 For `provider_name`, you can pass a custom model provider name. For `chat_model`, you need to pass a `langchain` `ChatModel` or a `str`. Detailed explanations for this parameter are as follows:
 

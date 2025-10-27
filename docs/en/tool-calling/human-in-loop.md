@@ -1,4 +1,4 @@
-# Adding Human-in-the-Loop Support
+# Human-in-the-Loop Support
 
 > [!NOTE]
 >
