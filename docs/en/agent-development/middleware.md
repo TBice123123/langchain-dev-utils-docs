@@ -305,14 +305,14 @@ from langchain_dev_utils.agents.middleware import ModelRouterMiddleware
 
 agent = create_agent(
     model="vllm:qwen3-4b",
-    tools=[],
+    tools=[run_python_code,get_current_time],
     middleware=[
         ModelRouterMiddleware(
             router_model="vllm:qwen3-4b",
             model_list=[
                 {
                     "model_name": "vllm:qwen3-8b",
-                    "model_description": "Suitable for general tasks, such as dialogue, text generation, etc.",
+                    "model_description": "Suitable for general tasks such as dialogue and text generation",
                 },
                 {
                     "model_name": "openrouter:qwen/qwen3-vl-32b-instruct",
@@ -321,6 +321,7 @@ agent = create_agent(
                 {
                     "model_name": "openrouter:qwen/qwen3-coder-plus",
                     "model_description": "Suitable for code generation tasks",
+                    "tools": [run_python_code],
                 },
             ],
         )

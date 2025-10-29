@@ -72,3 +72,8 @@ cd langchain-dev-utils
 uv sync --group test
 uv run pytest .
 ```
+
+**Note:**
+
+- You need to create a `.env` file and write the relevant `API_KEY` and `API_BASE`.
+- Currently, all test cases have passed verification. If individual test cases fail during runtime, it may be due to unstable models. Please try running the tests again.
