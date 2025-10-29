@@ -277,7 +277,7 @@ class ModelRouterMiddleware(AgentMiddleware):
 **参数说明：**
 
 - `router_model`: 用于路由的模型
-- `model_list`: 模型列表，每个模型需要包含`model_name`和`model_description`两个键
+- `model_list`: 模型列表，每个模型需要包含`model_name`和`model_description`两个键，同时也可以选择性地包含`tools`这个键，代表模型可用的工具，如果不传则默认是使用全部工具。
 - `router_prompt`: 路由模型的提示词，如果为 None 则使用默认的提示词
 
 **示例：**
@@ -288,7 +288,7 @@ model_router_middleware = ModelRouterMiddleware(
     model_list=[
         {
             "model_name": "vllm:qwen3-4b",
-            "model_description": "适合普通任务，如对话、文本生成等",
+            "model_description": "适合普通任务，如对话、文本生成等"
         },
         {
             "model_name": "vllm:qwen3-8b",
@@ -324,6 +324,7 @@ class PlanState(AgentState):
 class ModelDict(TypedDict):
     model_name: str
     model_description: str
+    tools: NotRequired[list[BaseTool | dict[str, Any]]]
 ```
 
 ## SelectModel

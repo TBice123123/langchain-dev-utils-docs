@@ -295,7 +295,7 @@ Middleware used to dynamically route to an appropriate model based on the input 
 For this middleware, you need to pass two parameters:
 
 - `router_model`: The model used for routing.
-- `model_list`: A list of models. Each model needs to contain the keys `model_name` and `model_description`.
+- `model_list`: A list of models. Each model needs to contain the keys `model_name` and `model_description`, and can also optionally contain the `tools` key, representing the tools available to the model. If not provided, all tools will be used by default.
 - `router_prompt`: The prompt for the routing model. If None, the default prompt is used.
 
 Usage example:
@@ -328,3 +328,5 @@ agent = create_agent(
 )
 print(agent.invoke({"messages": [HumanMessage(content="Help me write a bubble sort code")]}))
 ```
+
+**Note:** All tools specified in the `tools` parameter of each model in `model_list` should be listed in the `tools` parameter of `create_agent` as well, otherwise an error will occur. The `tools` parameter in `model_list` is used to specify the tools available to the model. For example, in the above example, the `tools` parameter of the third model is only `run_python_code`, and the first two models can use `run_python_code` and `get_current_time`.

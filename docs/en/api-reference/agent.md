@@ -277,7 +277,7 @@ class ModelRouterMiddleware(AgentMiddleware):
 **Parameters:**
 
 - `router_model`: model used for routing
-- `model_list`: list of models, each model needs to contain `model_name` and `model_description` keys
+- `model_list`: A list of models. Each model needs to contain the keys `model_name` and `model_description`, and can also optionally contain the `tools` key, representing the tools available to the model. If not provided, all tools will be used by default.
 - `router_prompt`: prompt for the routing model, uses default prompt if None
 
 **Example:**
@@ -324,6 +324,7 @@ Type for model list.
 class ModelDict(TypedDict):
     model_name: str
     model_description: str
+    tools: NotRequired[list[BaseTool | dict[str, Any]]]
 ```
 
 ## SelectModel

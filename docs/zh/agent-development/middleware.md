@@ -296,7 +296,7 @@ print(response)
 对于此中间件，你需要传入两个参数:
 
 - `router_model`: 用于路由的模型
-- `model_list`: 模型列表，每个模型需要包含`model_name`和`model_description`两个键
+- `model_list`: 模型列表，每个模型需要包含`model_name`和`model_description`两个键，同时也可以选择性地包含`tools`这个键，代表模型可用的工具，如果不传则默认是使用全部工具。
 - `router_prompt`: 路由模型的提示词，如果为 None 则使用默认的提示词
 
 使用示例:
@@ -306,7 +306,7 @@ from langchain_dev_utils.agents.middleware import ModelRouterMiddleware
 
 agent = create_agent(
     model="vllm:qwen3-4b",
-    tools=[],
+    tools=[run_python_code,get_current_time],
     middleware=[
         ModelRouterMiddleware(
             router_model="vllm:qwen3-4b",
@@ -322,6 +322,7 @@ agent = create_agent(
                 {
                     "model_name": "openrouter:qwen/qwen3-coder-plus",
                     "model_description": "适合代码生成任务",
+                    "tools": [run_python_code],
                 },
             ],
         )
@@ -329,3 +330,5 @@ agent = create_agent(
 )
 print(agent.invoke({"messages": [HumanMessage(content="帮我写一个冒泡排序代码")]}))
 ```
+
+**注意：** `model_list`中的每个`tools`参数中的所有工具都应同时在`create_agent`的`tools`参数中列出，否则会报错。对于`model_list`中的`tools`参数，作用是指定模型可用的工具。例如上述例子，则第三个模型的`tools`只有`run_python_code`，而剩余的两个模型则可以使用`run_python_code`和`get_current_time`。
