@@ -18,15 +18,15 @@ Implemented through the following function:
 
 Supported parameters:
 
-- `sub_graphs`: List of state graphs to combine (must be StateGraph instances)
-- `state_schema`: State Schema for the final generated graph
-- `graph_name`: Name of the final generated graph (optional)
-- `context_schema`: Context Schema for the final generated graph (optional)
-- `input_schema`: Input Schema for the final generated graph (optional)
-- `output_schema`: Output Schema for the final generated graph (optional)
-- `checkpoint`: LangGraph's persistence Checkpoint (optional)
-- `store`: LangGraph's persistence Store (optional)
-- `cache`: LangGraph's Cache (optional)
+- **sub_graphs**: List of state graphs to combine (must be StateGraph instances)
+- **state_schema**: State Schema for the final generated graph
+- **graph_name**: Name of the final generated graph (optional)
+- **context_schema**: Context Schema for the final generated graph (optional)
+- **input_schema**: Input Schema for the final generated graph (optional)
+- **output_schema**: Output Schema for the final generated graph (optional)
+- **checkpoint**: LangGraph's persistence Checkpoint (optional)
+- **store**: LangGraph's persistence Store (optional)
+- **cache**: LangGraph's Cache (optional)
 
 Usage example:
 
@@ -118,16 +118,16 @@ Implemented through the following function:
 
 Supported parameters:
 
-- `sub_graphs`: List of state graphs to combine
-- `state_schema`: State Schema for the final generated graph
-- `branches_fn`: Parallel branch function that returns a list of Send objects to control parallel execution
-- `graph_name`: Name of the final generated graph (optional)
-- `context_schema`: Context Schema for the final generated graph (optional)
-- `input_schema`: Input Schema for the final generated graph (optional)
-- `output_schema`: Output Schema for the final generated graph (optional)
-- `checkpoint`: LangGraph's persistence Checkpoint (optional)
-- `store`: LangGraph's persistence Store (optional)
-- `cache`: LangGraph's Cache (optional)
+- **sub_graphs**: List of state graphs to combine
+- **state_schema**: State Schema for the final generated graph
+- **branches_fn**: Parallel branch function that returns a list of Send objects to control parallel execution
+- **graph_name**: Name of the final generated graph (optional)
+- **context_schema**: Context Schema for the final generated graph (optional)
+- **input_schema**: Input Schema for the final generated graph (optional)
+- **output_schema**: Output Schema for the final generated graph (optional)
+- **checkpoint**: LangGraph's persistence Checkpoint (optional)
+- **store**: LangGraph's persistence Store (optional)
+- **cache**: LangGraph's Cache (optional)
 
 Usage example:
 

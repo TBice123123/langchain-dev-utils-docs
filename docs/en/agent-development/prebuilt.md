@@ -16,7 +16,7 @@ The pre-built intelligent agent module primarily provides a function that is fun
 
 **Function Parameters**:
 
-- model: Model name, must be a string in the format `provider_name:model_name`. Supports formats compatible with both `init_chat_model` and `load_chat_model`. For `load_chat_model`, the provider_name must be registered using `register_model_provider`.
+- **model**: Model name, must be a string in the format provider_name:model_name. Supports formats compatible with both init_chat_model and load_chat_model. For load_chat_model, the provider_name must be registered using register_model_provider.
 - Other parameters are identical to LangChain's `create_agent`.
 
 ## Usage Example

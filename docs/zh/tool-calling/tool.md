@@ -17,7 +17,7 @@
 
 支持的参数如下:
 
-- `message`：AIMessage 对象
+- **message**：AIMessage 对象
 
 使用示例:
 
@@ -49,8 +49,8 @@ print(has_tool_calling(cast(AIMessage, response)))
 
 支持的参数如下:
 
-- `message`：AIMessage 对象
-- `first_tool_call_only`：是否仅解析第一个工具调用。如果为 `True`，返回单个元组；如果为 `False`，返回元组列表。
+- **message**：AIMessage 对象
+- **first_tool_call_only**：是否仅解析第一个工具调用。如果为 True，返回单个元组；如果为 False，返回元组列表。
 
 使用示例:
 

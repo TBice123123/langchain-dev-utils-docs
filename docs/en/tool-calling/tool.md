@@ -1,10 +1,10 @@
-# Tool Calling Processing
+# Tool Calling Handling
 
 > [!NOTE]
 >
-> **Overview**: Provides utility functions for parsing tool calling parameters.
+> **Overview**: Provides utility tools for parsing tool calling parameters.
 >
-> **Prerequisites**: Familiarity with Langchain's [Tools](https://docs.langchain.com/oss/python/langchain/tools) and [Messages](https://docs.langchain.com/oss/python/langchain/messages).
+> **Prerequisites**: Familiarity with LangChain's [Tool](https://docs.langchain.com/oss/python/langchain/tools) and [Message](https://docs.langchain.com/oss/python/langchain/messages).
 >
 > **Estimated Reading Time**: 3 minutes
 
@@ -17,7 +17,7 @@ The core function is:
 
 Supported parameters:
 
-- `message`: AIMessage object
+- **message**: AIMessage object
 
 Usage example:
 
@@ -39,18 +39,18 @@ response = model.bind_tools([get_current_time]).invoke("What time is it now?")
 print(has_tool_calling(cast(AIMessage, response)))
 ```
 
-## Parsing Tool Calling Parameters
+## Parsing Tool Call Parameters
 
-Provides a utility function to parse tool calling parameters and extract argument information from messages.
+Provides a utility function to parse tool call parameters and extract argument information from messages.
 
 The core function is:
 
-- `parse_tool_calling`: Parse tool calling parameters
+- `parse_tool_calling`: Parse tool call parameters
 
 Supported parameters:
 
-- `message`: AIMessage object
-- `first_tool_call_only`: Whether to parse only the first tool call. If `True`, returns a single tuple; if `False`, returns a list of tuples.
+- **message**: AIMessage object
+- **first_tool_call_only**: Whether to parse only the first tool call. If True, returns a single tuple; if False, returns a list of tuples.
 
 Usage example:
 

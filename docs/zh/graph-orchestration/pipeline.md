@@ -18,15 +18,15 @@
 
 支持的参数如下:
 
-- `sub_graphs`: 要组合的状态图列表（必须是 StateGraph 实例）
-- `state_schema`: 最终生成图的 State Schema
-- `graph_name`: 最终生成图的名称（可选）
-- `context_schema`: 最终生成图的 Context Schema（可选）
-- `input_schema`: 最终生成图的输入 Schema（可选）
-- `output_schema`: 最终生成图的输出 Schema（可选）
-- `checkpoint`: LangGraph 的持久化 Checkpoint（可选）
-- `store`: LangGraph 的持久化 Store（可选）
-- `cache`: LangGraph 的 Cache（可选）
+- **sub_graphs**: 要组合的状态图列表（必须是 StateGraph 实例）
+- **state_schema**: 最终生成图的 State Schema
+- **graph_name**: 最终生成图的名称（可选）
+- **context_schema**: 最终生成图的 Context Schema（可选）
+- **input_schema**: 最终生成图的输入 Schema（可选）
+- **output_schema**: 最终生成图的输出 Schema（可选）
+- **checkpoint**: LangGraph 的持久化 Checkpoint（可选）
+- **store**: LangGraph 的持久化 Store（可选）
+- **cache**: LangGraph 的 Cache（可选）
 
 使用示例:
 
@@ -118,16 +118,16 @@ graph = graph.compile()
 
 支持的参数如下:
 
-- `sub_graphs`: 要组合的状态图列表
-- `state_schema`: 最终生成图的 State Schema
-- `branches_fn`: 并行分支函数，返回 Send 对象列表控制并行执行
-- `graph_name`: 最终生成图的名称（可选）
-- `context_schema`: 最终生成图的 Context Schema（可选）
-- `input_schema`: 最终生成图的输入 Schema（可选）
-- `output_schema`: 最终生成图的输出 Schema（可选）
-- `checkpoint`: LangGraph 的持久化 Checkpoint（可选）
-- `store`: LangGraph 的持久化 Store（可选）
-- `cache`: LangGraph 的 Cache（可选）
+- **sub_graphs**: 要组合的状态图列表
+- **state_schema**: 最终生成图的 State Schema
+- **branches_fn**: 并行分支函数，返回 Send 对象列表控制并行执行
+- **graph_name**: 最终生成图的名称（可选）
+- **context_schema**: 最终生成图的 Context Schema（可选）
+- **input_schema**: 最终生成图的输入 Schema（可选）
+- **output_schema**: 最终生成图的输出 Schema（可选）
+- **checkpoint**: LangGraph 的持久化 Checkpoint（可选）
+- **store**: LangGraph 的持久化 Store（可选）
+- **cache**: LangGraph 的 Cache（可选）
 
 使用示例:
 

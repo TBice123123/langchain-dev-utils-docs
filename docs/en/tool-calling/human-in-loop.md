@@ -1,10 +1,10 @@
-# Human-in-the-Loop Support
+# Adding Human-in-Loop Support
 
 > [!NOTE]
 >
-> **Overview**: Provides convenient utilities for adding "human-in-the-loop" review support to tool calling processes.
+> **Overview**: Provides utility tools to easily add "human-in-the-loop" review support for tool invocation processes.
 >
-> **Prerequisites**: Familiarity with Langchain's [Tools](https://docs.langchain.com/oss/python/langchain/tools) and [Human-in-the-Loop](https://docs.langchain.com/oss/python/langchain/human-in-the-loop).
+> **Prerequisites**: Familiarity with LangChain's [Tool](https://docs.langchain.com/oss/python/langchain/tools) and [Human-in-the-Loop](https://docs.langchain.com/oss/python/langchain/human-in-the-loop).
 >
 > **Estimated Reading Time**: 5 minutes
 
@@ -19,8 +19,8 @@ The core functions are:
 
 **Function Parameter Description:**
 
-- `func`: The function to be decorated (**Do not pass this parameter manually, only for decorator syntax**)
-- `handler`: Optional, type `Callable[[InterruptParams], Any]`, custom interrupt handling logic. If not provided, the built-in `default_handler` is used.
+- **func**: The function to be decorated (**Do not pass this parameter manually, only for decorator syntax**)
+- **handler**: Optional, type is Callable[[InterruptParams], Any], custom interrupt handling logic. If not provided, the built-in default_handler is used.
 
 **The parameters for the async function decorator are the same as above, but the handler must be an async function**
 
@@ -40,7 +40,7 @@ def get_current_time() -> str:
     return str(datetime.datetime.now().timestamp())
 ```
 
-**Async tool example**
+**Asynchronous tool example**
 
 ```python
 from langchain_dev_utils import human_in_the_loop_async
@@ -89,12 +89,12 @@ def default_handler(params: InterruptParams) -> Any:
         raise ValueError(f"Unsupported interrupt response type: {response['type']}")
 ```
 
-When interrupting, a JSON Schema content as returned by `_get_human_in_the_loop_request` will be sent. When responding, you need to return a JSON Schema content with a key "type" and value "accept/edit/response".
+When interrupting, a JSON Schema content as returned by `_get_human_in_the_loop_request` will be sent. When replying, a JSON Schema content needs to be returned, with a key "type" and value "accept"/"edit"/"response".
 
 :::
 
 **Custom Handler Example**
-You can fully control the interrupt behavior, for example, only allowing "accept/reject", or customizing prompts:
+You can fully control the interrupt behavior, for example, only allowing "accept/reject", or customizing the prompt:
 
 ```python
 from typing import Any

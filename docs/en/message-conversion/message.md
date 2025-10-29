@@ -20,8 +20,8 @@ Specifically:
 
 Parameters:
 
-- `model_response`: AI message response returned by the model (could be AIMessage or iterator of AIMessageChunk)
-- `think_tag`: Tuple containing start and end tags for reasoning content (defaults to `<think></think>`)
+- **model_response**: AI message response returned by the model (could be AIMessage or iterator of AIMessageChunk)
+- **think_tag**: Tuple containing start and end tags for reasoning content (defaults to `<think></think>`)
 
 Usage Example:
 
@@ -56,7 +56,7 @@ Core function:
 
 Supported parameters:
 
-- `chunks`: List of AI message chunks
+- **chunks**: List of AI message chunks
 
 Usage Example:
 

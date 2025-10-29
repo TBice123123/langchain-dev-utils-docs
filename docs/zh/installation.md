@@ -2,7 +2,15 @@
 
 `langchain-dev-utils`可以使用各种包管理器安装。选择最适合您工作流程的工具。
 
-## 包管理器
+## 前置准备
+
+- Python 3.11 或更高版本
+- Python 包管理器（推荐使用`uv`）
+- 任意的大模型提供商的 `API Key`
+
+## 安装方式
+
+`langchain-dev-utils`支持使用`pip`、`poetry`、`uv`等多种包管理器进行安装。
 
 ::: code-group
 
@@ -37,10 +45,6 @@ uv add langchain-dev-utils[standard]
 ```
 
 :::
-
-## 系统要求
-
-- Python 3.11 或更高版本
 
 ## 依赖项
 

@@ -2,9 +2,9 @@
 
 > [!NOTE]
 >
-> **Feature Overview**: Provides practical list content formatting functionality.
+> **Overview**: Provides functionality to format common list content into a single string.
 >
-> **Prerequisites**: Understand LangChain's [Message](https://docs.langchain.com/oss/python/langchain/messages).
+> **Prerequisites**: Familiarity with LangChain's [Message](https://docs.langchain.com/oss/python/langchain/messages).
 >
 > **Estimated Reading Time**: 2 minutes
 
@@ -12,61 +12,85 @@ Formats a list composed of Documents, Messages, or strings into a single text st
 
 ## Core Function
 
-- `format_sequence`: Format messages
+- `format_sequence`: Formats messages
 
 **Function Parameters:**
 
-- `inputs`: A list containing any of the following types:
-  - `langchain_core.messages`: HumanMessage, AIMessage, SystemMessage, ToolMessage
-  - `langchain_core.documents.Document`
-  - `str`
-- `separator`: String used to join the content, defaults to `"-"`.
-- `with_num`: If `True`, adds numeric prefixes to each item (e.g., `"1. Hello"`), defaults to `False`.
+- **inputs**: A list containing any of the following types:
+  - langchain_core.messages: HumanMessage, AIMessage, SystemMessage, ToolMessage
+  - langchain_core.documents.Document
+  - str
+- **separator**: String used to join the content, defaults to "-".
+- **with_num**: If True, adds a numerical prefix to each item (e.g., "1. Hello"), defaults to False.
 
-## Usage Example
+## Usage Examples
 
-**Messages**:
+### Message
 
 ```python
 from langchain_core.documents import Document
 from langchain_core.messages import AIMessage
 from langchain_dev_utils.message_convert import format_sequence
 
-formated1 = format_sequence(
+formatted1 = format_sequence(
     [
         AIMessage(content="Hello1"),
         AIMessage(content="Hello2"),
         AIMessage(content="Hello3"),
     ]
 )
-print(formated1)
+print(formatted1)
 ```
 
-**Documents**:
+Output:
+
+```
+-Hello1
+-Hello2
+-Hello3
+```
+
+### Document
 
 ```python
-format2 = format_sequence(
+formatted2 = format_sequence(
     [
         Document(page_content="content1"),
         Document(page_content="content2"),
         Document(page_content="content3"),
     ],
-    separator="\n",
+    separator=">",
 )
-print(format2)
+print(formatted2)
 ```
 
-**Strings**:
+Output:
+
+```
+>content1
+>content2
+>content3
+```
+
+### String
 
 ```python
-format3 = format_sequence(
+formatted3 = format_sequence(
     [
         "str1",
         "str2",
         "str3",
     ],
-    separator="\n",
+    separator=">",
     with_num=True,
 )
-print(format3)
+print(formatted3)
+```
+
+Output:
+
+```
+>1. str1
+>2. str2
+>3. str3
 ```

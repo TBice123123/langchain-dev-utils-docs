@@ -16,16 +16,16 @@
 
 **函数参数：**
 
-- `inputs`：包含以下任意类型的列表：
-  - `langchain_core.messages`：HumanMessage、AIMessage、SystemMessage、ToolMessage
-  - `langchain_core.documents.Document`
-  - `str`
-- `separator`：用于连接内容的字符串，默认为 `"-"`。
-- `with_num`：如果为 `True`，为每个项目添加数字前缀（例如 `"1. 你好"`），默认为 `False`。
+- **inputs**：包含以下任意类型的列表：
+  - langchain_core.messages：HumanMessage、AIMessage、SystemMessage、ToolMessage
+  - langchain_core.documents.Document
+  - str
+- **separator**：用于连接内容的字符串，默认为 "-"。
+- **with_num**：如果为 True，为每个项目添加数字前缀（例如 "1. 你好"），默认为 False。
 
 ## 使用示例
 
-**Messages**:
+### Message
 
 ```python
 from langchain_core.documents import Document
@@ -42,7 +42,15 @@ formated1 = format_sequence(
 print(formated1)
 ```
 
-**Documents**:
+输出结果：
+
+```
+-Hello1
+-Hello2
+-Hello3
+```
+
+### Document
 
 ```python
 format2 = format_sequence(
@@ -51,12 +59,21 @@ format2 = format_sequence(
         Document(page_content="content2"),
         Document(page_content="content3"),
     ],
-    separator="\n",
+    separator=">",
 )
 print(format2)
+
 ```
 
-**Strings**:
+输出结果：
+
+```
+>content1
+>content2
+>content3
+```
+
+### String
 
 ```python
 format3 = format_sequence(
@@ -65,8 +82,16 @@ format3 = format_sequence(
         "str2",
         "str3",
     ],
-    separator="\n",
+    separator=">",
     with_num=True,
 )
 print(format3)
+```
+
+输出结果：
+
+```
+>1. str1
+>2. str2
+>3. str3
 ```

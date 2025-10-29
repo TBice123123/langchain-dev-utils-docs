@@ -19,8 +19,8 @@
 
 **函数参数说明:**
 
-- `func`：待装饰的函数（**请勿手动传参，仅用于装饰器语法**）
-- `handler`：可选，类型为 `Callable[[InterrruptParams], Any]`，自定义中断处理逻辑。若未提供，则使用内置 `default_handler`。
+- **func**：待装饰的函数（**请勿手动传参，仅用于装饰器语法**）
+- **handler**：可选，类型为 Callable[[InterrruptParams], Any]，自定义中断处理逻辑。若未提供，则使用内置 default_handler。
 
 **异步函数的装饰器的参数和上述相同，但是 handler 必须是一个异步函数**
 

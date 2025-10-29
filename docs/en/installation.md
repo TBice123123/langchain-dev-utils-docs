@@ -1,8 +1,16 @@
 # Installation
 
-`langchain-dev-utils` can be installed using various package managers. Choose the one that best fits your workflow.
+`langchain-dev-utils` can be installed using various package managers. Choose the tool that best fits your workflow.
 
-## Package Managers
+## Prerequisites
+
+- Python 3.11 or higher
+- A Python package manager (`uv` is recommended)
+- An `API Key` from any LLM provider
+
+## Installation Methods
+
+`langchain-dev-utils` supports installation via package managers such as `pip`, `poetry`, and `uv`.
 
 ::: code-group
 
@@ -20,7 +28,7 @@ uv add langchain-dev-utils
 
 :::
 
-If you want to use the complete functionality of this package, you need to execute the following command:
+The commands above will install `langchain-dev-utils` and its core dependencies. If you want to use its full functionality, execute the following commands:
 
 ::: code-group
 
@@ -38,24 +46,20 @@ uv add langchain-dev-utils[standard]
 
 :::
 
-## System Requirements
-
-- Python 3.11 or higher
-
 ## Dependencies
 
-This package automatically installs the following dependencies:
+The package automatically installs the following dependencies:
 
 - `langchain`
-- `langgraph`
+- `langgraph` (installed alongside `langchain`)
 
-If it is a standard version, it will also install the following dependencies:
+For the standard version, the following dependencies are also installed:
 
 - `langchain-openai`
 
 ## Verification
 
-After installation, verify that the package has been installed correctly:
+After installation, verify that the package was installed correctly:
 
 ```python
 import langchain_dev_utils
@@ -64,7 +68,7 @@ print(langchain_dev_utils.__version__)
 
 ## Running Tests
 
-If you wish to contribute to the project or run tests:
+If you wish to contribute to the project or run the tests:
 
 ```bash
 git clone https://github.com/TBice123123/langchain-dev-utils.git
@@ -75,5 +79,5 @@ uv run pytest .
 
 **Note:**
 
-- You need to create a `.env` file and write the relevant `API_KEY` and `API_BASE`.
-- Currently, all test cases have passed verification. If individual test cases fail during runtime, it may be due to unstable models. Please try running the tests again.
+- You need to create a new `.env` file and include the relevant `API_KEY` and `API_BASE` values.
+- All test cases have currently passed verification. If individual model-related failures occur during execution, they might be due to model instability; please try running the tests again.

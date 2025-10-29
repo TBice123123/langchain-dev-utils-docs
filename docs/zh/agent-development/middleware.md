@@ -12,7 +12,7 @@
 
 ## SummarizationMiddleware
 
-核心作用是压缩对话内容，功能与官方[SummarizationMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#summarization)完全一致。但是只允许字符串参数指定模型，与上面的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册。
+核心作用是压缩对话内容，功能与官方[SummarizationMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#summarization)完全一致。但是只允许字符串参数指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。
 使用示例:
 
 ```python
@@ -44,7 +44,7 @@ print(response)
 
 ## LLMToolSelectorMiddleware
 
-核心作用是用于大量工具的情况下，由 LLM 自己选择工具，功能与官方[LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-selector)完全一致。但是同样只允许字符串指定模型，与上面的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册。
+核心作用是用于大量工具的情况下，由 LLM 自己选择工具，功能与官方[LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-selector)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。
 使用示例:
 
 ```python
@@ -103,8 +103,8 @@ print(response)
 
 这三个函数接收的参数如下:
 
-- `description`：工具描述,如果不传则采用默认的工具描述
-- `message_key`：用于更新 messages 的键，若不传入则使用默认的`messages` （`read_plan`工具无此参数）
+- **description**：工具描述,如果不传则采用默认的工具描述
+- **message_key**：用于更新 messages 的键，若不传入则使用默认的 messages（read_plan 工具无此参数）
 
 使用示例如下:
 
@@ -209,8 +209,8 @@ def read_plan(runtime: ToolRuntime):
 但是上述的使用方式在本库是不推荐的，最佳的做法应该是使用 PlanMiddleware。
 PlanMiddleware 的参数说明如下:
 
-- `system_prompt`：可选字符串类型，系统提示词，功能上与官方的 TodoListMiddleware 相同
-- `tools`：可选 BaseTool 列表类型，工具列表，指定后会加入到 tools 中，必须是通过 `create_write_plan_tool`、`create_finish_sub_plan_tool` 以及 `create_read_plan_tool` 创建的工具
+- **system_prompt**：可选字符串类型，系统提示词，功能上与官方的 TodoListMiddleware 相同
+- **tools**：可选 BaseTool 列表类型，工具列表，指定后会加入到 tools 中，必须是通过 create_write_plan_tool、create_finish_sub_plan_tool 以及 create_read_plan_tool 创建的工具
 
 ```python
 from langchain_dev_utils.agents.middleware import (
@@ -245,7 +245,7 @@ print(response)
 
 ## ModelFallbackMiddleware
 
-用于在调用模型失败时回退到备用模型的中间件。功能与官方[ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback)完全一致。但是同样只允许字符串指定模型，与上面的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册。使用示例:
+用于在调用模型失败时回退到备用模型的中间件。功能与官方[ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。使用示例:
 
 ```python
 from langchain_dev_utils.agents.middleware import (
@@ -268,7 +268,7 @@ print(response)
 
 ## LLMToolEmulator
 
-用于使用大模型来模拟工具调用的中间件。功能与官方[LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator)完全一致。但是同样只允许字符串指定模型，与上面的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册。使用示例:
+用于使用大模型来模拟工具调用的中间件。功能与官方[LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。使用示例:
 
 ```python
 from langchain_dev_utils.agents.middleware import (
@@ -295,9 +295,9 @@ print(response)
 
 对于此中间件，你需要传入两个参数:
 
-- `router_model`: 用于路由的模型
-- `model_list`: 模型列表，每个模型需要包含`model_name`和`model_description`两个键，同时也可以选择性地包含`tools`这个键，代表模型可用的工具，如果不传则默认是使用全部工具。
-- `router_prompt`: 路由模型的提示词，如果为 None 则使用默认的提示词
+- **router_model**：用于路由的模型
+- **model_list**：模型列表，每个模型需要包含 model_name 和 model_description 两个键，同时也可以选择性地包含 tools 这个键，代表模型可用的工具，如果不传则默认是使用全部工具。
+- **router_prompt**：路由模型的提示词，如果为 None 则使用默认的提示词
 
 使用示例:
 
