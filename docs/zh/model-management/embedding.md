@@ -171,4 +171,15 @@ print(emb)
 
 ## 注意
 
-`register_embeddings_provider` 及其对应的批量注册函数 `batch_register_embeddings_provider` 均基于一个全局字典实现。为避免多线程并发问题，请务必在项目启动阶段完成所有注册操作，切勿在运行时动态注册。
+- `register_embeddings_provider` 及其对应的批量注册函数 `batch_register_embeddings_provider` 均基于一个全局字典实现。为避免多线程并发问题，请务必在项目启动阶段完成所有注册操作，切勿在运行时动态注册。
+- 与对话模型类似，对于官方 `init_embeddings` 函数已支持的模型提供商，你也可以直接使用 `load_embeddings` 函数进行加载，无需额外注册。因此，如果你需要同时接入多个模型，其中部分提供商为官方支持，另一部分不支持，可以考虑统一使用 `load_embeddings` 进行加载。例如：
+
+```python
+from langchain_dev_utils.embeddings import load_embeddings
+from langchain_core.embeddings.fake import FakeEmbeddings
+
+# You must specify both the provider and model name when loading the model
+model = load_embeddings("openai:text-embedding-3-large")
+# Or explicitly specify the provider parameter
+model = load_embeddings("text-embedding-3-large", provider="openai")
+```

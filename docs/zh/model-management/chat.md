@@ -350,4 +350,19 @@ print(model.invoke("Hello"))
 
 ## 注意
 
-`register_model_provider` 及其对应的批量注册函数 `batch_register_model_provider` 均基于一个全局字典实现。为避免多线程并发问题，请务必在项目启动阶段完成所有注册操作，切勿在运行时动态注册。
+- `register_model_provider` 及其对应的批量注册函数 `batch_register_model_provider` 均基于一个全局字典实现。为避免多线程并发问题，请务必在项目启动阶段完成所有注册操作，切勿在运行时动态注册。
+- 对于官方 `init_chat_model` 函数已支持的模型提供商，你也可以直接使用 `load_chat_model` 函数进行加载，无需额外注册。因此，如果你需要同时接入多个模型，其中部分提供商为官方支持，另一部分不支持，可以考虑统一使用 `load_chat_model` 进行加载。例如：
+
+```python
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_core.messages import HumanMessage
+
+# 加载模型时需指定提供商与模型名称
+model = load_chat_model("openai:gpt-4o-mini")
+# 或显式指定提供商参数
+model = load_chat_model("openai:gpt-4o-mini", model_provider="openai")
+
+# 注意：必须指定模型提供商，无法仅根据模型名称自动推断
+response = model.invoke([HumanMessage("Hello")])
+print(response)
+```

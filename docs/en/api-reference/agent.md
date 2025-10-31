@@ -266,9 +266,10 @@ Middleware for dynamically routing to appropriate models based on input content.
 
 ```python
 class ModelRouterMiddleware(AgentMiddleware):
+    state_schema = ModelRouterState
     def __init__(
         self,
-        router_model: str,
+        router_model: str | BaseChatModel,
         model_list: list[ModelDict],
         router_prompt: Optional[str] = None,
     ) -> None:
@@ -276,9 +277,9 @@ class ModelRouterMiddleware(AgentMiddleware):
 
 **Parameters:**
 
-- `router_model`: model used for routing
-- `model_list`: A list of models. Each model needs to contain the keys `model_name` and `model_description`, and can also optionally contain the `tools` key, representing the tools available to the model. If not provided, all tools will be used by default.
-- `router_prompt`: prompt for the routing model, uses default prompt if None
+- `router_model`: The model used for routing, accepts string type (loaded by `load_chat_model`) or a direct instance of `ChatModel`.
+- `model_list`: List of models, each model needs to include the `model_name` and `model_description` keys, and can optionally include the `tools` and `model_kwargs` keys, representing the tools available to the model and the extra parameters passed to the model respectively. If not provided, all tools and default parameters are used.
+- `router_prompt`: The prompt for the routing model, if None, the default prompt is used.
 
 **Example:**
 
@@ -325,6 +326,7 @@ class ModelDict(TypedDict):
     model_name: str
     model_description: str
     tools: NotRequired[list[BaseTool | dict[str, Any]]]
+    model_kwargs: NotRequired[dict[str, Any]]
 ```
 
 ## SelectModel

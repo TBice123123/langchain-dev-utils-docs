@@ -171,4 +171,14 @@ print(emb)
 
 ## Note
 
-Both `register_embeddings_provider` and its corresponding batch registration function `batch_register_embeddings_provider` are implemented based on a global dictionary. To avoid multi-threading concurrency issues, please ensure that all registration operations are completed during the project startup phase. Do not dynamically register providers during runtime.
+- Both `register_embeddings_provider` and its corresponding batch registration function `batch_register_embeddings_provider` are implemented based on a global dictionary. To avoid multi-threading concurrency issues, please ensure that all registration operations are completed during the project startup phase. Do not dynamically register providers during runtime.
+- For model providers officially supported by the `init_embeddings` function, you can also use the `load_embeddings` function to load models directly without additional registration. Therefore, if you need to integrate multiple models where some providers are officially supported and others are not, you can consider using `load_embeddings` for unified loading. For example:
+
+```python
+from langchain_dev_utils.embeddings import load_embeddings
+
+# You must specify both the provider and model name when loading the model
+model = load_embeddings("openai:text-embedding-3-large")
+# Or explicitly specify the provider parameter
+model = load_embeddings("text-embedding-3-large", provider="openai")
+```
