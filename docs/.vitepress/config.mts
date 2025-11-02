@@ -64,7 +64,7 @@ export default defineConfig({
                 items: [
                   {
                     text: "human-in-loop support",
-                    link: "/en/tool-calling/human-in-loop",
+                    link: "/en/tool-calling/human-in-the-loop",
                   },
                   {
                     text: "Tool calling process",
@@ -173,7 +173,7 @@ export default defineConfig({
                 items: [
                   {
                     text: "添加人在回路支持",
-                    link: "/zh/tool-calling/human-in-loop",
+                    link: "/zh/tool-calling/human-in-the-loop",
                   },
                   {
                     text: "工具调用过程处理",

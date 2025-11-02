@@ -51,6 +51,32 @@ def create_agent(  # noqa: PLR0915
 agent = create_agent(model="vllm:qwen3-4b", tools=[get_current_time])
 ```
 
+## wrap_agent_as_tool
+
+```python
+def wrap_agent_as_tool(
+    agent: CompiledStateGraph,
+    tool_name: Optional[str] = None,
+    tool_description: Optional[str] = None,
+    agent_system_prompt: Optional[str] = None,
+) -> BaseTool:
+```
+
+**参数说明：**
+
+- `agent`：CompiledStateGraph 类型，必填，智能体
+- `tool_name`：可选字符串类型，工具名称
+- `tool_description`：可选字符串类型，工具描述
+- `agent_system_prompt`：可选字符串类型，智能体系统提示词
+
+**返回值：** BaseTool 类型，工具实例
+
+**示例：**
+
+```python
+tool = wrap_agent_as_tool(agent)
+```
+
 ## create_write_plan_tool
 
 创建用于写计划或者更新计划的工具。
@@ -278,7 +304,7 @@ class ModelRouterMiddleware(AgentMiddleware):
 **参数说明：**
 
 - `router_model`: 用于路由的模型,接收字符串类型（使用`load_chat_model`加载）或者直接传入 ChatModel
-- `model_list`: 模型列表，每个模型需要包含`model_name`和`model_description`两个键，同时也可以选择性地包含`tools`、`model_kwargs`这两个键，代表模型可用的工具(如果不传则默认是使用全部工具)以及传递给模型的额外参数（例如：temperature、top_p 等）。
+- `model_list`：模型列表，每个模型需要包含 `model_name` 和 `model_description` 两个键，同时也可以选择性地包含 `tools`、`model_kwargs` 、`model_system_prompt` 这三个键，分别代表模型可用的工具（如果不传则默认是使用全部工具）、传递给模型的额外参数（例如：temperature、top_p 等）和该模型的系统提示词。
 - `router_prompt`: 路由模型的提示词，如果为 None 则使用默认的提示词
 
 **示例：**
@@ -327,6 +353,7 @@ class ModelDict(TypedDict):
     model_description: str
     tools: NotRequired[list[BaseTool | dict[str, Any]]]
     model_kwargs: NotRequired[dict[str, Any]]
+    model_system_prompt: NotRequired[str]
 ```
 
 ## SelectModel
