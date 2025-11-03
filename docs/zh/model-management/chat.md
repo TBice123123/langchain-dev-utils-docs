@@ -138,6 +138,10 @@ register_model_provider(
 
 其中最后一个取值是`specific`，意为强制模型调用指定名称的工具。对于 OpenAI 兼容 API，往往需要传递`tool_choice={"type": "function", "function": {"name": "get_weather"}}`。但是实际上在`langchain`中可以直接传递该工具的名称。
 
+::: danger 注意
+`register_model_provider` 及其对应的批量注册函数 `batch_register_model_provider` 均基于一个全局字典实现。为避免多线程并发问题，请务必在项目启动阶段完成所有注册操作，切勿在运行时动态注册。
+:::
+
 ## 加载对话模型
 
 加载对话模型的函数是`load_chat_model`，其接收以下参数：
@@ -348,10 +352,8 @@ model = load_chat_model("fake_provider:fake-model")
 print(model.invoke("Hello"))
 ```
 
-## 注意
-
-- `register_model_provider` 及其对应的批量注册函数 `batch_register_model_provider` 均基于一个全局字典实现。为避免多线程并发问题，请务必在项目启动阶段完成所有注册操作，切勿在运行时动态注册。
-- 对于官方 `init_chat_model` 函数已支持的模型提供商，你也可以直接使用 `load_chat_model` 函数进行加载，无需额外注册。因此，如果你需要同时接入多个模型，其中部分提供商为官方支持，另一部分不支持，可以考虑统一使用 `load_chat_model` 进行加载。例如：
+::: tip 提示
+对于官方 `init_chat_model` 函数已支持的模型提供商，你也可以直接使用 `load_chat_model` 函数进行加载，无需额外注册。因此，如果你需要同时接入多个模型，其中部分提供商为官方支持，另一部分不支持，可以考虑统一使用 `load_chat_model` 进行加载。例如：
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -366,3 +368,5 @@ model = load_chat_model("openai:gpt-4o-mini", model_provider="openai")
 response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
+
+:::

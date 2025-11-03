@@ -291,12 +291,12 @@ print(response)
 
 ## ModelRouterMiddleware
 
-Middleware used to dynamically route to an appropriate model based on the input content.
+A middleware used for dynamically routing to appropriate models based on input content.
 
-For this middleware, you need to pass two parameters:
+For this middleware, you need to pass in two parameters:
 
-- **router_model**: The model used for routing. Accepts a string type (loaded using **load_chat_model**) or directly pass a ChatModel.
-- **model_list**: A list of models. Each model needs to include the keys **model_name** and **model_description**. Optionally, it can also include the keys **tools**, **model_kwargs**, and **model_system_prompt**, which represent the tools available to the model (if not passed, it defaults to using all tools), additional parameters passed to the model (e.g., temperature, top_p, etc.), and the system prompt for that model, respectively.
+- **router_model**: The model used for routing. Accepts a string type (loaded using **load_chat_model**) or directly pass in a ChatModel.
+- **model_list**: A list of models. Each model must include the keys **model_name** and **model_description**. Optionally, it can also include the keys **tools**, **model_kwargs**, and **model_system_prompt**, which represent the tools available to the model (if not provided, all tools are used by default), additional parameters passed to the model (e.g., temperature, top_p, etc.), and the system prompt for the model, respectively.
 - **router_prompt**: The prompt for the routing model. If None, the default prompt is used.
 
 Usage example:
@@ -306,20 +306,21 @@ from langchain_dev_utils.agents.middleware import ModelRouterMiddleware
 
 agent = create_agent(
     model="vllm:qwen3-4b",
-    tools=[run_python_code,get_current_time],
+    tools=[run_python_code, get_current_time],
     middleware=[
         ModelRouterMiddleware(
             router_model="vllm:qwen3-4b",
             model_list=[
                 {
                     "model_name": "vllm:qwen3-8b",
-                    "model_description": "Suitable for general tasks, such as dialogue, text generation, etc.",
-                    "model_kwargs": {"temperature": 0.7,"extra_body":{"chat_template_kwargs": {"enable_thinking": False}}},
-                    "model_system_prompt": "You are an assistant skilled in handling general tasks, such as dialogue, text generation, etc.",
+                    "model_description": "Suitable for general tasks such as dialogue, text generation, etc.",
+                    "model_kwargs": {"temperature": 0.7, "extra_body": {"chat_template_kwargs": {"enable_thinking": False}}},
+                    "model_system_prompt": "You are an assistant skilled in handling general tasks such as dialogue, text generation, etc.",
                 },
                 {
                     "model_name": "openrouter:qwen/qwen3-vl-32b-instruct",
                     "model_description": "Suitable for visual tasks",
+                    "tools": [],
                 },
                 {
                     "model_name": "openrouter:qwen/qwen3-coder-plus",
@@ -333,4 +334,4 @@ agent = create_agent(
 print(agent.invoke({"messages": [HumanMessage(content="Help me write a bubble sort code")]}))
 ```
 
-**Note:** All tools in the `tools` parameter for each item in `model_list` should also be listed in the `tools` parameter of `create_agent`, otherwise an error will occur. The `tools` parameter in `model_list` is used to specify the tools available to that model. For example, in the above example, the third model's `tools` only include `run_python_code`, while the remaining two models can use both `run_python_code` and `get_current_time`.
+**Note:** All tools in the `tools` parameter of each entry in the `model_list` should also be listed in the `tools` parameter of `create_agent`; otherwise, an error will occur. The `tools` parameter here is used to specify the tools available to the model. For example, in the above example, the `vllm:qwen3-8b` model can use all tools, the `openrouter:qwen/qwen3-vl-32b-instruct` model has no tools, and the `openrouter:qwen/qwen3-coder-plus` model can only use the `run_python_code` tool.

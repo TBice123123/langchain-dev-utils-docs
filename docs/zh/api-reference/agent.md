@@ -58,7 +58,20 @@ def wrap_agent_as_tool(
     agent: CompiledStateGraph,
     tool_name: Optional[str] = None,
     tool_description: Optional[str] = None,
-    agent_system_prompt: Optional[str] = None,
+    pre_input_hooks: Optional[
+        tuple[
+            Callable[[str, ToolRuntime], str],
+            Callable[[str, ToolRuntime], Awaitable[str]],
+        ]
+        | Callable[[str, ToolRuntime], str]
+    ] = None,
+    post_output_hooks: Optional[
+        tuple[
+            Callable[[str, list[AnyMessage], ToolRuntime], Any],
+            Callable[[str, list[AnyMessage], ToolRuntime], Awaitable[Any]],
+        ]
+        | Callable[[str, list[AnyMessage], ToolRuntime], Any]
+    ] = None,
 ) -> BaseTool:
 ```
 
@@ -67,7 +80,8 @@ def wrap_agent_as_tool(
 - `agent`：CompiledStateGraph 类型，必填，智能体
 - `tool_name`：可选字符串类型，工具名称
 - `tool_description`：可选字符串类型，工具描述
-- `agent_system_prompt`：可选字符串类型，智能体系统提示词
+- `pre_input_hooks`：可选元组类型或者函数类型，Agent 输入预处理函数
+- `post_output_hooks`：可选元组类型或者函数类型，Agent 输出后处理函数
 
 **返回值：** BaseTool 类型，工具实例
 

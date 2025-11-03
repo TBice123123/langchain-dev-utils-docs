@@ -320,6 +320,7 @@ agent = create_agent(
                 {
                     "model_name": "openrouter:qwen/qwen3-vl-32b-instruct",
                     "model_description": "适合视觉任务",
+                    "tools": [],
                 },
                 {
                     "model_name": "openrouter:qwen/qwen3-coder-plus",
@@ -333,4 +334,4 @@ agent = create_agent(
 print(agent.invoke({"messages": [HumanMessage(content="帮我写一个冒泡排序代码")]}))
 ```
 
-**注意：** `model_list`中的每个`tools`参数中的所有工具都应同时在`create_agent`的`tools`参数中列出，否则会报错。对于`model_list`中的`tools`参数，作用是指定模型可用的工具。例如上述例子，则第三个模型的`tools`只有`run_python_code`，而剩余的两个模型则可以使用`run_python_code`和`get_current_time`。
+**注意：** `model_list`中的每个`tools`参数中的所有工具都应同时在`create_agent`的`tools`参数中列出，否则会报错。这里的`tools`参数用于指定模型可用的工具，例如上面的示例中，`vllm:qwen3-8b`模型可用的工具为所有工具，而`openrouter:qwen/qwen3-vl-32b-instruct`模型没有工具，`openrouter:qwen/qwen3-coder-plus`模型可用的工具仅为`run_python_code`。

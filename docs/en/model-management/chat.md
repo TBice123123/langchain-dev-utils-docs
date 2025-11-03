@@ -138,6 +138,11 @@ register_model_provider(
 
 The last value is `specific`, which means forcing the model to call a tool with a specified name. For the OpenAI-compatible API, it often requires passing `tool_choice={"type": "function", "function": {"name": "get_weather"}}`. But actually, in `langchain`, you can directly pass the name of that tool.
 
+::: danger note
+
+Both `register_model_provider` and its corresponding batch registration function `batch_register_model_provider` are implemented based on a global dictionary. To avoid multi-threading concurrency issues, please ensure that all registration operations are completed during the project startup phase. Do not dynamically register providers during runtime.
+:::
+
 ## Loading a Chat Model
 
 The function to load a chat model is `load_chat_model`, which accepts the following parameters:
@@ -349,11 +354,8 @@ model = load_chat_model("fake_provider:fake-model")
 print(model.invoke("Hello"))
 ```
 
-## Note
-
-- Both `register_model_provider` and its corresponding batch registration function `batch_register_model_provider` are implemented based on a global dictionary. To avoid multi-threading concurrency issues, please ensure that all registration operations are completed during the project startup phase. Do not dynamically register providers during runtime.
-
-- For model providers officially supported by the `init_chat_model` function, you can also use the `load_chat_model` function to load models directly without additional registration. Therefore, if you need to integrate multiple models where some providers are officially supported and others are not, you can consider using `load_chat_model` for unified loading. For example:
+::: tip tips
+For model providers officially supported by the `init_chat_model` function, you can also use the `load_chat_model` function to load models directly without additional registration. Therefore, if you need to integrate multiple models where some providers are officially supported and others are not, you can consider using `load_chat_model` for unified loading. For example:
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -368,3 +370,5 @@ model = load_chat_model("openai:gpt-4o-mini", model_provider="openai")
 response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
+
+:::

@@ -4,9 +4,9 @@
 >
 > **功能概述**：提供方便进行 Agent 开发的实用工具。
 >
-> **前置要求**：了解 langchain 的[Agent](https://docs.langchain.com/oss/python/langchain/agents)。
+> **前置要求**：了解 langchain 的[Agent](https://docs.langchain.com/oss/python/langchain/agents)、[Multi-Agent](https://docs.langchain.com/oss/python/langchain/multi-agent)。
 >
-> **预计阅读时间**：5 分钟
+> **预计阅读时间**：8 分钟
 
 预构建智能体模块主要是提供一个和`langchain`的`create_agent`函数功能上完全相同的函数，但是通过字符串指定更多的模型(需要进行注册)。
 
@@ -52,16 +52,19 @@ print(response)
 
 ## 将 Agent 转换为一个 Tool
 
+本函数的作用是将一个 Agent 转换为一个 Tool，从而将其作为工具使用。这种方式是多智能体的一种实现方式。
+
 核心函数：
 
 - `wrap_agent_as_tool`：将 Agent 转换为 Tool
 
 **函数参数**：
 
-- **agent**: 智能体，取值必须为`langchain`的`CompiledStateGraph`。
-- **tool_name**: Tool 的名称(可选，取值必须为字符串)。
+- **agent**: 智能体，取值必须为**langchain**的**CompiledStateGraph**。
+- **tool_name**: Tool 的名称(可选，取值必须为字符串)，如果不传则工具默认名称是`transfor_to_agent_name`。
 - **tool_description**: Tool 的描述(可选，取值必须为字符串)。
-- **agent_system_prompt**: Agent 的系统提示(可选，取值必须为字符串)。
+- **pre_input_hooks**: Tool 的预处理函数(可选，取值必须为函数或者函数组成的二元组)。
+- **post_input_hooks**: Tool 的后处理函数(可选，取值必须为函数或者函数组成的二元组)。
 
 **使用示例**
 
@@ -85,13 +88,92 @@ time_agent = create_agent(
 tool = wrap_agent_as_tool(
     time_agent, tool_name="call_time_agent", tool_description="调用时间智能体"
 )
-print(tool)
-
 # 将其作为一个工具
 agent = create_agent("vllm:qwen3-4b", tools=[tool], name="agent")
 
 response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")]})
 print(response)
 ```
+
+### `pre_input_hooks`
+
+**作用**：  
+对工具的原始输入字符串进行预处理。可用于输入增强、上下文注入、格式校验、权限检查等。
+
+支持传入以下类型：
+
+- 若传入 **单个同步函数**，则该函数同时用于同步（`invoke`）和异步（`ainvoke`）调用路径（异步路径中不会 `await`，直接调用）。
+- 若传入 **二元组 `(sync_func, async_func)`**：
+  - 第一个函数用于同步调用路径；
+  - 第二个函数（必须是 `async def`）用于异步调用路径，并会被 `await`。
+
+你传入的函数接收两个参数：
+
+- `request: str`：原始工具调用输入；
+- `runtime: ToolRuntime`：`langchain`的`ToolRuntime`。
+
+你传入的函数必须返回处理后的 `str`，作为 agent 的实际输入。
+
+**示例**：
+
+```python
+def process_input(request: str, runtime: ToolRuntime) -> str:
+    return "<task_description>" + request + "</task_description>"
+
+# 或支持异步
+async def process_input_async(request: str, runtime: ToolRuntime) -> str:
+    return "<task_description>" + request + "</task_description>"
+
+# 使用
+tool = wrap_agent_as_tool(
+    agent,
+    pre_input_hooks=(process_input, process_input_async)
+)
+```
+
+### `post_output_hooks`
+
+**作用**：  
+在 agent 执行完成后，对 agent 返回的完整消息列表进行后处理，以生成工具的最终返回值。可用于结果提取、结构化转换等。
+
+支持传入以下类型：
+
+- 若传入 **单个函数**，该函数用于同步和异步路径（异步路径中不 `await`）。
+- 若传入 **二元组 `(sync_func, async_func)`**：
+  - 第一个用于同步路径；
+  - 第二个（`async def`）用于异步路径，并会被 `await`。
+
+你传入的函数接收三个参数：
+
+- `request: str`：（可能已处理的）原始输入；
+- `messages: List[AnyMessage]`：agent 返回的完整消息历史（来自 `response["messages"]`）；
+- `runtime: ToolRuntime`：`langchain`的`ToolRuntime`。
+
+你传入的函数返回的值可以是能够被序列化为一个字符串或者是`Command`对象。
+
+**示例**：
+
+```python
+from langgraph.types import Command
+
+def process_output_sync(request: str, messages: list, runtime: ToolRuntime) -> Command:
+    return Command(update={
+        "messages":[ToolMessage(content=messages[-1].content, tool_call_id=runtime.tool_call_id)]
+    })
+
+async def process_output_async(request: str, messages: list, runtime: ToolRuntime) -> Command:
+    return Command(update={
+        "messages":[ToolMessage(content=messages[-1].content, tool_call_id=runtime.tool_call_id)]
+    })
+
+# 使用
+tool = wrap_agent_as_tool(
+    agent,
+    post_output_hooks=(process_output_sync, process_output_async)
+)
+```
+
+- 若未提供 `pre_input_hooks`，输入原样传递；
+- 若未提供 `post_output_hooks`，默认返回 `response["messages"][-1].content`（即最后一条消息的文本内容）。
 
 **注意**：当该 Agent（CompiledStateGraph）作为 `wrap_agent_as_tool` 的 agent 参数时，该 Agent 必须定义 name 属性。

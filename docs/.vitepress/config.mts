@@ -38,6 +38,7 @@ export default defineConfig({
             items: [
               {
                 text: "model-management",
+                collapsed: true,
                 items: [
                   { text: "chat", link: "/en/model-management/chat" },
                   {
@@ -48,6 +49,7 @@ export default defineConfig({
               },
               {
                 text: "message-conversion",
+                collapsed: true,
                 items: [
                   {
                     text: "message process",
@@ -61,9 +63,10 @@ export default defineConfig({
               },
               {
                 text: "tool-calling",
+                collapsed: true,
                 items: [
                   {
-                    text: "human-in-loop support",
+                    text: "human-in-the-loop support",
                     link: "/en/tool-calling/human-in-the-loop",
                   },
                   {
@@ -74,6 +77,7 @@ export default defineConfig({
               },
               {
                 text: "agent-development",
+                collapsed: true,
                 items: [
                   {
                     text: "prebuilt agent",
@@ -87,6 +91,7 @@ export default defineConfig({
               },
               {
                 text: "graph-orchestration",
+                collapsed: true,
                 items: [
                   {
                     text: "pipeline",
@@ -147,6 +152,7 @@ export default defineConfig({
             items: [
               {
                 text: "模型管理",
+                collapsed: true,
                 items: [
                   { text: "对话模型管理", link: "/zh/model-management/chat" },
                   {
@@ -157,11 +163,9 @@ export default defineConfig({
               },
               {
                 text: "消息转换",
+                collapsed: true,
                 items: [
-                  {
-                    text: "消息处理",
-                    link: "/zh/message-conversion/message",
-                  },
+                  { text: "消息处理", link: "/zh/message-conversion/message" },
                   {
                     text: "格式化列表内容",
                     link: "/zh/message-conversion/format",
@@ -170,6 +174,7 @@ export default defineConfig({
               },
               {
                 text: "工具调用",
+                collapsed: true,
                 items: [
                   {
                     text: "添加人在回路支持",
@@ -183,6 +188,7 @@ export default defineConfig({
               },
               {
                 text: "Agent 开发",
+                collapsed: true,
                 items: [
                   {
                     text: "预构建 Agent",
@@ -193,6 +199,7 @@ export default defineConfig({
               },
               {
                 text: "状态图编排",
+                collapsed: true,
                 items: [
                   {
                     text: "编排管道",
