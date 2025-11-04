@@ -10,7 +10,7 @@
 
 Middleware is a component specifically built for pre-constructed Agents in `langchain`. The official library provides some built-in middleware. This library, based on practical scenarios and usage contexts, offers additional middleware. These can be broadly categorized into further encapsulations of official middleware and custom middleware defined within this library.
 
-## Official Middleware
+## Encapsulation of official middleware
 
 Further encapsulations of official middleware, providing more convenient usage methods.
 Specifically, the following four middleware are available:
@@ -139,7 +139,7 @@ response = agent.invoke({"messages": [HumanMessage(content="What time is it now?
 print(response)
 ```
 
-## Middleware in This Library
+## Custom Middleware In This Library
 
 ### PlanMiddleware
 
@@ -303,32 +303,33 @@ print(response)
 
 ### ModelRouterMiddleware
 
-`ModelRouterMiddleware` is a middleware used for **dynamically routing to the most suitable model based on the input content**. It uses a "router model" to analyze user requests and select the most appropriate model from a predefined list to handle the current task.
+`ModelRouterMiddleware` is a middleware designed to **dynamically route input to the most suitable model** based on the content of the request. It utilizes a "router model" to analyze the user's query and select the best-fitting model from a predefined list to handle the task.
 
-**Parameter Description**
+**Parameters**
 
 - **router_model** (Required)  
-  The model used to make routing decisions. Can be passed as:
+  The model used to make routing decisions. Accepts:
 
   - A string (which will be automatically loaded via **load_chat_model**), e.g., `"vllm:qwen3-4b"`;
-  - Or directly as an instantiated **ChatModel** object.
+  - Or a pre-instantiated **ChatModel** object.
 
 - **model_list** (Required)  
-  A list of model configurations. Each element is a dictionary that must contain the following fields:
+  A list of model configurations. Each element is a dictionary containing the following required fields:
 
-  - **model_name**: Model identifier (e.g., `"vllm:qwen3-8b"`), type is string.
-  - **model_description**: A brief description of the model's capabilities, used for the router model's judgment, type is string.
+  - **model_name**: The model identifier (e.g., `"vllm:qwen3-8b"`), type: string.
+  - **model_description**: A brief description of the model's capabilities, used by the router model for decision-making, type: string.
 
   Optional fields:
 
-  - **tools**: The list of tools allowed for this model. **If not specified, all tools registered in the agent are used by default.** Type is a list of BaseTool.  
-    ⚠️ Note: All tools listed in tools **must also be present in the tools parameter of create_agent**, otherwise an error will be thrown.
-  - **model_kwargs**: Additional parameters passed to this model (e.g., `temperature`, `top_p`, `extra_body`, etc.), type is dictionary.
-  - **model_system_prompt**: The system prompt set for this model, used to guide its behavior, type is string.
+  - **tools**: The list of tools this model is allowed to use. **If not specified, the model defaults to using all tools registered in the agent.** Type: List of BaseTool.  
+    ⚠️ Note: All tools listed in `tools` **must also be present in the `tools` parameter passed to `create_agent`**, otherwise an error will be raised.
+  - **model_kwargs**: Additional parameters passed to this model (e.g., `temperature`, `top_p`, `extra_body`, etc.), type: dict.
+  - **model_system_prompt**: The system prompt set for this model to guide its behavior, type: string.
 
 - **router_prompt** (Optional)  
-   Custom prompt for the router model, type is string. If **None** (default), the built-in default prompt template is used.
-  **Usage Example**
+  A custom prompt for the router model, type: string. If **None** (default), a built-in default prompt template is used.
+
+**Usage Example**
 
 First, define the model list:
 
@@ -336,7 +337,7 @@ First, define the model list:
 model_list = [
     {
         "model_name": "vllm:qwen3-8b",
-        "model_description": "Suitable for general tasks, such as dialogue, text generation, etc.",
+        "model_description": "Suitable for general tasks like dialogue, text generation, etc.",
         "model_kwargs": {
             "temperature": 0.7,
             "extra_body": {"chat_template_kwargs": {"enable_thinking": False}}
@@ -345,25 +346,25 @@ model_list = [
     },
     {
         "model_name": "openrouter:qwen/qwen3-vl-32b-instruct",
-        "model_description": "Suitable for visual tasks",
-        "tools": [],  # If this model does not require any tools, set this field to an empty list [].
+        "model_description": "Suitable for vision tasks",
+        "tools": [],  # If this model requires no tools, set this field to an empty list []
     },
     {
         "model_name": "openrouter:qwen/qwen3-coder-plus",
         "model_description": "Suitable for code generation tasks",
-        "tools": [run_python_code],  # Only allow the run_python_code tool
+        "tools": [run_python_code],  # Only allowed to use the run_python_code tool
     },
 ]
 ```
 
-Then enable the middleware when creating the agent:
+Then, enable the middleware when creating the agent:
 
 ```python
 from langchain_dev_utils.agents.middleware import ModelRouterMiddleware
 from langchain_core.messages import HumanMessage
 
 agent = create_agent(
-    model="vllm:qwen3-4b",  # This model is only a placeholder; it will be dynamically replaced by the middleware.
+    model="vllm:qwen3-4b",  # This model acts only as a placeholder; it will be dynamically replaced by the middleware
     tools=[run_python_code, get_current_time],
     middleware=[
         ModelRouterMiddleware(
@@ -373,13 +374,19 @@ agent = create_agent(
     ],
 )
 
-# The routing middleware will automatically select the most suitable model based on the input content.
+# The routing middleware automatically selects the most suitable model based on the input content
 response = agent.invoke({"messages": [HumanMessage(content="Help me write a bubble sort code")]})
 print(response)
 ```
 
-With `ModelRouterMiddleware`, you can easily build a multi-model, multi-capability intelligent agent that automatically selects the optimal model based on the task type, improving response quality and efficiency.
+With `ModelRouterMiddleware`, you can easily build a multi-model, multi-capability Agent that automatically selects the optimal model based on the task type, improving response quality and efficiency.
 
 ::: tip Note  
-If a model does not require any tools, explicitly set `tools=[]`; if it needs to use some tools, list the corresponding tools in `tools`; if the `tools` field is not provided, the model will default to using all registered tools.  
+In the `model_list`, the `tools` field in each dictionary controls the scope of tools available to that model:
+
+- If `[]` is explicitly passed, the model uses no tools.
+- If `[tool1, tool2, ...]` is passed, the model can only use the specified tools.
+- If the `tools` field is not provided, the model can use all registered tools.
+
+In short: When the `tools` parameter is provided, the model is restricted to using only the tools in that list; if the list is empty, the model has no tools available; if the parameter is omitted, the model defaults to having access to all tools.
 :::
