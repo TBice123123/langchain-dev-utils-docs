@@ -24,7 +24,7 @@
 - **[Agent 开发](./agent-development/prebuilt.md)** - 提供方便进行 Agent 开发的工具函数，包括官方 Agent 创建函数的进一步封装、常用中间件等。
 - **[状态图编排管道](./graph-orchestration/pipeline.md)** - 提供管道工具函数，将多个状态子图(StateGraph)以并行或者串行的方式组合在一起。
 
-### 主要特性
+## 主要特性
 
 - **统一的模型管理机制**：通过集中注册与管理 Chat 和 Embeddings 模型，简化模型调用与切换，提升开发效率。
 - **更灵活的消息处理**：提供丰富的 Message 类工具函数，支持思维链拼接、流式 chunk 合并、消息格式化等，便于构建复杂对话逻辑。
@@ -32,6 +32,6 @@
 - **更高效的 Agent 开发**：封装官方 Agent 创建流程，集成常用中间件，加速智能体的构建与迭代。
 - **更灵活的状态图组合**：支持将多个 StateGraph 以串行或并行方式组合，实现复杂工作流的可视化与模块化编排。
 
-### GitHub 仓库
+## GitHub 仓库
 
 访问 [GitHub 仓库](https://github.com/TBice123123/langchain-dev-utils) 查看源代码和问题。

@@ -8,9 +8,20 @@
 >
 > **预计阅读时间**：10 分钟
 
-中间件是专门针对`langchain`预构建的 Agent 而构建的组件。官方提供了一些内置的中间件。本库则根据实际情况和本库的使用场景，提供了更多的中间件。
+中间件是专门针对`langchain`预构建的 Agent 而构建的组件。官方提供了一些内置的中间件。本库则根据实际情况和本库的使用场景，提供了更多的中间件。、
+大致可以分为官方中间件的进一步封装、以及本库自定义的中间件。
 
-## SummarizationMiddleware
+## 官方中间件
+
+官方中间件的进一步封装，提供了更方便的使用方式。
+具体有以下四个中间件：
+
+- SummarizationMiddleware
+- LLMToolSelectorMiddleware
+- ModelFallbackMiddleware
+- LLMToolEmulator
+
+### SummarizationMiddleware
 
 核心作用是压缩对话内容，功能与官方[SummarizationMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#summarization)完全一致。但是只允许字符串参数指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。
 使用示例:
@@ -42,7 +53,7 @@ response = agent.invoke({"messages": big_messages})
 print(response)
 ```
 
-## LLMToolSelectorMiddleware
+### LLMToolSelectorMiddleware
 
 核心作用是用于大量工具的情况下，由 LLM 自己选择工具，功能与官方[LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-selector)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。
 使用示例:
@@ -83,7 +94,55 @@ response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")
 print(response)
 ```
 
-## PlanMiddleware
+### ModelFallbackMiddleware
+
+用于在调用模型失败时回退到备用模型的中间件。功能与官方[ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。使用示例:
+
+```python
+from langchain_dev_utils.agents.middleware import (
+    ModelFallbackMiddleware,
+)
+
+agent = create_agent(
+    model="vllm:qwen3-4b",
+    middleware=[
+        ModelFallbackMiddleware(
+           "vllm:qwen3-8b",
+           "openrouter:meta-llama/llama-3.3-8b-instruct:free",
+        )
+    ],
+)
+
+response = agent.invoke({"messages": [HumanMessage(content="你好。")]}),
+print(response)
+```
+
+### LLMToolEmulator
+
+用于使用大模型来模拟工具调用的中间件。功能与官方[LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。使用示例:
+
+```python
+from langchain_dev_utils.agents.middleware import (
+    LLMToolEmulator,
+)
+
+agent = create_agent(
+    model="vllm:qwen3-4b",
+    tools=[get_current_time],
+    middleware=[
+        LLMToolEmulator(
+            model="vllm:qwen3-4b"
+        )
+    ],
+)
+
+response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")]}),
+print(response)
+```
+
+## 本库中的中间件
+
+### PlanMiddleware
 
 任务规划的中间件，用于在执行复杂任务前进行结构化分解与过程管理。
 
@@ -243,95 +302,86 @@ print(response)
 
 2. 对于 `tools` 参数，仅支持使用 `create_write_plan_tool`、`create_finish_sub_plan_tool` 和 `create_read_plan_tool` 所创建的工具。其中，`create_read_plan_tool`为可选工具，仅传入前两者时，此中间件仍可正常运行，但将不具备读取计划的功能。
 
-## ModelFallbackMiddleware
+### ModelRouterMiddleware
 
-用于在调用模型失败时回退到备用模型的中间件。功能与官方[ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。使用示例:
+`ModelRouterMiddleware` 是一个用于**根据输入内容动态路由到最适配模型**的中间件。它通过一个“路由模型”分析用户请求，从预定义的模型列表中选择最适合当前任务的模型进行处理。
+
+**参数说明**
+
+- **router_model**（必填）  
+  用于执行路由决策的模型。可以传入：
+
+  - 字符串（将通过 **load_chat_model** 自动加载），例如 `"vllm:qwen3-4b"`；
+  - 或直接传入已实例化的 **ChatModel** 对象。
+
+- **model_list**（必填）  
+  一个模型配置列表，每个元素是一个字典，需包含以下字段：
+
+  - **model_name**：模型标识符（如 `"vllm:qwen3-8b"`），类型为字符串。
+  - **model_description**：对该模型能力的简要描述，用于路由模型判断，类型为字符串。
+
+  可选字段：
+
+  - **tools**：该模型允许使用的工具列表。**若未指定，则默认使用 agent 中注册的所有工具**。类型为 BaseTool 列表。  
+    ⚠️ 注意：tools 中列出的所有工具**必须同时出现在 create_agent 的 tools 参数中**，否则会抛出错误。
+  - **model_kwargs**：传递给该模型的额外参数（如 `temperature`, `top_p`, `extra_body` 等），类型为字典。
+  - **model_system_prompt**：为该模型设置的系统提示词，用于引导其行为，类型为字符串。
+
+- **router_prompt**（可选）  
+  自定义路由模型的提示词，类型为字符串。若为 **None**（默认），则使用内置的默认提示模板。
+
+**使用示例**
+
+首先定义模型列表：
 
 ```python
-from langchain_dev_utils.agents.middleware import (
-    ModelFallbackMiddleware,
-)
-
-agent = create_agent(
-    model="vllm:qwen3-4b",
-    middleware=[
-        ModelFallbackMiddleware(
-           "vllm:qwen3-8b",
-           "openrouter:meta-llama/llama-3.3-8b-instruct:free",
-        )
-    ],
-)
-
-response = agent.invoke({"messages": [HumanMessage(content="你好。")]}),
-print(response)
+model_list = [
+    {
+        "model_name": "vllm:qwen3-8b",
+        "model_description": "适合普通任务，如对话、文本生成等",
+        "model_kwargs": {
+            "temperature": 0.7,
+            "extra_body": {"chat_template_kwargs": {"enable_thinking": False}}
+        },
+        "model_system_prompt": "你是一个助手，擅长处理普通任务，如对话、文本生成等。",
+    },
+    {
+        "model_name": "openrouter:qwen/qwen3-vl-32b-instruct",
+        "model_description": "适合视觉任务",
+        "tools": [],  # 如果该模型不需要任何工具，请将此字段设置为空列表 []
+    },
+    {
+        "model_name": "openrouter:qwen/qwen3-coder-plus",
+        "model_description": "适合代码生成任务",
+        "tools": [run_python_code],  # 仅允许使用 run_python_code 工具
+    },
+]
 ```
 
-## LLMToolEmulator
-
-用于使用大模型来模拟工具调用的中间件。功能与官方[LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。使用示例:
-
-```python
-from langchain_dev_utils.agents.middleware import (
-    LLMToolEmulator,
-)
-
-agent = create_agent(
-    model="vllm:qwen3-4b",
-    tools=[get_current_time],
-    middleware=[
-        LLMToolEmulator(
-            model="vllm:qwen3-4b"
-        )
-    ],
-)
-
-response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")]}),
-print(response)
-```
-
-## ModelRouterMiddleware
-
-用于根据输入内容动态路由到合适模型的中间件。
-
-对于此中间件，你需要传入两个参数:
-
-- **router_model**：用于路由的模型，接收字符串类型（使用**load_chat_model**加载）或者直接传入 ChatModel
-- **model_list**：模型列表，每个模型需要包含 **model_name** 和 **model_description** 两个键，同时也可以选择性地包含 **tools**、**model_kwargs** 、**model_system_prompt** 这三个键，分别代表模型可用的工具（如果不传则默认是使用全部工具）、传递给模型的额外参数（例如：temperature、top_p 等）和该模型的系统提示词。
-- **router_prompt**：路由模型的提示词，如果为 None 则使用默认的提示词
-
-使用示例:
+然后在创建 agent 时启用中间件：
 
 ```python
 from langchain_dev_utils.agents.middleware import ModelRouterMiddleware
+from langchain_core.messages import HumanMessage
 
 agent = create_agent(
-    model="vllm:qwen3-4b",
-    tools=[run_python_code,get_current_time],
+    model="vllm:qwen3-4b",  # 此模型仅作占位，实际由中间件动态替换
+    tools=[run_python_code, get_current_time],
     middleware=[
         ModelRouterMiddleware(
             router_model="vllm:qwen3-4b",
-            model_list=[
-                {
-                    "model_name": "vllm:qwen3-8b",
-                    "model_description": "适合普通任务，如对话、文本生成等",
-                    "model_kwargs": {"temperature": 0.7,"extra_body":{"chat_template_kwargs": {"enable_thinking": False}}},
-                    "model_system_prompt": "你是一个助手，擅长处理普通任务，如对话、文本生成等。",
-                },
-                {
-                    "model_name": "openrouter:qwen/qwen3-vl-32b-instruct",
-                    "model_description": "适合视觉任务",
-                    "tools": [],
-                },
-                {
-                    "model_name": "openrouter:qwen/qwen3-coder-plus",
-                    "model_description": "适合代码生成任务",
-                    "tools": [run_python_code],
-                },
-            ],
+            model_list=model_list,
         )
     ],
 )
-print(agent.invoke({"messages": [HumanMessage(content="帮我写一个冒泡排序代码")]}))
+
+# 路由中间件会根据输入内容自动选择最合适的模型
+response = agent.invoke({"messages": [HumanMessage(content="帮我写一个冒泡排序代码")]})
+print(response)
 ```
 
-**注意：** `model_list`中的每个`tools`参数中的所有工具都应同时在`create_agent`的`tools`参数中列出，否则会报错。这里的`tools`参数用于指定模型可用的工具，例如上面的示例中，`vllm:qwen3-8b`模型可用的工具为所有工具，而`openrouter:qwen/qwen3-vl-32b-instruct`模型没有工具，`openrouter:qwen/qwen3-coder-plus`模型可用的工具仅为`run_python_code`。
+通过 `ModelRouterMiddleware`，你可以轻松构建一个多模型、多能力的智能代理，根据任务类型自动选择最优模型，提升响应质量与效率。
+
+::: tip 注意  
+若模型不需要任何工具，请显式设置 `tools=[]`；若需使用部分工具，请在 `tools` 中列出对应工具；若未提供 `tools` 字段，则默认该模型可使用所有已注册的工具。  
+:::

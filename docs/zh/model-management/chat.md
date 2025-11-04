@@ -25,11 +25,11 @@
 
 具体的使用方法如下：
 
-### 设置 provider_name
+### Step 1：设置 provider_name
 
 首先需要传入 `provider_name`参数以指定模型提供商。此名称可自定义，建议使用具有明确含义的名称（如`vllm`）来指代真实的提供商。请注意，名称中请勿包含冒号`:`，因为该符号后续将用于分隔提供商与模型名称。
 
-### 设置 chat_model
+### Step 2：设置 chat_model
 
 接下来需要传入 `chat_model`参数，这个参数接收两种类型：`langchain` 的 `ChatModel` 或者 `str`。
 
@@ -69,7 +69,7 @@ register_model_provider(
 3. **支持配置 tool_choice**：  
    对于大多数兼容 OpenAI API 的模型提供商，其 tool_choice 参数可能与 OpenAI 官方 API 支持的有所不同。因此，该对话模型类支持用户指定支持的 `tool_choice`（见下文）。
 
-### 设置 base_url（可选）
+### Step 3：设置 base_url（可选）
 
 该参数仅在`chat_model`为字符串（具体是`"openai-compatible"`）时才需要进行设置。你可以通过直接在本函数中传递`base_url`，或者设置模型的提供商的`API_BASE`。
 
@@ -114,17 +114,23 @@ vllm serve Qwen/Qwen3-4B \
 完成后会提供一个 OpenAI 兼容 API，地址为`http://localhost:8000/v1`。
 :::
 
-### 设置 tool_choice（可选）
+### Step 4：设置 tool_choice（可选）
 
-同样仅在`chat_model`为字符串（具体是`"openai-compatible"`）时才需要进行设置。
+仅当 `chat_model` 为字符串 `"openai-compatible"` 时，才需要显式设置此参数。本库之所以提供该参数是为了增强兼容性。
+大多数模型提供商支持 `tool_choice` 参数。在 LangChain 中，部分对话模型类的 `bind_tools` 方法允许通过 `tool_choice` 参数来设置。该参数通常接受以下字符串值：
 
-大多数模型提供商都支持 `tool_choice` 参数。在 LangChain 中，部分对话模型类的 `bind_tools` 方法允许通过 `tool_choice` 参数传递该选项。该参数通常接受字符串值，例如 `"auto"`、`"none"`、`"any"`、`"required"`，或某个具体工具的名称。不过，不同模型提供商对 `tool_choice` 的支持程度可能有所不同。为此，我们引入了这一配置项，用于声明当前模型提供商所支持的 `tool_choice` 选项，以提升兼容性。在大多数情况下，你无需手动设置该参数即可正常使用。
+- `auto`：由模型自主决定是否调用工具（大多数提供商的默认行为）；
+- `none`：禁止调用任何工具；
+- `required`：强制模型必须调用至少一个工具；
+- `any`：允许调用任意工具（部分提供商支持）；
+- `具体工具名称`：强制调用指定名称的工具。
 
-该参数是一个字符串列表，每个字符串的取值只能是：`"auto"`、`"none"`、`"any"`、`"required"` 以及 `"specific"`。其中，前四项为常用的`tool_choice`取值，而 `"specific"` 是本库特有的选项，意为强制模型调用指定名称的工具。
+然而，不同模型提供商对 `tool_choice` 的支持范围并不一致。为提升兼容性，本库引入了一个配置项，用于声明当前模型实际支持的 `tool_choice` 选项。
 
-默认情况下，若不传递 `tool_choice` 参数，模型提供商通常采用 `"auto"` 策略，即由模型自主决定是否调用工具。但在某些高层封装库（如 `langmem`）中，可能会主动传入 `tool_choice` 参数。为避免因模型不支持该参数取值而导致的错误，本库提供了此参数。当传入的值不在支持范围内时，系统将自动回退为 `None`，即不传递 `tool_choice` 参数。
+该配置项是一个字符串列表，每个字符串的取值只能是`auto`、`none`、`any`、`required`、`specific`。其中，前四项对应标准的 `tool_choice` 策略，而 `specific` 是本库特有的标识，表示最后一种策略，即强制调用指定的工具。
 
-例如，vllm 支持设置`auto`、`none`、`required`以及具体的工具的`tool_choice`，则对应的本函数中你应该这么写：
+**示例**：  
+vLLM 支持 `"auto"`、`"none"`、`"required"` 以及指定具体工具名称的 `tool_choice`。因此，在本库中应将该参数设为：
 
 ```python
 from langchain_dev_utils.chat_models import register_model_provider
@@ -136,9 +142,51 @@ register_model_provider(
 )
 ```
 
-其中最后一个取值是`specific`，意为强制模型调用指定名称的工具。对于 OpenAI 兼容 API，往往需要传递`tool_choice={"type": "function", "function": {"name": "get_weather"}}`。但是实际上在`langchain`中可以直接传递该工具的名称。
+本参数主要用于以下两种场景：
 
-::: danger 注意
+1. **针对高层封装库的调用**  
+   某些高层封装（如 `langmem`）可能会传入 `tool_choice` 参数。若当前模型不支持该取值，可通过本参数显式声明模型实际支持的选项（如 `["auto"]`）。系统会自动检测传入的 `tool_choice` 值是否在支持列表中；若不支持，则回退为 `None`（即不传递该参数），避免因不兼容导致报错。
+
+2. **强制工具调用以确保结构化输出**  
+   默认情况下，本库不会强制模型调用特定工具，可能导致结构化输出为 `None`。若你的模型提供商支持强制调用指定工具（例如允许设置`tool_choice={"type": "function", "function": {"name": "get_weather"}}`），则可在本参数中包含 `"specific"`。 启用后，系统在绑定对应工具的时候也会传入上述的参数，强制模型调用指定工具，确保输出符合预期结构。
+
+## 批量注册
+
+如果你需要注册多个模型提供商，可以多次使用`register_model_provider`函数。但是这样显然特别麻烦，因此本库提供了一个批量注册的函数`batch_register_model_provider`。
+
+其接收的参数是 providers，其为一个字典列表，每个字典有四个键分别是`provider`、`chat_model`、`base_url`(可选)、`tool_choice`(可选)。每个键的意义与`register_model_provider`函数中的参数意义相同。
+
+示例代码如下：
+
+```python
+from langchain_dev_utils.chat_models import (
+    batch_register_model_provider,
+    load_chat_model,
+)
+from langchain_core.language_models.fake_chat_models import FakeChatModel
+
+batch_register_model_provider(
+    providers=[
+        {
+            "provider": "fake_provider",
+            "chat_model": FakeChatModel,
+        },
+        {
+            "provider": "vllm",
+            "chat_model": "openai-compatible",
+            "base_url": "http://localhost:8000/v1",
+        },
+    ]
+)
+
+model = load_chat_model("vllm:qwen3-4b")
+print(model.invoke("Hello"))
+
+model = load_chat_model("fake_provider:fake-model")
+print(model.invoke("Hello"))
+```
+
+::: warning 注意
 `register_model_provider` 及其对应的批量注册函数 `batch_register_model_provider` 均基于一个全局字典实现。为避免多线程并发问题，请务必在项目启动阶段完成所有注册操作，切勿在运行时动态注册。
 :::
 
@@ -314,42 +362,6 @@ messages = [
 model = load_chat_model("openrouter:qwen/qwen3-vl-8b-thinking")
 response = model.invoke(messages)
 print(response)
-```
-
-## 批量注册
-
-如果你需要注册多个模型提供商，可以多次使用`register_model_provider`函数。但是这样显然特别麻烦，因此本库提供了一个批量注册的函数`batch_register_model_provider`。
-
-其接收的参数是 providers，其为一个字典列表，每个字典有四个键分别是`provider`、`chat_model`、`base_url`(可选)、`tool_choice`(可选)。每个键的意义与`register_model_provider`函数中的参数意义相同。
-
-示例代码如下：
-
-```python
-from langchain_dev_utils.chat_models import (
-    batch_register_model_provider,
-    load_chat_model,
-)
-from langchain_core.language_models.fake_chat_models import FakeChatModel
-
-batch_register_model_provider(
-    providers=[
-        {
-            "provider": "fake_provider",
-            "chat_model": FakeChatModel,
-        },
-        {
-            "provider": "vllm",
-            "chat_model": "openai-compatible",
-            "base_url": "http://localhost:8000/v1",
-        },
-    ]
-)
-
-model = load_chat_model("vllm:qwen3-4b")
-print(model.invoke("Hello"))
-
-model = load_chat_model("fake_provider:fake-model")
-print(model.invoke("Hello"))
 ```
 
 ::: tip 提示

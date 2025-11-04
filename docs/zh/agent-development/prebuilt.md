@@ -19,7 +19,7 @@
 **函数参数**：
 
 - **model**: 模型名称，取值必须为字符串，且格式是 provider_name:model_name，同时支持 init_chat_model 以及 load_chat_model 支持的格式，其中 load_chat_model 的 provider_name 需要使用 register_model_provider 完成注册。
-- 其它参数与`langchain`的`create_agent`完全相同。
+- **其它参数与`langchain`的`create_agent`完全相同。**
 
 **使用示例**
 
@@ -37,12 +37,10 @@ register_model_provider(
     base_url="http://localhost:8000/v1",
 )
 
-
 @tool
 def get_current_time() -> str:
     """获取当前时间戳"""
     return str(datetime.datetime.now().timestamp())
-
 
 agent = create_agent("vllm:qwen3-4b", tools=[get_current_time])
 # 使用方式与 langchain的create_agent完全一致
@@ -52,7 +50,7 @@ print(response)
 
 ## 将 Agent 转换为一个 Tool
 
-本函数的作用是将一个 Agent 转换为一个 Tool，从而将其作为工具使用。这种方式是多智能体的一种实现方式。
+本函数的作用是将一个 Agent 转换为一个 Tool，从而将其作为工具使用。这种方式是多智能体的一种非常常见的实现方式。
 
 核心函数：
 
@@ -74,31 +72,32 @@ from langchain_core.messages import HumanMessage
 from langchain_core.tools import tool
 from langchain_dev_utils.agents import wrap_agent_as_tool, create_agent
 
-
 @tool
 def get_current_time() -> str:
     """获取当前时间戳"""
     return str(datetime.datetime.now().timestamp())
 
-
 # 定义一个用于查询时间的智能体
 time_agent = create_agent(
     "vllm:qwen3-4b", tools=[get_current_time], name="time_agent"
 )
-tool = wrap_agent_as_tool(
+call_time_agent_tool = wrap_agent_as_tool(
     time_agent, tool_name="call_time_agent", tool_description="调用时间智能体"
 )
 # 将其作为一个工具
-agent = create_agent("vllm:qwen3-4b", tools=[tool], name="agent")
+agent = create_agent("vllm:qwen3-4b", tools=[call_time_agent_tool], name="agent")
 
 response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")]})
 print(response)
 ```
 
-### `pre_input_hooks`
+### 使用钩子函数
 
-**作用**：  
-对工具的原始输入字符串进行预处理。可用于输入增强、上下文注入、格式校验、权限检查等。
+本函数提供了几个钩子函数，用于在调用智能体前后进行一些操作。
+
+**1.pre_input_hooks**
+
+在智能体运行前对输入进行预处理。可用于输入增强、上下文注入、格式校验、权限检查等。
 
 支持传入以下类型：
 
@@ -125,16 +124,15 @@ async def process_input_async(request: str, runtime: ToolRuntime) -> str:
     return "<task_description>" + request + "</task_description>"
 
 # 使用
-tool = wrap_agent_as_tool(
+call_agent_tool = wrap_agent_as_tool(
     agent,
     pre_input_hooks=(process_input, process_input_async)
 )
 ```
 
-### `post_output_hooks`
+**2. post_output_hooks**
 
-**作用**：  
-在 agent 执行完成后，对 agent 返回的完整消息列表进行后处理，以生成工具的最终返回值。可用于结果提取、结构化转换等。
+在智能体运行完成后，对其返回的完整消息列表进行后处理，以生成工具的最终返回值。可用于结果提取、结构化转换等。
 
 支持传入以下类型：
 
@@ -167,7 +165,7 @@ async def process_output_async(request: str, messages: list, runtime: ToolRuntim
     })
 
 # 使用
-tool = wrap_agent_as_tool(
+call_agent_tool = wrap_agent_as_tool(
     agent,
     post_output_hooks=(process_output_sync, process_output_async)
 )
