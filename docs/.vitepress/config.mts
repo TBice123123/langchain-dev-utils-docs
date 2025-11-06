@@ -45,6 +45,10 @@ export default defineConfig({
                     text: "embedding",
                     link: "/en/model-management/embedding",
                   },
+                  {
+                    text: "Best Practice",
+                    link: "/en/model-management/summary",
+                  },
                 ],
               },
               {
@@ -58,6 +62,10 @@ export default defineConfig({
                   {
                     text: "format sequence",
                     link: "/en/message-conversion/format",
+                  },
+                  {
+                    text: "Best Practice",
+                    link: "/en/message-conversion/summary",
                   },
                 ],
               },
@@ -73,6 +81,10 @@ export default defineConfig({
                     text: "Tool calling process",
                     link: "/en/tool-calling/tool",
                   },
+                  {
+                    text: "Best Practice",
+                    link: "/en/tool-calling/summary",
+                  },
                 ],
               },
               {
@@ -87,6 +99,10 @@ export default defineConfig({
                     text: "middleware",
                     link: "/en/agent-development/middleware",
                   },
+                  {
+                    text: "Best Practice",
+                    link: "/en/agent-development/summary",
+                  },
                 ],
               },
               {
@@ -96,6 +112,10 @@ export default defineConfig({
                   {
                     text: "pipeline",
                     link: "/en/graph-orchestration/pipeline",
+                  },
+                  {
+                    text: "Best Practice",
+                    link: "/en/graph-orchestration/summary",
                   },
                 ],
               },
@@ -159,6 +179,10 @@ export default defineConfig({
                     text: "嵌入模型管理",
                     link: "/zh/model-management/embedding",
                   },
+                  {
+                    text: "最佳实践",
+                    link: "/zh/model-management/summary",
+                  },
                 ],
               },
               {
@@ -169,6 +193,10 @@ export default defineConfig({
                   {
                     text: "格式化列表内容",
                     link: "/zh/message-conversion/format",
+                  },
+                  {
+                    text: "最佳实践",
+                    link: "/zh/message-conversion/summary",
                   },
                 ],
               },
@@ -184,6 +212,10 @@ export default defineConfig({
                     text: "工具调用过程处理",
                     link: "/zh/tool-calling/tool",
                   },
+                  {
+                    text: "最佳实践",
+                    link: "/zh/tool-calling/summary",
+                  },
                 ],
               },
               {
@@ -194,7 +226,14 @@ export default defineConfig({
                     text: "预构建 Agent",
                     link: "/zh/agent-development/prebuilt",
                   },
-                  { text: "中间件", link: "/zh/agent-development/middleware" },
+                  {
+                    text: "中间件",
+                    link: "/zh/agent-development/middleware",
+                  },
+                  {
+                    text: "最佳实践",
+                    link: "/zh/agent-development/summary",
+                  },
                 ],
               },
               {
@@ -204,6 +243,10 @@ export default defineConfig({
                   {
                     text: "编排管道",
                     link: "/zh/graph-orchestration/pipeline",
+                  },
+                  {
+                    text: "最佳实践",
+                    link: "/zh/graph-orchestration/summary",
                   },
                 ],
               },
