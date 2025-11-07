@@ -9,7 +9,7 @@ export default defineConfig({
     "A comprehensive utility library for developers building applications with langchain and langgraph",
 
   // Enable dark mode with user preference as default
-  appearance: true,
+  appearance: false,
 
   locales: {
     en: {
