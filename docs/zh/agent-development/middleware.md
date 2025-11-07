@@ -24,6 +24,7 @@
 ### SummarizationMiddleware
 
 核心作用是压缩对话内容，功能与官方[SummarizationMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#summarization)完全一致。但是只允许字符串参数指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。
+
 使用示例:
 
 ```python
@@ -56,6 +57,7 @@ print(response)
 ### LLMToolSelectorMiddleware
 
 核心作用是用于大量工具的情况下，由 LLM 自己选择工具，功能与官方[LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-selector)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。
+
 使用示例:
 
 ```python
@@ -96,7 +98,8 @@ print(response)
 
 ### ModelFallbackMiddleware
 
-用于在调用模型失败时回退到备用模型的中间件。功能与官方[ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。使用示例:
+用于在调用模型失败时回退到备用模型的中间件。功能与官方[ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。
+使用示例:
 
 ```python
 from langchain_dev_utils.agents.middleware import (
@@ -119,7 +122,9 @@ print(response)
 
 ### LLMToolEmulator
 
-用于使用大模型来模拟工具调用的中间件。功能与官方[LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。使用示例:
+用于使用大模型来模拟工具调用的中间件。功能与官方[LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。
+
+使用示例:
 
 ```python
 from langchain_dev_utils.agents.middleware import (
@@ -162,8 +167,20 @@ print(response)
 
 这三个函数接收的参数如下:
 
-- **description**：工具描述,如果不传则采用默认的工具描述
-- **message_key**：用于更新 messages 的键，若不传入则使用默认的 messages（read_plan 工具无此参数）
+<Params :params="[
+{
+name: 'description',
+type: 'str',
+description: '工具描述,如果不传则采用默认的工具描述。',
+required: false,
+},
+{
+name: 'message_key',
+type: 'str',
+description: '用于更新 messages 的键，若不传入则使用默认的 messages（read_plan 工具无此参数）。',
+required: false,
+},
+]"/>
 
 使用示例如下:
 
@@ -184,92 +201,23 @@ agent = create_agent(
 
 需要注意的是,要使用这三个工具,你必须要保证状态 Schema 中包含 plan 这个键,否则会报错,对此你可以使用本库提供的`PlanState`来继承状态 Schema。
 
-::: details write_plan
-
-write_plan 有两个作用：1 是第一次进行计划的写入。2 是在计划的执行过程中，如果发现现有计划有问题，可以进行更新。
-
-```python
-@tool(description=description or _DEFAULT_WRITE_PLAN_TOOL_DESCRIPTION,)
-def write_plan(plan: list[str], runtime: ToolRuntime):
-    msg_key = message_key or "messages"
-    return Command(
-        update={
-            "plan": [
-                {
-                    "content": content,
-                    "status": "pending" if index > 0 else "in_progress",
-                }
-                for index, content in enumerate(plan)
-            ],
-            msg_key: [
-                ToolMessage(
-                    content=f"Plan successfully written, please first execute the {plan[0]} task (no need to change the status to in_process)",
-                    tool_call_id=runtime.tool_call_id,
-                )
-            ],
-        }
-    )
-
-```
-
-:::
-
-::: details finish_sub_plan
-
-finish_sub_plan 则是仅用于更新当前子任务的状态，以及设置下一个子任务。
-
-```python
-@tool(description=description or _DEFAULT_FINISH_SUB_PLAN_TOOL_DESCRIPTION,)
-def finish_sub_plan(runtime: ToolRuntime,):
-    msg_key = message_key or "messages"
-    plan_list = runtime.state.get("plan", [])
-
-    sub_finish_plan = ""
-    sub_next_plan = ",all sub plan are done"
-    for plan in plan_list:
-        if plan["status"] == "in_progress":
-            plan["status"] = "done"
-            sub_finish_plan = f"finish sub plan:**{plan['content']}**"
-
-    for plan in plan_list:
-        if plan["status"] == "pending":
-            plan["status"] = "in_progress"
-            sub_next_plan = f",next plan:**{plan['content']}**"
-            break
-
-    return Command(
-        update={
-            "plan": plan_list,
-            msg_key: [
-                ToolMessage(
-                    content=sub_finish_plan + sub_next_plan,
-                    tool_call_id=runtime.tool_call_id,
-                )
-            ],
-        }
-    )
-```
-
-:::
-
-::: details read_plan
-
-read_plan 则是仅用于读取当前的计划。
-
-```python
-@tool(description=description or _DEFAULT_READ_PLAN_TOOL_DESCRIPTION)
-def read_plan(runtime: ToolRuntime):
-    plan_list = runtime.state.get("plan", [])
-    return json.dumps(plan_list)
-```
-
-:::
-
 但是上述的使用方式在本库是不推荐的，最佳的做法应该是使用 PlanMiddleware。
 PlanMiddleware 的参数说明如下:
 
-- **system_prompt**：可选字符串类型，系统提示词，功能上与官方的 TodoListMiddleware 相同
-- **tools**：可选 BaseTool 列表类型，工具列表，指定后会加入到 tools 中，必须是通过 create_write_plan_tool、create_finish_sub_plan_tool 以及 create_read_plan_tool 创建的工具
+<Params :params="[
+{
+name: 'system_prompt',
+type: 'str',
+description: '可选字符串类型，系统提示词，功能上与官方的 TodoListMiddleware 相同。',
+required: false,
+},
+{
+name: 'tools',
+type: 'list[BaseTool]',
+description: '可选 BaseTool 列表类型，工具列表，指定后会加入到 tools 中，必须是通过 create_write_plan_tool、create_finish_sub_plan_tool 以及 create_read_plan_tool 创建的工具。',
+required: false,
+},
+]"/>
 
 ```python
 from langchain_dev_utils.agents.middleware import (
@@ -306,29 +254,28 @@ print(response)
 
 `ModelRouterMiddleware` 是一个用于**根据输入内容动态路由到最适配模型**的中间件。它通过一个“路由模型”分析用户请求，从预定义的模型列表中选择最适合当前任务的模型进行处理。
 
-**参数说明**
+其参数如下:
 
-- **router_model**（必填）  
-  用于执行路由决策的模型。可以传入：
-
-  - 字符串（将通过 **load_chat_model** 自动加载），例如 `"vllm:qwen3-4b"`；
-  - 或直接传入已实例化的 **ChatModel** 对象。
-
-- **model_list**（必填）  
-  一个模型配置列表，每个元素是一个字典，需包含以下字段：
-
-  - **model_name**：模型标识符（如 `"vllm:qwen3-8b"`），类型为字符串。
-  - **model_description**：对该模型能力的简要描述，用于路由模型判断，类型为字符串。
-
-  可选字段：
-
-  - **tools**：该模型允许使用的工具列表。**若未指定，则默认使用 agent 中注册的所有工具**。类型为 BaseTool 列表。  
-    ⚠️ 注意：tools 中列出的所有工具**必须同时出现在 create_agent 的 tools 参数中**，否则会抛出错误。
-  - **model_kwargs**：传递给该模型的额外参数（如 `temperature`, `top_p`, `extra_body` 等），类型为字典。
-  - **model_system_prompt**：为该模型设置的系统提示词，用于引导其行为，类型为字符串。
-
-- **router_prompt**（可选）  
-  自定义路由模型的提示词，类型为字符串。若为 **None**（默认），则使用内置的默认提示模板。
+<Params :params="[
+{
+name: 'router_model',
+type: 'str | BaseChatModel',
+description: '用于执行路由决策的模型。可以传入字符串（将通过 load_chat_model 自动加载），例如 vllm:qwen3-4b；或直接传入已实例化的 ChatModel 对象。',
+required: true,
+},
+{
+name: 'model_list',
+type: 'list[dict]',
+description: '一个模型配置列表，每个元素是一个字典，需包含 model_name (str), model_description (str)，以及可选的 tools (list[BaseTool]), model_kwargs (dict), model_system_prompt (str)。',
+required: true,
+},
+{
+name: 'router_prompt',
+type: 'str',
+description: '自定义路由模型的提示词。若为 None（默认），则使用内置的默认提示模板。',
+required: false,
+},
+]"/>
 
 **使用示例**
 

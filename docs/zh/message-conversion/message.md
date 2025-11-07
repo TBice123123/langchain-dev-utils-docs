@@ -20,8 +20,20 @@
 
 其参数如下:
 
-- **model_response**：模型返回的 AI 消息响应(可能是 AIMessage 或 AIMessageChunk 的迭代器)
-- **think_tag**：包含推理内容起始和结束标签的元组（默认为(`<think>`, `</think>`））
+<Params :params="[
+{
+name: 'model_response',
+type: 'AIMessage | Iterable[AIMessageChunk]',
+description: '模型返回的 AI 消息响应',
+required: true,
+},
+{
+name: 'think_tag',
+type: 'tuple[string, string]',
+description: '包含推理内容起始和结束标签的元组（默认为(`<think>`, `</think>`））',
+required: false,
+},
+]"/>
 
 使用示例:
 
@@ -55,7 +67,14 @@ for chunk in convert_reasoning_content_for_chunk_iterator(
 
 支持的参数如下:
 
-- **chunks**：AI 消息块列表
+<Params :params="[
+{
+name: 'chunks',
+type: 'list[AIMessageChunk]',
+description: 'AI 消息块列表',
+required: true,
+},
+]"/>
 
 使用示例:
 

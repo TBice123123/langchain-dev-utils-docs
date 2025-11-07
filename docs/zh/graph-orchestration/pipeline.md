@@ -16,17 +16,64 @@
 
 - `sequential_pipeline` - 以串行方式组合多个状态图
 
-支持的参数如下:
+其参数如下:
 
-- **sub_graphs**: 要组合的状态图列表（必须是 StateGraph 实例）
-- **state_schema**: 最终生成图的 State Schema
-- **graph_name**: 最终生成图的名称（可选）
-- **context_schema**: 最终生成图的 Context Schema（可选）
-- **input_schema**: 最终生成图的输入 Schema（可选）
-- **output_schema**: 最终生成图的输出 Schema（可选）
-- **checkpoint**: LangGraph 的持久化 Checkpoint（可选）
-- **store**: LangGraph 的持久化 Store（可选）
-- **cache**: LangGraph 的 Cache（可选）
+<Params :params="[
+{
+name: 'sub_graphs',
+type: 'list[StateGraph]',
+description: '要组合的状态图列表（必须是 StateGraph 实例）。',
+required: true,
+},
+{
+name: 'state_schema',
+type: 'dict',
+description: '最终生成图的 State Schema。',
+required: true,
+},
+{
+name: 'graph_name',
+type: 'string',
+description: '最终生成图的名称。',
+required: false,
+},
+{
+name: 'context_schema',
+type: 'dict',
+description: '最终生成图的 Context Schema。',
+required: false,
+},
+{
+name: 'input_schema',
+type: 'dict',
+description: '最终生成图的输入 Schema。',
+required: false,
+},
+{
+name: 'output_schema',
+type: 'dict',
+description: '最终生成图的输出 Schema。',
+required: false,
+},
+{
+name: 'checkpoint',
+type: 'BaseCheckpointSaver',
+description: 'LangGraph 的持久化 Checkpoint。',
+required: false,
+},
+{
+name: 'store',
+type: 'BaseStore',
+description: 'LangGraph 的持久化 Store。',
+required: false,
+},
+{
+name: 'cache',
+type: 'BaseCache',
+description: 'LangGraph 的 Cache。',
+required: false,
+},
+]"/>
 
 使用示例:
 
@@ -116,22 +163,74 @@ graph = graph.compile()
 
 - `parallel_pipeline` - 以并行方式组合多个状态图
 
-支持的参数如下:
+其参数如下:
 
-- **sub_graphs**: 要组合的状态图列表
-- **state_schema**: 最终生成图的 State Schema
-- **branches_fn**: 并行分支函数，返回 Send 对象列表控制并行执行
-- **graph_name**: 最终生成图的名称（可选）
-- **context_schema**: 最终生成图的 Context Schema（可选）
-- **input_schema**: 最终生成图的输入 Schema（可选）
-- **output_schema**: 最终生成图的输出 Schema（可选）
-- **checkpoint**: LangGraph 的持久化 Checkpoint（可选）
-- **store**: LangGraph 的持久化 Store（可选）
-- **cache**: LangGraph 的 Cache（可选）
+<Params :params="[
+{
+name: 'sub_graphs',
+type: 'list[StateGraph]',
+description: '要组合的状态图列表。',
+required: true,
+},
+{
+name: 'state_schema',
+type: 'dict',
+description: '最终生成图的 State Schema。',
+required: true,
+},
+{
+name: 'branches_fn',
+type: 'Callable[[Any], list[Send]]',
+description: '并行分支函数，接收状态作为输入，返回 Send 对象列表以控制并行执行哪些子图。',
+required: false,
+},
+{
+name: 'graph_name',
+type: 'string',
+description: '最终生成图的名称。',
+required: false,
+},
+{
+name: 'context_schema',
+type: 'dict',
+description: '最终生成图的 Context Schema。',
+required: false,
+},
+{
+name: 'input_schema',
+type: 'dict',
+description: '最终生成图的输入 Schema。',
+required: false,
+},
+{
+name: 'output_schema',
+type: 'dict',
+description: '最终生成图的输出 Schema。',
+required: false,
+},
+{
+name: 'checkpoint',
+type: 'BaseCheckpointSaver',
+description: 'LangGraph 的持久化 Checkpoint。',
+required: false,
+},
+{
+name: 'store',
+type: 'BaseStore',
+description: 'LangGraph 的持久化 Store。',
+required: false,
+},
+{
+name: 'cache',
+type: 'BaseCache',
+description: 'LangGraph 的 Cache。',
+required: false,
+},
+]"/>
 
 使用示例:
 
-**基础并行示例**
+### 基础并行示例
 
 ```python
 from langchain_dev_utils.pipeline import parallel_pipeline
@@ -167,7 +266,7 @@ print(response)
 最终生成的图结构如下：
 ![并行管道示意图](/img/parallel.png)
 
-**使用分支函数控制并行执行**
+### 使用分支函数控制并行执行
 
 有些时候需要根据条件指定并行执行哪些子图，这时可以使用分支函数。
 分支函数需要返回`Send`列表。
@@ -209,7 +308,7 @@ response = graph.invoke({"messages": [HumanMessage("你好")]})
 print(response)
 ```
 
-重要注意事项
+**重要注意事项**
 
 - 不传入 `branches_fn` 参数时，所有子图都会并行执行。
 - 传入 `branches_fn` 参数时，执行哪些子图由该函数的返回值决定。

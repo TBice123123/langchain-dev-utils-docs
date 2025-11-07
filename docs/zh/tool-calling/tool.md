@@ -15,9 +15,16 @@
 
 - `has_tool_calling`：检查消息是否包含工具调用
 
-支持的参数如下:
+其参数如下:
 
-- **message**：AIMessage 对象
+<Params :params="[
+{
+name: 'message',
+type: 'AIMessage',
+description: '待检查的 AIMessage 对象',
+required: true,
+},
+]"/>
 
 使用示例:
 
@@ -43,10 +50,22 @@ print(has_tool_calling(response))
 
 - `parse_tool_calling`：解析工具调用参数
 
-支持的参数如下:
+其参数如下:
 
-- **message**：AIMessage 对象
-- **first_tool_call_only**：是否仅解析第一个工具调用。如果为 True，返回单个元组；如果为 False，返回元组列表。
+<Params :params="[
+{
+name: 'message',
+type: 'AIMessage',
+description: '包含工具调用信息的 AIMessage 对象',
+required: true,
+},
+{
+name: 'first_tool_call_only',
+type: 'bool',
+description: '是否仅解析第一个工具调用。如果为 True，返回单个元组；如果为 False，返回元组列表。',
+required: false,
+},
+]"/>
 
 使用示例:
 

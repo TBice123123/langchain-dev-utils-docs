@@ -17,16 +17,26 @@
 - `human_in_the_loop`：用于同步工具函数
 - `human_in_the_loop_async`：用于异步工具函数
 
-**函数参数说明:**
+其参数如下:
 
-- **func**：待装饰的函数（**请勿手动传参，仅用于装饰器语法**）
-- **handler**：可选，类型为 Callable[[InterrruptParams], Any]，自定义中断处理逻辑。若未提供，则使用内置 default_handler。
-
-**异步函数的装饰器的参数和上述相同，但是 handler 必须是一个异步函数**
+<Params :params="[
+{
+name: 'func',
+type: 'Callable',
+description: '待装饰的函数（**请勿手动传参，仅用于装饰器语法**）',
+required: true,
+},
+{
+name: 'handler',
+type: 'Callable[[InterruptParams], Any]',
+description: '可选，自定义中断处理逻辑。若未提供，则使用内置 default_handler。对于异步装饰器，handler 必须是异步函数。',
+required: false,
+},
+]"/>
 
 ## 使用示例
 
-**使用默认的 handler**
+### 使用默认的 handler
 
 ```python
 from langchain_dev_utils import human_in_the_loop
@@ -40,7 +50,7 @@ def get_current_time() -> str:
     return str(datetime.datetime.now().timestamp())
 ```
 
-**异步工具示例**
+### 异步工具示例
 
 ```python
 from langchain_dev_utils import human_in_the_loop_async
@@ -89,11 +99,12 @@ def default_handler(params: InterruptParams) -> Any:
         raise ValueError(f"Unsupported interrupt response type: {response['type']}")
 ```
 
-中断的时候会发送一个 JSON Schema 内容如上\_get_human_in_the_loop_request 返回的值,回复的时候需要返回一个 JSON Schema 内容，要有一个键为 type，值为 accept/edit/response
+中断的时候会发送一个 JSON Schema 内容如上`_get_human_in_the_loop_request`返回的值,回复的时候需要返回一个 JSON Schema 内容，要有一个键为 `type`，值为 `accept`/`edit`/`response`。
 
 :::
 
-**自定义 Handler 示例**
+### 自定义 Handler 示例
+
 你可以完全控制中断行为，例如只允许“接受/拒绝”，或自定义提示语：
 
 ```python
@@ -118,3 +129,7 @@ async def get_weather(city: str) -> str:
     """获取天气信息"""
     return f"{city}天气晴朗"
 ```
+
+<BestPractice>
+当你的多个工具都需要添加人在回路支持，且流程相同时，你可以使用上述方法定义一个 handler，然后依次为多个函数添加装饰器。如果仅是一个函数需要添加人在回路支持，推荐直接使用 langgraph 提供的interrupt函数。
+</BestPractice>

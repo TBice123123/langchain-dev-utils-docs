@@ -14,16 +14,30 @@
 
 - `format_sequence`：格式化消息
 
-**函数参数：**
+其参数如下:
+其参数如下:
 
-- **inputs**：包含以下任意类型的列表：
-  - langchain_core.messages：HumanMessage、AIMessage、SystemMessage、ToolMessage
-  - langchain_core.documents.Document
-  - str
-- **separator**：用于连接内容的字符串，默认为 "-"。
-- **with_num**：如果为 True，为每个项目添加数字前缀（例如 "1. 你好"），默认为 False。
-
-## 使用示例
+<Params :params="[
+{
+name: 'inputs',
+type: 'list[Message | Document | string]',
+description: '包含以下任意类型的列表：Message、Document、str',
+required: true,
+},
+{
+name: 'separator',
+type: 'str',
+description: '用于连接内容的字符串，默认为-',
+required: false,
+},
+{
+name: 'with_num',
+type: 'bool',
+description: '如果为 True，为每个项目添加数字前缀，默认为 False',
+required: false,
+},
+]"/>
+使用示例:
 
 ### Message
 

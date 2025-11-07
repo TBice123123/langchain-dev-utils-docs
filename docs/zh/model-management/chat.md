@@ -14,22 +14,41 @@
 
 ## 注册对话模型提供商
 
-注册对话模型提供商需要使用函数`register_model_provider`。
+注册对话模型提供商需要使用函数`register_model_provider`。对于这个函数，它接收以下参数：
 
-对于这个函数，它接收以下参数：
+<Params :params="[
+{
+name: 'provider_name',
+type: 'string',
+description: '对话模型提供商名称',
+required: true,
+},
+{
+name: 'chat_model',
+type: ' BaseChatModel | string',
+description: '对话模型',
+required: true,
+},
+{
+name: 'base_url',
+type: 'string',
+description: '对话模型基础 URL',
+required: false,
+},
+{
+name: 'tool_choice',
+type: 'list[string]',
+description: '该大模型提供商所支持的所有 tool_choice 取值',
+required: false,
+},
+]"/>
 
-- **provider_name**：对话模型提供商名称，类型为 str
-- **chat_model**：对话模型，类型为 langchain 的 ChatModel 或者 str
-- **base_url**：对话模型基础 URL，类型为 str，仅在 chat_model 为 str 时生效
-- **tool_choice**：该大模型提供商所支持的所有 tool_choice 取值，类型为字符串列表。与 base_url 相同，仅在 chat_model 为 str 时生效
+对于上述参数的具体使用方法如下：
 
-具体的使用方法如下：
-
-### Step 1：设置 provider_name
-
+<StepItem step="1" title="设置 provider_name"></StepItem>
 首先需要传入 `provider_name`参数以指定模型提供商。此名称可自定义，建议使用具有明确含义的名称（如`vllm`）来指代真实的提供商。请注意，名称中请勿包含冒号`:`，因为该符号后续将用于分隔提供商与模型名称。
 
-### Step 2：设置 chat_model
+<StepItem step="2" title="设置 chat_model"></StepItem>
 
 接下来需要传入 `chat_model`参数，这个参数接收两种类型：`langchain` 的 `ChatModel` 或者 `str`。
 
@@ -69,7 +88,7 @@ register_model_provider(
 3. **支持配置 tool_choice**：  
    对于大多数兼容 OpenAI API 的模型提供商，其 tool_choice 参数可能与 OpenAI 官方 API 支持的有所不同。因此，该对话模型类支持用户指定支持的 `tool_choice`（见下文）。
 
-### Step 3：设置 base_url（可选）
+<StepItem step="3" title="设置 base_url（可选）"></StepItem>
 
 该参数仅在`chat_model`为字符串（具体是`"openai-compatible"`）时才需要进行设置。你可以通过直接在本函数中传递`base_url`，或者设置模型的提供商的`API_BASE`。
 
@@ -114,7 +133,7 @@ vllm serve Qwen/Qwen3-4B \
 完成后会提供一个 OpenAI 兼容 API，地址为`http://localhost:8000/v1`。
 :::
 
-### Step 4：设置 tool_choice（可选）
+<StepItem step="4" title="设置 tool_choice（可选）"></StepItem>
 
 仅当 `chat_model` 为字符串 `"openai-compatible"` 时，才需要显式设置此参数。本库之所以提供该参数是为了增强兼容性。
 大多数模型提供商支持 `tool_choice` 参数。在 LangChain 中，部分对话模型类的 `bind_tools` 方法允许通过 `tool_choice` 参数来设置。该参数通常接受以下字符串值：
@@ -149,6 +168,10 @@ register_model_provider(
 
 2. **强制工具调用以确保结构化输出**  
    默认情况下，本库不会强制模型调用特定工具，可能导致结构化输出为 `None`。若你的模型提供商支持强制调用指定工具（例如允许设置`tool_choice={"type": "function", "function": {"name": "get_weather"}}`），则可在本参数中包含 `"specific"`。 启用后，系统在绑定对应工具的时候也会传入上述的参数，强制模型调用指定工具，确保输出符合预期结构。
+
+<BestPractice>
+对于<strong>tool_choice</strong>参数，是否配置需要针对具体的场景。例如针对结构化输出，如果模型输出的内容不稳定。此时配置 tool_choice 参数可提高稳定性，尤其是模型提供商支持强制调用指定工具时，配置 tool_choice 包含 "specific"，确保结构化输出不为 None
+</BestPractice>
 
 ## 批量注册
 
@@ -194,18 +217,35 @@ print(model.invoke("Hello"))
 
 加载对话模型的函数是`load_chat_model`，其接收以下参数：
 
-- **model**：对话模型名称，类型为 str
-- **model_provider**：对话模型提供商名称，类型为 str，可选
-- **kwargs**：传递给对话模型类的额外的参数，例如 temperature、top_p 等
+<Params :params="[
+{
+name: 'model',
+type: 'string',
+description: '对话模型名称',
+required: true,
+},
+{
+name: 'model_provider',
+type: 'string',
+description: '对话模型提供商名称',
+required: false,
+},
+{
+name: 'kwargs',
+type: 'dict',
+description: '模型其它参数，具体参考对应模型提供商的文档',
+required: false,
+}
+]"/>
 
-对于**model**参数，其支持的格式如下：
+对于`model`参数，其支持的格式如下：
 
 - provider_name:model_name
 - model_name
 
-其中 **provider_name** 为 register_model_provider 函数中注册的 **provider_name**。
+其中 `provider_name` 为 `register_model_provider` 函数中注册的 `provider_name`。
 
-对于 **model_provider** 参数，含义和上述的 **provider_name** 相同，允许不传，但是此时 **model** 参数必须为 **provider_name:model_name** 格式，如果传入，则 **model** 参数必须为 **model_name** 格式。
+对于 `model_provider` 参数，含义和上述的 `provider_name` 相同，允许不传，但是此时 `model` 参数必须为 `provider_name:model_name` 格式，如果传入，则 `model` 参数必须为 `model_name` 格式。
 示例代码如下：
 
 ```python
@@ -217,7 +257,7 @@ response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
 
-也可以直接传入**model_provider**参数。
+也可以直接传入`model_provider`参数。
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model

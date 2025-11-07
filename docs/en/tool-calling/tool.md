@@ -1,23 +1,30 @@
-# Tool Calling Handling
+# Tool Call Processing
 
 > [!NOTE]
 >
-> **Overview**: Provides utility tools for parsing tool calling parameters.
+> **Feature Overview**: Provides utilities for parsing tool call arguments.
 >
-> **Prerequisites**: Familiarity with LangChain's [Tool](https://docs.langchain.com/oss/python/langchain/tools) and [Message](https://docs.langchain.com/oss/python/langchain/messages).
+> **Prerequisites**: Understanding of langchain's [Tool](https://docs.langchain.com/oss/python/langchain/tools) and [Message](https://docs.langchain.com/oss/python/langchain/messages).
 >
 > **Estimated Reading Time**: 3 minutes
 
-## Detecting Tool Calls
+## Detect Tool Calls
 
-Detect whether a message contains tool calls.
+Detects if a message contains tool calls.
 The core function is:
 
-- `has_tool_calling`: Check if a message contains tool calls
+- `has_tool_calling`: Checks if a message contains tool calls
 
-Supported parameters:
+Its parameters are as follows:
 
-- **message**: AIMessage object
+<Params :params="[
+{
+name: 'message',
+type: 'AIMessage',
+description: 'The AIMessage object to be checked',
+required: true,
+},
+]"/>
 
 Usage example:
 
@@ -31,22 +38,34 @@ def get_current_time() -> str:
     """Get the current timestamp"""
     return str(datetime.datetime.now().timestamp())
 
-response = model.bind_tools([get_current_time]).invoke("What time is it now?")
+response = model.bind_tools([get_current_time]).invoke("现在几点了？")
 print(has_tool_calling(response))
 ```
 
-## Parsing Tool Call Parameters
+## Parse Tool Call Arguments
 
-Provides a utility function to parse tool call parameters and extract argument information from messages.
+Provides a utility function to parse tool call arguments, extracting parameter information from a message.
 
 The core function is:
 
-- `parse_tool_calling`: Parse tool call parameters
+- `parse_tool_calling`: Parse tool call arguments
 
-Supported parameters:
+Its parameters are as follows:
 
-- **message**: AIMessage object
-- **first_tool_call_only**: Whether to parse only the first tool call. If True, returns a single tuple; if False, returns a list of tuples.
+<Params :params="[
+{
+name: 'message',
+type: 'AIMessage',
+description: 'The AIMessage object containing tool call information',
+required: true,
+},
+{
+name: 'first_tool_call_only',
+type: 'bool',
+description: 'Whether to parse only the first tool call. If True, returns a single tuple; if False, returns a list of tuples.',
+required: false,
+},
+]"/>
 
 Usage example:
 
@@ -60,7 +79,7 @@ def get_current_time() -> str:
     """Get the current timestamp"""
     return str(datetime.datetime.now().timestamp())
 
-response = model.bind_tools([get_current_time]).invoke("What time is it now?")
+response = model.bind_tools([get_current_time]).invoke("现在几点了？")
 
 if has_tool_calling(response):
     name, args = parse_tool_calling(

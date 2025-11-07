@@ -16,10 +16,18 @@
 
 - `create_agent`：创建单智能体
 
-**函数参数**：
+其参数如下:
 
-- **model**: 模型名称，取值必须为字符串，且格式是 provider_name:model_name，同时支持 init_chat_model 以及 load_chat_model 支持的格式，其中 load_chat_model 的 provider_name 需要使用 register_model_provider 完成注册。
-- **其它参数与`langchain`的`create_agent`完全相同。**
+<Params :params="[
+{
+name: 'model',
+type: 'str',
+description: '模型名称，取值必须为字符串，且格式是 provider_name:model_name，同时支持 init_chat_model 以及 load_chat_model 支持的格式，其中 load_chat_model 的 provider_name 需要使用 register_model_provider 完成注册。',
+required: true,
+}
+]"/>
+
+**注意**：其它参数和 langchain 的 create_agent 一样。
 
 **使用示例**
 
@@ -56,13 +64,40 @@ print(response)
 
 - `wrap_agent_as_tool`：将 Agent 转换为 Tool
 
-**函数参数**：
+其参数如下:
 
-- **agent**: 智能体，取值必须为**langchain**的**CompiledStateGraph**。
-- **tool_name**: Tool 的名称(可选，取值必须为字符串)，如果不传则工具默认名称是`transfor_to_agent_name`。
-- **tool_description**: Tool 的描述(可选，取值必须为字符串)。
-- **pre_input_hooks**: Tool 的预处理函数(可选，取值必须为函数或者函数组成的二元组)。
-- **post_input_hooks**: Tool 的后处理函数(可选，取值必须为函数或者函数组成的二元组)。
+<Params :params="[
+{
+name: 'agent',
+type: 'CompiledStateGraph',
+description: '智能体，取值必须为**langchain**的**CompiledStateGraph**。',
+required: true,
+},
+{
+name: 'tool_name',
+type: 'str',
+description: 'Tool 的名称。如果不传则工具默认名称是`transfor_to_agent_name`。',
+required: false,
+},
+{
+name: 'tool_description',
+type: 'str',
+description: 'Tool 的描述。',
+required: false,
+},
+{
+name: 'pre_input_hooks',
+type: 'Callable | tuple[Callable, AwaitableCallable]',
+description: 'Tool 的预处理函数，可以是单个同步函数或一个二元组。如果是二元组，则第一个函数是同步函数，第二个函数是异步函数，用于在智能体运行前对输入进行预处理。',
+required: false,
+},
+{
+name: 'post_output_hooks',
+type: 'Callable | tuple[Callable, AwaitableCallable]',
+description: 'Tool 的后处理函数，可以是单个同步函数或一个二元组。如果是二元组，则第一个函数是同步函数，第二个函数是异步函数，用于在智能体运行完成后，对其返回的完整消息列表进行后处理。',
+required: false,
+},
+]"/>
 
 **使用示例**
 
@@ -95,7 +130,7 @@ print(response)
 
 本函数提供了几个钩子函数，用于在调用智能体前后进行一些操作。
 
-**1.pre_input_hooks**
+#### 1. pre_input_hooks
 
 在智能体运行前对输入进行预处理。可用于输入增强、上下文注入、格式校验、权限检查等。
 
@@ -130,7 +165,7 @@ call_agent_tool = wrap_agent_as_tool(
 )
 ```
 
-**2. post_output_hooks**
+#### 2. post_output_hooks
 
 在智能体运行完成后，对其返回的完整消息列表进行后处理，以生成工具的最终返回值。可用于结果提取、结构化转换等。
 

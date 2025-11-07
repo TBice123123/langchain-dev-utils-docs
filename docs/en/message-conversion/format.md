@@ -1,29 +1,43 @@
-# Format List Content
+# Formatting List Content
 
 > [!NOTE]
 >
-> **Overview**: Provides functionality to format common list content into a single string.
+> **Feature Overview**: Provides functionality to format common list content into a single string.
 >
-> **Prerequisites**: Familiarity with LangChain's [Message](https://docs.langchain.com/oss/python/langchain/messages).
+> **Prerequisites**: Understanding of langchain's [Message](https://docs.langchain.com/oss/python/langchain/messages).
 >
 > **Estimated Reading Time**: 2 minutes
 
-Formats a list composed of Documents, Messages, or strings into a single text string.
+Format a list composed of Document, Message, or string objects into a single text string.
 
 ## Core Function
 
-- `format_sequence`: Formats messages
+- `format_sequence`: Format messages
 
-**Function Parameters:**
+Its parameters are as follows:
 
-- **inputs**: A list containing any of the following types:
-  - langchain_core.messages: HumanMessage, AIMessage, SystemMessage, ToolMessage
-  - langchain_core.documents.Document
-  - str
-- **separator**: String used to join the content, defaults to "-".
-- **with_num**: If True, adds a numerical prefix to each item (e.g., "1. Hello"), defaults to False.
+<Params :params="[
+{
+name: 'inputs',
+type: 'list[Message | Document | string]',
+description: 'A list containing any of the following types: Message, Document, str',
+required: true,
+},
+{
+name: 'separator',
+type: 'str',
+description: 'String used to join content, defaults to -',
+required: false,
+},
+{
+name: 'with_num',
+type: 'bool',
+description: 'If True, adds numeric prefix to each item, defaults to False',
+required: false,
+}
+]"/>
 
-## Usage Examples
+Usage examples:
 
 ### Message
 
@@ -32,14 +46,14 @@ from langchain_core.documents import Document
 from langchain_core.messages import AIMessage
 from langchain_dev_utils.message_convert import format_sequence
 
-formatted1 = format_sequence(
+formated1 = format_sequence(
     [
         AIMessage(content="Hello1"),
         AIMessage(content="Hello2"),
         AIMessage(content="Hello3"),
     ]
 )
-print(formatted1)
+print(formated1)
 ```
 
 Output:
@@ -53,7 +67,7 @@ Output:
 ### Document
 
 ```python
-formatted2 = format_sequence(
+format2 = format_sequence(
     [
         Document(page_content="content1"),
         Document(page_content="content2"),
@@ -61,7 +75,7 @@ formatted2 = format_sequence(
     ],
     separator=">",
 )
-print(formatted2)
+print(format2)
 ```
 
 Output:
@@ -75,7 +89,7 @@ Output:
 ### String
 
 ```python
-formatted3 = format_sequence(
+format3 = format_sequence(
     [
         "str1",
         "str2",
@@ -84,7 +98,7 @@ formatted3 = format_sequence(
     separator=">",
     with_num=True,
 )
-print(formatted3)
+print(format3)
 ```
 
 Output:
