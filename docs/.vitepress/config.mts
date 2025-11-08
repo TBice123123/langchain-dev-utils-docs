@@ -80,7 +80,7 @@ export default defineConfig({
                 collapsed: true,
                 items: [
                   {
-                    text: "prebuilt agent",
+                    text: "prebuilt",
                     link: "/en/agent-development/prebuilt",
                   },
                   {
@@ -191,7 +191,7 @@ export default defineConfig({
                 collapsed: true,
                 items: [
                   {
-                    text: "预构建 Agent",
+                    text: "预构建",
                     link: "/zh/agent-development/prebuilt",
                   },
                   {

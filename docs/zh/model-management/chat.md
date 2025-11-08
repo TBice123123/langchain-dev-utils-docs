@@ -16,32 +16,34 @@
 
 注册对话模型提供商需要使用函数`register_model_provider`。对于这个函数，它接收以下参数：
 
-<Params :params="[
-{
-name: 'provider_name',
-type: 'string',
-description: '对话模型提供商名称',
-required: true,
-},
-{
-name: 'chat_model',
-type: ' BaseChatModel | string',
-description: '对话模型',
-required: true,
-},
-{
-name: 'base_url',
-type: 'string',
-description: '对话模型基础 URL',
-required: false,
-},
-{
-name: 'tool_choice',
-type: 'list[string]',
-description: '该大模型提供商所支持的所有 tool_choice 取值',
-required: false,
-},
-]"/>
+<Params
+name="provider_name"
+type="string"
+description="对话模型提供商名称"
+:required="true"
+:default="null"
+/>
+<Params
+name="chat_model"
+type="BaseChatModel | string"
+description="对话模型"
+:required="true"
+:default="null"
+/>
+<Params
+name="base_url"
+type="string"
+description="对话模型基础 URL"
+:required="false"
+:default="null"
+/>
+<Params
+name="tool_choice"
+type="list[string]"
+description="该大模型提供商所支持的所有 tool_choice 取值"
+:required="false"
+:default="null"
+/>
 
 对于上述参数的具体使用方法如下：
 
@@ -169,10 +171,6 @@ register_model_provider(
 2. **强制工具调用以确保结构化输出**  
    默认情况下，本库不会强制模型调用特定工具，可能导致结构化输出为 `None`。若你的模型提供商支持强制调用指定工具（例如允许设置`tool_choice={"type": "function", "function": {"name": "get_weather"}}`），则可在本参数中包含 `"specific"`。 启用后，系统在绑定对应工具的时候也会传入上述的参数，强制模型调用指定工具，确保输出符合预期结构。
 
-<BestPractice>
-对于<strong>tool_choice</strong>参数，是否配置需要针对具体的场景。例如针对结构化输出，如果模型输出的内容不稳定。此时配置 tool_choice 参数可提高稳定性，尤其是模型提供商支持强制调用指定工具时，配置 tool_choice 包含 "specific"，确保结构化输出不为 None
-</BestPractice>
-
 ## 批量注册
 
 如果你需要注册多个模型提供商，可以多次使用`register_model_provider`函数。但是这样显然特别麻烦，因此本库提供了一个批量注册的函数`batch_register_model_provider`。
@@ -217,35 +215,40 @@ print(model.invoke("Hello"))
 
 加载对话模型的函数是`load_chat_model`，其接收以下参数：
 
-<Params :params="[
-{
-name: 'model',
-type: 'string',
-description: '对话模型名称',
-required: true,
-},
-{
-name: 'model_provider',
-type: 'string',
-description: '对话模型提供商名称',
-required: false,
-},
-{
-name: 'kwargs',
-type: 'dict',
-description: '模型其它参数，具体参考对应模型提供商的文档',
-required: false,
-}
-]"/>
+<Params
+name="model"
+type="string"
+description="对话模型名称"
+:required="true"
+:default="null"
+/>
+<Params
+name="model_provider"
+type="string"
+description="对话模型提供商名称"
+:required="false"
+:default="null"
+/>
+同时对于这个函数的使用还需要注意以下内容：
 
-对于`model`参数，其支持的格式如下：
+**1.额外参数**
 
-- provider_name:model_name
-- model_name
+该函数还能接收任意数量个关键字参数，例如`temperature`、`max_tokens`等,具体参考对应的模型集成类文档（如果 chat_model 是`openai-compatible`，则可以参考`ChatOpenAI`）。
 
-其中 `provider_name` 为 `register_model_provider` 函数中注册的 `provider_name`。
+**2.model 参数格式**
 
-对于 `model_provider` 参数，含义和上述的 `provider_name` 相同，允许不传，但是此时 `model` 参数必须为 `provider_name:model_name` 格式，如果传入，则 `model` 参数必须为 `model_name` 格式。
+`model` 参数支持两种格式：
+
+1. `provider_name:model_name`
+2. `model_name`
+
+其中，`provider_name` 为通过 `register_model_provider` 函数注册的提供商名称。
+
+`model_provider` 参数与上述 `provider_name` 含义相同，为可选参数：
+
+- 若未传入 `model_provider`，则 `model` 参数必须为 `provider_name:model_name` 格式；
+- 若传入 `model_provider`，则 `model` 参数必须为 `model_name` 格式。
+
 示例代码如下：
 
 ```python
@@ -270,6 +273,8 @@ model = load_chat_model("qwen3-4b", model_provider="vllm")
 ```bash
 export VLLM_API_KEY=vllm
 ```
+
+**3.chat_model 为字符串情况下的对话模型类特点**
 
 对于上面提到的`chat_model`为字符串（即`"openai-compatible"`）的情况，其提供了`langchain`的`ChatModel`的基本功能包括如下：
 
@@ -404,7 +409,8 @@ response = model.invoke(messages)
 print(response)
 ```
 
-::: tip 提示
+**4.与官方函数兼容情况**
+
 对于官方 `init_chat_model` 函数已支持的模型提供商，你也可以直接使用 `load_chat_model` 函数进行加载，无需额外注册。因此，如果你需要同时接入多个模型，其中部分提供商为官方支持，另一部分不支持，可以考虑统一使用 `load_chat_model` 进行加载。例如：
 
 ```python
@@ -421,4 +427,11 @@ response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
 
-:::
+<BestPractice>
+    <p>对于本模块的使用，有如下建议：</p>
+    <ol>
+        <li>若所有模型均被官方 <code>init_chat_model</code> 支持，请直接使用该函数，以获得最佳兼容性和稳定性。</li>
+        <li>若部分模型不受官方支持，或需要集成官方未覆盖的提供商，可使用本模块的函数。</li>
+        <li>如果暂无适合的模型集成库，但提供商提供了 OpenAI 兼容的 API，则可以使用本模块函数。</li>
+    </ol>
+</BestPractice>

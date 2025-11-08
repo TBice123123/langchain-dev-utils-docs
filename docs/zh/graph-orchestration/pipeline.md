@@ -17,63 +17,73 @@
 - `sequential_pipeline` - 以串行方式组合多个状态图
 
 其参数如下:
+<Params
+name="sub_graphs"
+type="list[StateGraph | CompiledStateGraph]"
+description="要组合的状态图列表（必须是 StateGraph 或者 CompiledStateGraph 实例）。"
+:required="true"
+:default="null"
+/>
+<Params
+name="state_schema"
+type="dict"
+description="最终生成图的 State Schema。"
+:required="true"
+:default="null"
+/>
+<Params
+name="graph_name"
+type="string"
+description="最终生成图的名称。"
+:required="false"
+:default="null"
+/>
+<Params
+name="context_schema"
+type="dict"
+description="最终生成图的 Context Schema。"
+:required="false"
+:default="null"
+/>
+<Params
+name="input_schema"
+type="dict"
+description="最终生成图的输入 Schema。"
+:required="false"
+:default="null"
+/>
 
-<Params :params="[
-{
-name: 'sub_graphs',
-type: 'list[StateGraph]',
-description: '要组合的状态图列表（必须是 StateGraph 实例）。',
-required: true,
-},
-{
-name: 'state_schema',
-type: 'dict',
-description: '最终生成图的 State Schema。',
-required: true,
-},
-{
-name: 'graph_name',
-type: 'string',
-description: '最终生成图的名称。',
-required: false,
-},
-{
-name: 'context_schema',
-type: 'dict',
-description: '最终生成图的 Context Schema。',
-required: false,
-},
-{
-name: 'input_schema',
-type: 'dict',
-description: '最终生成图的输入 Schema。',
-required: false,
-},
-{
-name: 'output_schema',
-type: 'dict',
-description: '最终生成图的输出 Schema。',
-required: false,
-},
-{
-name: 'checkpoint',
-type: 'BaseCheckpointSaver',
-description: 'LangGraph 的持久化 Checkpoint。',
-required: false,
-},
-{
-name: 'store',
-type: 'BaseStore',
-description: 'LangGraph 的持久化 Store。',
-required: false,
-},
-{
-name: 'cache',
-type: 'BaseCache',
-description: 'LangGraph 的 Cache。',
-required: false,
-},
-]"/>
+<Params
+name="output_schema"
+type="dict"
+description="最终生成图的输出 Schema。"
+:required="false"
+:default="null"
+/>
+
+<Params
+name="checkpoint"
+type="BaseCheckpointSaver"
+description="LangGraph 的持久化 Checkpoint。"
+:required="false"
+:default="null"
+/>
+
+<Params
+name="store"
+type="BaseStore"
+description="LangGraph 的持久化 Store。"
+:required="false"
+:default="null"
+/>
+
+<Params
+name="cache"
+type="BaseCache"
+description="LangGraph 的 Cache。"
+:required="false"
+:default="null"
+/>
 
 使用示例:
 
@@ -165,69 +175,80 @@ graph = graph.compile()
 
 其参数如下:
 
-<Params :params="[
-{
-name: 'sub_graphs',
-type: 'list[StateGraph]',
-description: '要组合的状态图列表。',
-required: true,
-},
-{
-name: 'state_schema',
-type: 'dict',
-description: '最终生成图的 State Schema。',
-required: true,
-},
-{
-name: 'branches_fn',
-type: 'Callable[[Any], list[Send]]',
-description: '并行分支函数，接收状态作为输入，返回 Send 对象列表以控制并行执行哪些子图。',
-required: false,
-},
-{
-name: 'graph_name',
-type: 'string',
-description: '最终生成图的名称。',
-required: false,
-},
-{
-name: 'context_schema',
-type: 'dict',
-description: '最终生成图的 Context Schema。',
-required: false,
-},
-{
-name: 'input_schema',
-type: 'dict',
-description: '最终生成图的输入 Schema。',
-required: false,
-},
-{
-name: 'output_schema',
-type: 'dict',
-description: '最终生成图的输出 Schema。',
-required: false,
-},
-{
-name: 'checkpoint',
-type: 'BaseCheckpointSaver',
-description: 'LangGraph 的持久化 Checkpoint。',
-required: false,
-},
-{
-name: 'store',
-type: 'BaseStore',
-description: 'LangGraph 的持久化 Store。',
-required: false,
-},
-{
-name: 'cache',
-type: 'BaseCache',
-description: 'LangGraph 的 Cache。',
-required: false,
-},
-]"/>
+<Params
+name="sub_graphs"
+type="list[StateGraph | CompiledStateGraph]"
+description="要组合的状态图列表（必须是 StateGraph 或者 CompiledStateGraph 实例）。"
+:required="true"
+:default="null"
+/>
+<Params
+name="state_schema"
+type="dict"
+description="最终生成图的 State Schema。"
+:required="true"
+:default="null"
+/>
+<Params
+name="branches_fn"
+type="Callable[[Any], list[Send]]"
+description="并行分支函数，接收状态作为输入，返回 Send 对象列表以控制并行执行哪些子图。"
+:required="false"
+:default="null"
+/>
+<Params
+name="graph_name"
+type="string"
+description="最终生成图的名称。"
+:required="false"
+:default="null"
+/>
+<Params
+name="context_schema"
+type="dict"
+description="最终生成图的 Context Schema。"
+:required="false"
+:default="null"
+/>
+<Params
+name="input_schema"
+type="dict"
+description="最终生成图的输入 Schema。"
+:required="false"
+:default="null"
+/>
 
+<Params
+name="output_schema"
+type="dict"
+description="最终生成图的输出 Schema。"
+:required="false"
+:default="null"
+/>
+
+<Params
+name="checkpoint"
+type="BaseCheckpointSaver"
+description="LangGraph 的持久化 Checkpoint。"
+:required="false"
+:default="null"
+/>
+
+<Params
+name="store"
+type="BaseStore"
+description="LangGraph 的持久化 Store。"
+:required="false"
+:default="null"
+/>
+
+<Params
+name="cache"
+type="BaseCache"
+description="LangGraph 的 Cache。"
+:required="false"
+:default="null"
+/>
 使用示例:
 
 ### 基础并行示例

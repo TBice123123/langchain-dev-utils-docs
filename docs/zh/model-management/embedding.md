@@ -16,26 +16,27 @@
 
 与注册对话模型提供商类似，注册嵌入模型提供商的函数是`register_embeddings_provider`，其接收以下参数：
 
-<Params :params="[
-{
-name: 'provider_name',
-type: 'string',
-description: '嵌入模型提供商名称',
-required: true,
-},
-{
-name: 'embeddings_model',
-type: ' Embeddings | string',
-description: '嵌入模型',
-required: true,
-},
-{
-name: 'base_url',
-type: 'string',
-description: '嵌入模型基础 URL',
-required: false,
-},
-]"/>
+<Params
+name="provider_name"
+type="string"
+description="嵌入模型提供商名称"
+:required="true"
+:default="null"
+/>
+<Params
+name="embeddings_model"
+type="Embeddings | string"
+description="嵌入模型"
+:required="true"
+:default="null"
+/>
+<Params
+name="base_url"
+type="string"
+description="嵌入模型基础 URL"
+:required="false"
+:default="null"
+/>
 
 对于该函数的使用，具体如下：
 
@@ -160,35 +161,40 @@ print(emb)
 
 加载嵌入模型的函数是`load_embeddings`，其接收以下参数：
 
-<Params :params="[
-{
-name: 'model',
-type: 'string',
-description: '嵌入模型名称',
-required: true,
-},
-{
-name: 'provider',
-type: 'string',
-description: '嵌入模型提供商名称',
-required: false,
-},
-{
-name: 'kwargs',
-type: 'dict',
-description: '模型其它参数，具体参考对应模型提供商的文档',
-required: false,
-}
-]"/>
+<Params
+name="model"
+type="string"
+description="嵌入模型名称"
+:required="true"
+:default="null"
+/>
+<Params
+name="provider"
+type="string"
+description="嵌入模型提供商名称"
+:required="false"
+:default="null"
+/>
+对于本函数的使用，需要注意以下几点：
 
-对于`model`参数，其支持的格式如下：
+**1.额外参数**
 
-- provider_name:embeddings_name
-- embeddings_name
+该函数还能接收任意数量个关键字参数，例如 `dimension` 等,具体参考对应的模型集成类文档（如果 embeddings_model 是 `openai-compatible`，则可以参考 `OpenAIEmbeddings`）。
 
-其中`provider_name`为`register_embeddings_provider`函数中注册的`provider_name`。
+**2.model 参数格式**
 
-对于`provider`参数，含义和上述的`provider_name`相同，允许不传，但是此时`model`参数必须为`provider_name:embeddings_name`格式，如果传入，则`model`参数必须为`embeddings_name`格式。
+`model` 参数支持以下两种格式：
+
+- `provider_name:embeddings_name`
+- `embeddings_name`
+
+其中，`provider_name` 是通过 `register_embeddings_provider` 函数注册的提供商名称。
+
+`provider` 参数与上述 `provider_name` 含义相同，为可选参数：
+
+- 若未传入 `provider`，则 `model` 参数必须为 `provider_name:embeddings_name` 格式；
+- 若传入 `provider`，则 `model` 参数必须为 `embeddings_name` 格式。
+
 示例代码如下：
 
 ```python
@@ -209,7 +215,8 @@ emb = embeddings.embed_query("Hello")
 print(emb)
 ```
 
-::: tip 提示
+**3.与官方函数的兼容情况**
+
 与对话模型类似，对于官方 `init_embeddings` 函数已支持的模型提供商，你也可以直接使用 `load_embeddings` 函数进行加载，无需额外注册。因此，如果你需要同时接入多个模型，其中部分提供商为官方支持，另一部分不支持，可以考虑统一使用 `load_embeddings` 进行加载。例如：
 
 ```python
@@ -221,4 +228,6 @@ model = load_embeddings("openai:text-embedding-3-large")
 model = load_embeddings("text-embedding-3-large", provider="openai")
 ```
 
-:::
+<BestPractice>
+对于本模块功能的使用建议与对话模型模块类似，具体可以参考对话模型模块的使用建议。
+</BestPractice>

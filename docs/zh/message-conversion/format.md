@@ -17,27 +17,29 @@
 其参数如下:
 其参数如下:
 
-<Params :params="[
-{
-name: 'inputs',
-type: 'list[Message | Document | string]',
-description: '包含以下任意类型的列表：Message、Document、str',
-required: true,
-},
-{
-name: 'separator',
-type: 'str',
-description: '用于连接内容的字符串，默认为-',
-required: false,
-},
-{
-name: 'with_num',
-type: 'bool',
-description: '如果为 True，为每个项目添加数字前缀，默认为 False',
-required: false,
-},
-]"/>
-使用示例:
+<Params
+name="inputs"
+type="list[Message | Document | string]"
+description="包含以下任意类型的列表：Message、Document、str"
+:required="true"
+:default="null"
+/>
+<Params
+name="separator"
+type="string"
+description="用于连接内容的字符串，默认为-"
+:required="false"
+:default="null"
+/>
+<Params
+name="with_num"
+type="bool"
+description="如果为 True，为每个项目添加数字前缀，默认为 False"
+:required="false"
+:default="null"
+/>
+
+使用示例如下：
 
 ### Message
 

@@ -1,4 +1,4 @@
-# 预构建 Agent 函数
+# 预构建
 
 > [!NOTE]
 >
@@ -8,24 +8,22 @@
 >
 > **预计阅读时间**：8 分钟
 
-预构建智能体模块主要是提供一个和`langchain`的`create_agent`函数功能上完全相同的函数，但是通过字符串指定更多的模型(需要进行注册)。
+## 预构建智能体函数
 
-## 创建一个智能体
+LangChain v1 版本中，官方提供的 `create_agent` 函数可以用于创建单智能体,其中 model 参数支持传入 BaseChatModel 实例或特定字符串（当传入字符串时，仅限于 `init_chat_model` 支持的模型）。为扩展字符串指定模型的灵活性，本库提供了功能相同的 `create_agent` 函数，使您能直接使用`load_chat_model`支持的模型（需要提取注册）。
 
-类似于 LangChain 的`create_agent`函数，但是可以指定更多的模型。具体如下：
+核心函数：
 
 - `create_agent`：创建单智能体
 
 其参数如下:
-
-<Params :params="[
-{
-name: 'model',
-type: 'str',
-description: '模型名称，取值必须为字符串，且格式是 provider_name:model_name，同时支持 init_chat_model 以及 load_chat_model 支持的格式，其中 load_chat_model 的 provider_name 需要使用 register_model_provider 完成注册。',
-required: true,
-}
-]"/>
+<Params
+name="model"
+type="string"
+description="对话模型名称，取值必须为字符串，且格式是 provider_name:model_name，同时支持 init_chat_model 以及 load_chat_model 支持的格式，其中 load_chat_model 的 provider_name 需要使用 register_model_provider 完成注册。"
+:required="true"
+:default="null"
+/>
 
 **注意**：其它参数和 langchain 的 create_agent 一样。
 
@@ -56,48 +54,51 @@ response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")
 print(response)
 ```
 
-## 将 Agent 转换为一个 Tool
+## 封装 Agent 为 Tool
 
-本函数的作用是将一个 Agent 转换为一个 Tool，从而将其作为工具使用。这种方式是多智能体的一种非常常见的实现方式。
+将智能体封装为工具是多智能体系统中的一种常见实现模式，LangChain 官方文档对此有详细阐述。为此，本库提供了预构建函数 `wrap_agent_as_tool` 来实现此模式，该函数能够将一个智能体实例封装成一个可供其它智能体调用的工具。
 
 核心函数：
 
-- `wrap_agent_as_tool`：将 Agent 转换为 Tool
+- `wrap_agent_as_tool`：将 Agent 封装为 Tool
 
 其参数如下:
 
-<Params :params="[
-{
-name: 'agent',
-type: 'CompiledStateGraph',
-description: '智能体，取值必须为**langchain**的**CompiledStateGraph**。',
-required: true,
-},
-{
-name: 'tool_name',
-type: 'str',
-description: 'Tool 的名称。如果不传则工具默认名称是`transfor_to_agent_name`。',
-required: false,
-},
-{
-name: 'tool_description',
-type: 'str',
-description: 'Tool 的描述。',
-required: false,
-},
-{
-name: 'pre_input_hooks',
-type: 'Callable | tuple[Callable, AwaitableCallable]',
-description: 'Tool 的预处理函数，可以是单个同步函数或一个二元组。如果是二元组，则第一个函数是同步函数，第二个函数是异步函数，用于在智能体运行前对输入进行预处理。',
-required: false,
-},
-{
-name: 'post_output_hooks',
-type: 'Callable | tuple[Callable, AwaitableCallable]',
-description: 'Tool 的后处理函数，可以是单个同步函数或一个二元组。如果是二元组，则第一个函数是同步函数，第二个函数是异步函数，用于在智能体运行完成后，对其返回的完整消息列表进行后处理。',
-required: false,
-},
-]"/>
+<Params
+name="agent"
+type="CompiledStateGraph"
+description="智能体，取值必须为 langgraph 的 CompiledStateGraph。"
+:required="true"
+:default="null"
+/>
+<Params
+name="tool_name"
+type="string"
+description="工具的名称。如果不传则工具默认名称是`transfor_to_agent_name`。"
+:required="false"
+:default="null"
+/>
+<Params
+name="tool_description"
+type="string"
+description="工具的描述。如果不传则使用默认的描述内容。"
+:required="false"
+:default="null"
+/>
+<Params
+name="pre_input_hooks"
+type="Callable | tuple[Callable, AwaitableCallable]"
+description="预处理钩子函数，可以是单个同步函数或一个二元组。如果是二元组，则第一个函数是同步函数，第二个函数是异步函数，用于在智能体运行前对输入进行预处理。"
+:required="false"
+:default="null"
+/>
+<Params
+name="post_output_hooks"
+type="Callable | tuple[Callable, AwaitableCallable]"
+description="后处理钩子函数，可以是单个同步函数或一个二元组。如果是二元组，则第一个函数是同步函数，第二个函数是异步函数，用于在智能体运行完成后，对其返回的完整消息列表进行后处理。"
+:required="false"
+:default="null"
+/>
 
 **使用示例**
 

@@ -19,20 +19,20 @@
 
 其参数如下:
 
-<Params :params="[
-{
-name: 'func',
-type: 'Callable',
-description: '待装饰的函数（**请勿手动传参，仅用于装饰器语法**）',
-required: true,
-},
-{
-name: 'handler',
-type: 'Callable[[InterruptParams], Any]',
-description: '可选，自定义中断处理逻辑。若未提供，则使用内置 default_handler。对于异步装饰器，handler 必须是异步函数。',
-required: false,
-},
-]"/>
+<Params
+name="func"
+type="Callable"
+description="待装饰的函数（请勿手动传参，仅用于装饰器语法）"
+:required="true"
+:default="null"
+/>
+<Params
+name="handler"
+type="Callable[[InterruptParams], Any]"
+description="可选，自定义中断处理逻辑。若未提供，则使用内置 default_handler。对于异步装饰器，handler 必须是异步函数。"
+:required="false"
+:default="null"
+/>
 
 ## 使用示例
 
@@ -131,5 +131,5 @@ async def get_weather(city: str) -> str:
 ```
 
 <BestPractice>
-当你的多个工具都需要添加人在回路支持，且流程相同时，你可以使用上述方法定义一个 handler，然后依次为多个函数添加装饰器。如果仅是一个函数需要添加人在回路支持，推荐直接使用 langgraph 提供的interrupt函数。
+该装饰器在实现自定义人在回路逻辑时，需要传入handler参数。此handler参数是一个函数，内部必须使用LangGraph的interrupt函数来执行中断操作。因此，如果仅为单个工具添加自定义的人在回路逻辑，建议直接使用LangGraph的interrupt函数。当多个工具需要相同自定义人在回路逻辑时，使用本装饰器可以有效避免代码重复。
 </BestPractice>

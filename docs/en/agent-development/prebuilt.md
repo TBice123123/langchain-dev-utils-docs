@@ -1,31 +1,29 @@
-# Pre-built Agent Functions
+# Pre-built
 
 > [!NOTE]
 >
-> **Feature Overview**: Provides utilities for convenient Agent development.
+> **Feature Overview**: Provides utility tools to facilitate Agent development.
 >
-> **Prerequisites**: Understanding of langchain's [Agent](https://docs.langchain.com/oss/python/langchain/agents) and [Multi-Agent](https://docs.langchain.com/oss/python/langchain/multi-agent).
+> **Prerequisites**: Understand LangChain's [Agent](https://docs.langchain.com/oss/python/langchain/agents) and [Multi-Agent](https://docs.langchain.com/oss/python/langchain/multi-agent).
 >
 > **Estimated Reading Time**: 8 minutes
 
-The pre-built agent module mainly provides a function that is completely identical in functionality to LangChain's `create_agent` function, but allows specifying more models through strings (requires registration).
+## Pre-built Agent Functions
 
-## Creating an Agent
+In LangChain v1, the officially provided `create_agent` function can be used to create a single agent. The model parameter supports passing a BaseChatModel instance or a specific string (when passing a string, it is limited to the models supported by `init_chat_model`). To extend the flexibility of specifying models via strings, this library provides a functionally identical `create_agent` function, allowing you to directly use models supported by `load_chat_model` (requires prior registration).
 
-Similar to LangChain's `create_agent` function, but allows specifying more models. Details are as follows:
+Core Function:
 
-- `create_agent`: Create a single agent
+- `create_agent`: Creates a single agent.
 
 Its parameters are as follows:
-
-<Params :params="[
-{
-name: 'model',
-type: 'str',
-description: 'Model name, must be a string in the format provider_name:model_name, and also supports formats supported by init_chat_model and load_chat_model, where the provider_name for load_chat_model needs to be registered using register_model_provider.',
-required: true,
-}
-]"/>
+<Params
+name="model"
+type="string"
+description="The name of the chat model. The value must be a string in the format provider_name:model_name. It supports formats compatible with both init_chat_model and load_chat_model, where the provider_name for load_chat_model needs to be registered using register_model_provider."
+:required="true"
+:default="null"
+/>
 
 **Note**: Other parameters are the same as LangChain's create_agent.
 
@@ -47,57 +45,60 @@ register_model_provider(
 
 @tool
 def get_current_time() -> str:
-    """Get current timestamp"""
+    """Get the current timestamp"""
     return str(datetime.datetime.now().timestamp())
 
 agent = create_agent("vllm:qwen3-4b", tools=[get_current_time])
-# Usage is completely consistent with langchain's create_agent
+# Usage is identical to LangChain's create_agent
 response = agent.invoke({"messages": [HumanMessage(content="What time is it now?")]})
 print(response)
 ```
 
-## Converting an Agent to a Tool
+## Wrapping an Agent as a Tool
 
-The function of this module is to convert an Agent into a Tool, so that it can be used as a tool. This approach is a very common implementation method for multi-agent systems.
+Wrapping an agent as a tool is a common implementation pattern in multi-agent systems, which is detailed in the official LangChain documentation. To facilitate this, this library provides the pre-built function `wrap_agent_as_tool`, which can encapsulate an agent instance into a tool that can be called by other agents.
 
-Core function:
+Core Function:
 
-- `wrap_agent_as_tool`: Convert Agent to Tool
+- `wrap_agent_as_tool`: Wraps an Agent as a Tool.
 
 Its parameters are as follows:
 
-<Params :params="[
-{
-name: 'agent',
-type: 'CompiledStateGraph',
-description: 'Agent, must be a **CompiledStateGraph** from **langchain**.',
-required: true,
-},
-{
-name: 'tool_name',
-type: 'str',
-description: 'Name of the Tool. If not passed, the default tool name is `transfor_to_agent_name`.',
-required: false,
-},
-{
-name: 'tool_description',
-type: 'str',
-description: 'Description of the Tool.',
-required: false,
-},
-{
-name: 'pre_input_hooks',
-type: 'Callable | tuple[Callable, AwaitableCallable]',
-description: 'Preprocessing function for the Tool, can be a single synchronous function or a binary tuple. If it is a binary tuple, the first function is a synchronous function, and the second function is an asynchronous function, used for preprocessing the input before the agent runs.',
-required: false,
-},
-{
-name: 'post_output_hooks',
-type: 'Callable | tuple[Callable, AwaitableCallable]',
-description: 'Postprocessing function for the Tool, can be a single synchronous function or a binary tuple. If it is a binary tuple, the first function is a synchronous function, and the second function is an asynchronous function, used for postprocessing the complete message list returned after the agent runs.',
-required: false,
-},
-]"/>
+<Params
+name="agent"
+type="CompiledStateGraph"
+description="The agent, must be a LangGraph CompiledStateGraph."
+:required="true"
+:default="null"
+/>
+<Params
+name="tool_name"
+type="string"
+description="The name of the tool. If not provided, the default tool name is `transfor_to_agent_name`."
+:required="false"
+:default="null"
+/>
+<Params
+name="tool_description"
+type="string"
+description="The description of the tool. If not provided, the default description content is used."
+:required="false"
+:default="null"
+/>
+<Params
+name="pre_input_hooks"
+type="Callable | tuple[Callable, AwaitableCallable]"
+description="Preprocessing hook functions, which can be a single synchronous function or a tuple of two callables. If it's a tuple, the first function is the synchronous function and the second function is the asynchronous function, used to preprocess the input before the agent runs."
+:required="false"
+:default="null"
+/>
+<Params
+name="post_output_hooks"
+type="Callable | tuple[Callable, AwaitableCallable]"
+description="Postprocessing hook functions, which can be a single synchronous function or a tuple of two callables. If it's a tuple, the first function is the synchronous function and the second function is the asynchronous function, used to postprocess the complete list of messages returned by the agent after it finishes running."
+:required="false"
+:default="null"
+/>
 
 **Usage Example**
 
@@ -109,7 +110,7 @@ from langchain_dev_utils.agents import wrap_agent_as_tool, create_agent
 
 @tool
 def get_current_time() -> str:
-    """Get current timestamp"""
+    """Get the current timestamp"""
     return str(datetime.datetime.now().timestamp())
 
 # Define an agent for querying time
@@ -117,7 +118,7 @@ time_agent = create_agent(
     "vllm:qwen3-4b", tools=[get_current_time], name="time_agent"
 )
 call_time_agent_tool = wrap_agent_as_tool(
-    time_agent, tool_name="call_time_agent", tool_description="Call time agent"
+    time_agent, tool_name="call_time_agent", tool_description="Call the time agent"
 )
 # Use it as a tool
 agent = create_agent("vllm:qwen3-4b", tools=[call_time_agent_tool], name="agent")
@@ -128,25 +129,25 @@ print(response)
 
 ### Using Hook Functions
 
-This function provides several hook functions for performing operations before and after calling the agent.
+This function provides several hook functions for performing operations before and after invoking the agent.
 
 #### 1. pre_input_hooks
 
-Preprocess the input before the agent runs. Can be used for input enhancement, context injection, format validation, permission checking, etc.
+Preprocesses the input before the agent runs. Can be used for input enhancement, context injection, format validation, permission checks, etc.
 
-Supports the following types:
+Supports the following input types:
 
-- If passing a **single synchronous function**, the function is used for both synchronous (`invoke`) and asynchronous (`ainvoke`) call paths (will not be `awaited` in the asynchronous path, called directly).
-- If passing a **binary tuple `(sync_func, async_func)`**:
+- If a **single synchronous function** is passed, this function is used for both the synchronous (`invoke`) and asynchronous (`ainvoke`) call paths (in the asynchronous path, it is called directly without `await`).
+- If a **tuple `(sync_func, async_func)`** is passed:
   - The first function is used for the synchronous call path;
-  - The second function (must be `async def`) is used for the asynchronous call path and will be `awaited`.
+  - The second function (must be `async def`) is used for the asynchronous call path and will be `await`ed.
 
 The function you pass receives two parameters:
 
-- `request: str`: Original tool call input;
-- `runtime: ToolRuntime`: `ToolRuntime` from `langchain`.
+- `request: str`: The original tool call input;
+- `runtime: ToolRuntime`: LangChain's `ToolRuntime`.
 
-The function you pass must return the processed `str` as the actual input to the agent.
+The function you pass must return the processed `str`, which will be used as the actual input for the agent.
 
 **Example**:
 
@@ -167,22 +168,22 @@ call_agent_tool = wrap_agent_as_tool(
 
 #### 2. post_output_hooks
 
-After the agent runs, postprocess the complete message list returned to generate the final return value of the tool. Can be used for result extraction, structured conversion, etc.
+Postprocesses the complete list of messages returned by the agent after it finishes running to generate the final return value for the tool. Can be used for result extraction, structured transformation, etc.
 
-Supports the following types:
+Supports the following input types:
 
-- If passing a **single function**, the function is used for both synchronous and asynchronous paths (will not be `awaited` in the asynchronous path).
-- If passing a **binary tuple `(sync_func, async_func)`**:
-  - The first is used for the synchronous path;
-  - The second (must be `async def`) is used for the asynchronous path and will be `awaited`.
+- If a **single function** is passed, this function is used for both synchronous and asynchronous paths (in the asynchronous path, it is called without `await`).
+- If a **tuple `(sync_func, async_func)`** is passed:
+  - The first function is used for the synchronous path;
+  - The second function (`async def`) is used for the asynchronous path and will be `await`ed.
 
 The function you pass receives three parameters:
 
-- `request: str`: Original input (possibly processed);
-- `messages: List[AnyMessage]`: Complete message history returned by the agent (from `response["messages"]`);
-- `runtime: ToolRuntime`: `ToolRuntime` from `langchain`.
+- `request: str`: The (possibly processed) original input;
+- `messages: List[AnyMessage]`: The complete message history returned by the agent (from `response["messages"]`);
+- `runtime: ToolRuntime`: LangChain's `ToolRuntime`.
 
-The value returned by the function you pass can be a string that can be serialized or a `Command` object.
+The value returned by the function you pass can be either a string or a `Command` object.
 
 **Example**:
 
@@ -206,7 +207,7 @@ call_agent_tool = wrap_agent_as_tool(
 )
 ```
 
-- If `pre_input_hooks` is not provided, the input is passed as is;
-- If `post_output_hooks` is not provided, it returns `response["messages"][-1].content` by default (i.e., the text content of the last message).
+- If `pre_input_hooks` is not provided, the input is passed through unchanged.
+- If `post_output_hooks` is not provided, it defaults to returning `response["messages"][-1].content` (i.e., the text content of the last message).
 
-**Note**: When the Agent (CompiledStateGraph) is used as the agent parameter of `wrap_agent_as_tool`, the Agent must define the name attribute.
+**Note**: When an Agent (CompiledStateGraph) is used as the agent parameter for `wrap_agent_as_tool`, that Agent must have the name attribute defined.

@@ -8,12 +8,12 @@
 >
 > **预计阅读时间**：10 分钟
 
-中间件是专门针对`langchain`预构建的 Agent 而构建的组件。官方提供了一些内置的中间件。本库则根据实际情况和本库的使用场景，提供了更多的中间件。、
+中间件是专门针对`langchain`预构建的 Agent 而构建的组件。官方提供了一些内置的中间件。本库则根据实际情况和本库的使用场景，提供了更多的中间件。
 大致可以分为官方中间件的进一步封装、以及本库自定义的中间件。
 
 ## 封装官方中间件
 
-官方中间件的进一步封装，提供了更方便的使用方式。
+官方中间件的进一步封装，具体类似于本库的`create_agent`函数，支持通过字符串指定`load_chat_model`支持的模型（需要进行提取注册）。
 具体有以下四个中间件：
 
 - SummarizationMiddleware
@@ -23,7 +23,7 @@
 
 ### SummarizationMiddleware
 
-核心作用是压缩对话内容，功能与官方[SummarizationMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#summarization)完全一致。但是只允许字符串参数指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。
+核心作用是压缩对话内容，功能与官方[SummarizationMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#summarization)完全一致。但是只允许字符串参数指定模型。
 
 使用示例:
 
@@ -56,7 +56,7 @@ print(response)
 
 ### LLMToolSelectorMiddleware
 
-核心作用是用于大量工具的情况下，由 LLM 自己选择工具，功能与官方[LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-selector)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。
+核心作用是用于大量工具的情况下，由 LLM 自己选择工具，功能与官方[LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-selector)完全一致。但是同样只允许字符串指定模型。
 
 使用示例:
 
@@ -98,7 +98,8 @@ print(response)
 
 ### ModelFallbackMiddleware
 
-用于在调用模型失败时回退到备用模型的中间件。功能与官方[ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。
+用于在调用模型失败时回退到备用模型的中间件。功能与官方[ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback)完全一致。但是同样只允许字符串指定模型。
+
 使用示例:
 
 ```python
@@ -122,7 +123,7 @@ print(response)
 
 ### LLMToolEmulator
 
-用于使用大模型来模拟工具调用的中间件。功能与官方[LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator)完全一致。但是同样只允许字符串指定模型（类似于本库中的`create_agent`一样，模型可以选择的范围更大，但是需要进行注册）。
+用于使用大模型来模拟工具调用的中间件。功能与官方[LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator)完全一致。但是同样只允许字符串指定模型。
 
 使用示例:
 
@@ -167,20 +168,20 @@ print(response)
 
 这三个函数接收的参数如下:
 
-<Params :params="[
-{
-name: 'description',
-type: 'str',
-description: '工具描述,如果不传则采用默认的工具描述。',
-required: false,
-},
-{
-name: 'message_key',
-type: 'str',
-description: '用于更新 messages 的键，若不传入则使用默认的 messages（read_plan 工具无此参数）。',
-required: false,
-},
-]"/>
+<Params
+name="description"
+type="string"
+description="工具描述,如果不传则采用默认的工具描述。"
+:required="false"
+:default="null"
+/>
+<Params
+name="message_key"
+type="string"
+description="用于更新 messages 的键，若不传入则使用默认的 messages（read_plan 工具无此参数）。"
+:required="false"
+:default="null"
+/>
 
 使用示例如下:
 
@@ -204,20 +205,20 @@ agent = create_agent(
 但是上述的使用方式在本库是不推荐的，最佳的做法应该是使用 PlanMiddleware。
 PlanMiddleware 的参数说明如下:
 
-<Params :params="[
-{
-name: 'system_prompt',
-type: 'str',
-description: '可选字符串类型，系统提示词，功能上与官方的 TodoListMiddleware 相同。',
-required: false,
-},
-{
-name: 'tools',
-type: 'list[BaseTool]',
-description: '可选 BaseTool 列表类型，工具列表，指定后会加入到 tools 中，必须是通过 create_write_plan_tool、create_finish_sub_plan_tool 以及 create_read_plan_tool 创建的工具。',
-required: false,
-},
-]"/>
+<Params
+name="system_prompt"
+type="string"
+description="可选字符串类型，系统提示词。"
+:required="false"
+:default="null"
+/>
+<Params
+name="tools"
+type="list[BaseTool]"
+description="可选 BaseTool 列表类型，工具列表，指定后会加入到 tools 中，必须是通过 create_write_plan_tool、create_finish_sub_plan_tool 以及 create_read_plan_tool 创建的工具。"
+:required="false"
+:default="null"
+/>
 
 ```python
 from langchain_dev_utils.agents.middleware import (
@@ -256,26 +257,27 @@ print(response)
 
 其参数如下:
 
-<Params :params="[
-{
-name: 'router_model',
-type: 'str | BaseChatModel',
-description: '用于执行路由决策的模型。可以传入字符串（将通过 load_chat_model 自动加载），例如 vllm:qwen3-4b；或直接传入已实例化的 ChatModel 对象。',
-required: true,
-},
-{
-name: 'model_list',
-type: 'list[dict]',
-description: '一个模型配置列表，每个元素是一个字典，需包含 model_name (str), model_description (str)，以及可选的 tools (list[BaseTool]), model_kwargs (dict), model_system_prompt (str)。',
-required: true,
-},
-{
-name: 'router_prompt',
-type: 'str',
-description: '自定义路由模型的提示词。若为 None（默认），则使用内置的默认提示模板。',
-required: false,
-},
-]"/>
+<Params
+name="router_model"
+type="BaseChatModel | string"
+description="用于执行路由决策的模型。可以传入字符串（将通过 load_chat_model 自动加载），例如 vllm:qwen3-4b；或直接传入已实例化的 BaseChatModel 对象。"
+:required="true"
+:default="null"
+/>
+<Params
+name="model_list"
+type="list[dict]"
+description="一个模型配置列表，每个元素是一个字典，需包含 model_name (str), model_description (str)，以及可选的 tools (list[BaseTool]), model_kwargs (dict), model_system_prompt (str)。"
+:required="true"
+:default="null"
+/>
+<Params
+name="router_prompt"
+type="string"
+description="自定义路由模型的提示词。若为 None（默认），则使用内置的默认提示模板。"
+:required="false"
+:default="null"
+/>
 
 **使用示例**
 

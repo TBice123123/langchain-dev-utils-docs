@@ -1,44 +1,35 @@
 <template>
-    <div class="param-list">
-        <div v-for="param in params" :key="param.name" class="param-item">
-            <div class="param-header">
-                <code class="param-name">{{ param.name }}</code>
-                <span class="param-type">{{ param.type }}</span>
-                <span v-if="param.required" class="param-required">required</span>
-            </div>
-            <div v-if="param.description" class="param-description">
-                {{ param.description }}
-            </div>
-            <div v-if="param.defaultValue !== undefined" class="param-default">
-                Defaults to <code>{{ param.defaultValue }}</code>.
-            </div>
+    <div class="param-item">
+        <div class="param-header">
+            <code class="param-name">{{ name }}</code>
+            <span class="param-type">{{ type }}</span>
+            <span v-if="required" class="param-required">required</span>
+        </div>
+        <div v-if="description" class="param-description">
+            {{ description }}
+        </div>
+        <div v-if="props.default != null" class="param-default">
+            Defaults to <code>{{ default }}</code>.
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-export interface Param {
+
+
+interface Props {
     name: string;
     type: string;
     description?: string;
     required?: boolean;
-    defaultValue?: string | number | boolean;
+    default?: string | number | boolean;
 }
 
-interface Props {
-    params: Param[];
-}
+const props = defineProps<Props>();
 
-defineProps<Props>();
 </script>
 
 <style scoped>
-.param-list {
-    margin: 1.5rem 0;
-    padding-left: 1.5rem;
-    border-left: 2px solid #e5e7eb;
-}
-
 .param-item {
     position: relative;
     padding-bottom: 1.5rem;
@@ -51,7 +42,7 @@ defineProps<Props>();
 .param-item::before {
     content: '';
     position: absolute;
-    left: -2.05rem;
+    left: -1.75rem;
     top: 0.4rem;
     width: 8px;
     height: 8px;

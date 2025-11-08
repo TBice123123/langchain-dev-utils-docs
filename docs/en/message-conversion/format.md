@@ -1,43 +1,45 @@
-# Formatting List Content
+# Format List Content
 
 > [!NOTE]
 >
-> **Feature Overview**: Provides functionality to format common list content into a single string.
+> **Feature Overview**: Provides the functionality to format commonly used list content into a single string.
 >
-> **Prerequisites**: Understanding of langchain's [Message](https://docs.langchain.com/oss/python/langchain/messages).
+> **Prerequisites**: Familiarity with Langchain's [Message](https://docs.langchain.com/oss/python/langchain/messages).
 >
 > **Estimated Reading Time**: 2 minutes
 
-Format a list composed of Document, Message, or string objects into a single text string.
+Formats a list composed of Documents, Messages, or strings into a single text string.
 
 ## Core Function
 
-- `format_sequence`: Format messages
+- `format_sequence`: Formats messages
 
+Its parameters are as follows:  
 Its parameters are as follows:
 
-<Params :params="[
-{
-name: 'inputs',
-type: 'list[Message | Document | string]',
-description: 'A list containing any of the following types: Message, Document, str',
-required: true,
-},
-{
-name: 'separator',
-type: 'str',
-description: 'String used to join content, defaults to -',
-required: false,
-},
-{
-name: 'with_num',
-type: 'bool',
-description: 'If True, adds numeric prefix to each item, defaults to False',
-required: false,
-}
-]"/>
+<Params
+name="inputs"
+type="list[Message | Document | string]"
+description="A list containing any of the following types: Message, Document, str"
+:required="true"
+:default="null"
+/>
+<Params
+name="separator"
+type="string"
+description="String used to join the contents; defaults to '-'"
+:required="false"
+:default="null"
+/>
+<Params
+name="with_num"
+type="bool"
+description="If True, adds a numerical prefix to each item; defaults to False"
+:required="false"
+:default="null"
+/>
 
-Usage examples:
+Usage examples are as follows:
 
 ### Message
 
@@ -76,6 +78,7 @@ format2 = format_sequence(
     separator=">",
 )
 print(format2)
+
 ```
 
 Output:
