@@ -1,84 +1,141 @@
 /* Custom CSS for LangChain Dev Utils Documentation */
 
-/* Color palette */
+/* Clean and professional color palette */
 :root {
-  --vp-c-brand-1: #4f8ff9;
-  --vp-c-brand-2: #3a7be6;
-  --vp-c-brand-3: #2a6ad3;
-  --vp-c-brand-soft: rgba(79, 143, 249, 0.16);
+  /* Primary brand colors */
+  --vp-c-brand-1: #2563eb;
+  --vp-c-brand-2: #1d4ed8;
+  --vp-c-brand-3: #1e40af;
+  --vp-c-brand-soft: rgba(37, 99, 235, 0.1);
+  --vp-c-brand-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   
-  /* Custom background color */
-  --vp-layout-max-width: 1660px;
-  --vp-sidebar-width: 250px;
+  /* Layout dimensions */
+  --vp-layout-max-width: 1600px;
+  --vp-sidebar-width: 280px;
   
-  /* Improved color contrast for accessibility */
-  --vp-c-text-1: #121212;
-  --vp-c-text-2: #555555;
-  --vp-c-text-3: #888888;
+  /* Text colors for optimal readability */
+  --vp-c-text-1: #1f2937;
+  --vp-c-text-2: #4b5563;
+  --vp-c-text-3: #6b7280;
   
-  /* Custom background colors */
+  /* Clean background colors */
   --vp-c-bg: #ffffff;
-  --vp-c-bg-soft: #f8fafc;
-  --vp-c-bg-soft-down: #e2e8f0;
-  --vp-c-bg-elv: #ffffff;
-  --vp-c-bg-elv-up: #ffffff;
-  --vp-c-bg-elv-down: #e2e8f0;
-  --vp-c-bg-elv-mute: #f1f5f9;
+  --vp-c-bg-soft: #f9fafb;
+  --vp-c-bg-soft-down: #f3f4f6;
+  --vp-c-bg-elev: #ffffff;
+  --vp-c-bg-elev-up: #ffffff;
+  --vp-c-bg-elev-down: #f3f4f6;
+  --vp-c-bg-elev-mute: #f9fafb;
+  --vp-c-bg-overlay: rgba(255, 255, 255, 0.95);
   
-  /* Custom border colors */
-  --vp-c-divider: rgba(60, 60, 60, 0.29);
-  --vp-c-divider-light: rgba(60, 60, 60, 0.12);
-  --vp-c-gutter: #e2e8f0;
+  /* Subtle border colors */
+  --vp-c-divider: #e5e7eb;
+  --vp-c-divider-light: #f3f4f6;
+  --vp-c-gutter: #f3f4f6;
   
-  /* Gradient for hero section */
-  --vp-home-hero-name-background: linear-gradient(120deg, #4f8ff9 30%, #3a7be6);
-  
-  /* Shadow values */
-  --vp-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --vp-shadow-2: 0 4px 8px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.08);
-  --vp-shadow-3: 0 8px 16px rgba(0, 0, 0, 0.04), 0 4px 8px rgba(0, 0, 0, 0.08);
+  /* Refined shadow system */
+  --vp-shadow-1: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --vp-shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --vp-shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   
   /* Border radius */
-  --vp-radius: 8px;
+  --vp-radius: 6px;
   --vp-radius-small: 4px;
-  --vp-radius-big: 12px;
+  --vp-radius-big: 8px;
+  --vp-radius-xl: 12px;
+  --vp-radius-2xl: 16px;
+  --vp-radius-full: 9999px;
+  
+  /* Shadow system */
+  --vp-shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --vp-shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --vp-shadow-glow: 0 0 0 1px rgba(37, 99, 235, 0.05), 0 0 20px rgba(37, 99, 235, 0.1);
+  
+  /* Transition system */
+  --vp-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --vp-transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --vp-transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Mesh gradient background */
+  --vp-mesh-gradient: radial-gradient(at 40% 20%, hsla(228, 100%, 74%, 0.15) 0px, transparent 50%), 
+                     radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 0.15) 0px, transparent 50%),
+                     radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 0.15) 0px, transparent 50%),
+                     radial-gradient(at 80% 50%, hsla(340, 100%, 76%, 0.15) 0px, transparent 50%),
+                     radial-gradient(at 0% 100%, hsla(22, 100%, 77%, 0.15) 0px, transparent 50%),
+                     radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 0.15) 0px, transparent 50%),
+                     radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0.15) 0px, transparent 50%);
 }
 
-/* Typography improvements */
+/* Professional typography */
 :root {
-  --vp-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  --vp-font-family-mono: 'Fira Code', 'Monaco', 'Consolas', 'Ubuntu Mono', monospace;
+  --vp-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --vp-font-family-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
   
-  /* Font weights */
-  --vp-font-weight-light: 300;
-  --vp-font-weight-regular: 400;
+  /* Clean font weights */
+  --vp-font-weight-normal: 400;
   --vp-font-weight-medium: 500;
   --vp-font-weight-semibold: 600;
   --vp-font-weight-bold: 700;
+  
+  /* Font size scale */
+  --vp-font-size-xs: 0.75rem;
+  --vp-font-size-sm: 0.875rem;
+  --vp-font-size-base: 1rem;
+  --vp-font-size-lg: 1.125rem;
+  --vp-font-size-xl: 1.25rem;
+  --vp-font-size-2xl: 1.5rem;
+  --vp-font-size-3xl: 1.875rem;
+  --vp-font-size-4xl: 2.25rem;
+  
+  /* Line height */
+  --vp-line-height-tight: 1.25;
+  --vp-line-height-normal: 1.5;
+  --vp-line-height-relaxed: 1.625;
+  
+  /* Letter spacing */
+  --vp-tracking-tight: -0.025em;
+  --vp-tracking-normal: 0em;
+  --vp-tracking-wide: 0.025em;
+  --vp-tracking-wider: 0.05em;
 }
 
-/* Main page layout */
+
+/* Clean main page layout */
 .VPContent {
   background-color: var(--vp-c-bg-soft);
 }
 
-/* Card styling for better visual hierarchy */
+/* Enhanced dark mode background */
+:root.dark .VPContent {
+  background: radial-gradient(circle at 25% 25%, rgba(88, 166, 255, 0.02) 0%, transparent 50%),
+              radial-gradient(circle at 75% 75%, rgba(88, 166, 255, 0.01) 0%, transparent 50%),
+              var(--vp-c-bg-soft);
+}
+
+/* Clean card styling for code blocks */
 .vp-doc div[class*='language-'] {
   border-radius: var(--vp-radius);
   box-shadow: var(--vp-shadow-2);
-  margin: 1.2em 0;
+  margin: 1.5em 0;
   overflow: hidden;
+  border: 1px solid var(--vp-c-divider);
+  transition: box-shadow 0.2s ease;
 }
 
-/* Improved code block styling */
+.vp-doc div[class*='language-']:hover {
+  box-shadow: var(--vp-shadow-3);
+}
+
+/* Clean code block styling */
 .vp-doc pre {
-  background-color: var(--vp-code-block-bg);
-  border: 1px solid var(--vp-c-divider-light);
+  background-color: #f8f9fa;
+  border: 1px solid var(--vp-c-divider);
   border-radius: var(--vp-radius);
-  padding: 1.2em;
-  line-height: 1.5;
-  font-size: 1.1em;
+  padding: 1.25em;
+  line-height: 1.6;
+  font-size: 0.9em;
   overflow-x: auto;
+  font-family: var(--vp-font-family-mono);
 }
 
 /* Custom tip, warning, danger blocks */
@@ -131,82 +188,165 @@
   background-color: var(--vp-c-bg-soft);
 }
 
-/* Enhanced navigation styling */
+/* Clean navigation styling */
 .VPNavScreen {
   background-color: var(--vp-c-bg);
+  border-right: 1px solid var(--vp-c-divider-light);
 }
 
-.VPNavScreenMenu .item .active, .VPNavScreenMenu .item:hover {
+.VPNavScreenMenu .item .active, 
+.VPNavScreenMenu .item:hover {
   color: var(--vp-c-brand-1);
+  background-color: var(--vp-c-brand-soft);
 }
 
-/* Improved header styling */
+/* Simple header styling */
 .VPNavBar {
   background-color: var(--vp-c-bg);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--vp-c-divider-light);
+  box-shadow: var(--vp-shadow-1);
 }
 
 .VPNavBarTitle .title {
   font-weight: var(--vp-font-weight-semibold);
+  color: var(--vp-c-text-1);
 }
 
-/* Improved sidebar styling */
+/* Simple sidebar styling */
 .VPSidebar {
+  background-color: var(--vp-c-bg);
   border-right: 1px solid var(--vp-c-divider-light);
 }
 
 .VPSidebarItem.level-0 > .item .text {
   font-weight: var(--vp-font-weight-semibold);
+  color: var(--vp-c-text-1);
 }
 
 .VPSidebarItem .link {
   border-radius: var(--vp-radius-small);
-  padding: 0.35rem 0.75rem;
-  margin: 0.15rem 0;
+  padding: 0.4rem 0.75rem;
+  margin: 0.2rem 0;
+  transition: background-color 0.2s ease;
 }
 
 .VPSidebarItem .link:hover {
-  background-color: var(--vp-c-bg-elv-mute);
+  background-color: var(--vp-c-bg-soft);
+  color: var(--vp-c-brand-1);
 }
 
-/* Better link styling */
+.VPSidebarItem.level-1 .link {
+  margin-left: 0.75rem;
+  font-size: 0.9em;
+}
+
+.VPSidebarItem.level-2 .link {
+  margin-left: 1.5rem;
+  font-size: 0.85em;
+  color: var(--vp-c-text-3);
+}
+
+/* Clean link styling */
 .vp-doc a {
   text-decoration: none;
-  border-bottom: 1px dotted currentColor;
+  color: var(--vp-c-brand-1);
+  transition: color 0.2s ease;
+  font-weight: var(--vp-font-weight-medium);
 }
 
 .vp-doc a:hover {
-  text-decoration: none;
-  border-bottom-style: solid;
+  color: var(--vp-c-brand-2);
+  text-decoration: underline;
 }
 
-/* Header styling for better visual hierarchy */
-.vp-doc h1, .vp-doc h2, .vp-doc h3 {
-  font-weight: var(--vp-font-weight-semibold);
-  border-bottom: none;
-  padding-bottom: 0.3em;
-  margin-top: 1.8em;
-  margin-bottom: 1em;
+/* Modern header styling with better visual hierarchy */
+.vp-doc h1, 
+.vp-doc h2, 
+.vp-doc h3, 
+.vp-doc h4, 
+.vp-doc h5, 
+.vp-doc h6 {
+  font-weight: var(--vp-font-weight-bold);
   color: var(--vp-c-text-1);
+  line-height: var(--vp-line-height-tight);
+  letter-spacing: var(--vp-tracking-tight);
+  position: relative;
 }
 
 .vp-doc h1 {
-  border-bottom: 1px solid var(--vp-c-divider);
-  margin-top: 0;
-  padding-bottom: 0.5em;
-  font-size: 2.2em;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  padding: 0 0 0.75rem 0;
+  color: var(--vp-c-brand-1);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-align: left;
+  border: none;
+  position: relative;
+}
+
+.vp-doc h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--vp-c-brand-1), var(--vp-c-brand-2));
+  border-radius: 2px;
 }
 
 .vp-doc h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem 0;
+  color: var(--vp-c-text-1);
+  line-height: 1.3;
+  position: relative;
+  padding-left: 1rem;
   border-bottom: 1px solid var(--vp-c-divider-light);
-  font-size: 1.6em;
+  padding-bottom: 0.5rem;
+}
+
+.vp-doc h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  width: 3px;
+  height: 1.5rem;
+  background: var(--vp-c-brand-1);
+  border-radius: 2px;
 }
 
 .vp-doc h3 {
-  font-size: 1.3em;
+  font-size: var(--vp-font-size-2xl);
+  margin: 2rem 0 1rem 0;
+  color: var(--vp-c-text-1);
 }
 
-/* Table styling */
+.vp-doc h4 {
+  font-size: var(--vp-font-size-xl);
+  margin: 1.5rem 0 0.75rem 0;
+  color: var(--vp-c-text-1);
+}
+
+.vp-doc h5 {
+  font-size: var(--vp-font-size-lg);
+  margin: 1.25rem 0 0.5rem 0;
+  color: var(--vp-c-text-2);
+}
+
+.vp-doc h6 {
+  font-size: var(--vp-font-size-base);
+  margin: 1rem 0 0.5rem 0;
+  color: var(--vp-c-text-2);
+  text-transform: uppercase;
+  letter-spacing: var(--vp-tracking-wide);
+}
+
+/* Clean table styling */
 .vp-doc table {
   border-radius: var(--vp-radius);
   overflow: hidden;
@@ -216,22 +356,29 @@
   border-collapse: collapse;
   display: table;
   min-width: max-content;
+  border: 1px solid var(--vp-c-divider);
 }
 
 .vp-doc table th {
   background-color: var(--vp-c-bg-soft);
   font-weight: var(--vp-font-weight-semibold);
-  padding: 0.75em 1em;
+  padding: 0.75rem 1rem;
   text-align: left;
-  border-bottom: 1px solid var(--vp-c-divider-light);
+  border-bottom: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-1);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .vp-doc table td {
-  padding: 0.75em 1em;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--vp-c-divider-light);
+  color: var(--vp-c-text-2);
 }
 
-.vp-doc table th, .vp-doc table td {
+.vp-doc table th, 
+.vp-doc table td {
   vertical-align: top;
 }
 
@@ -239,18 +386,35 @@
   border-bottom: none;
 }
 
-/* Responsive wrapper for tables on mobile - with improved UX */
+.vp-doc table tr:hover {
+  background-color: var(--vp-c-brand-soft);
+}
+
+/* Table improvements */
+.vp-doc table .nowrap {
+  white-space: nowrap;
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.85em;
+}
+
+.vp-doc table .text-center {
+  text-align: center;
+}
+
+.vp-doc table .text-right {
+  text-align: right;
+}
+
 .vp-doc {
   overflow-x: auto;
 }
 
-/* Specific wrapper for better mobile experience */
-.vp-doc > div:has(> table) {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin: 0 -1.5rem;
-  padding: 0 1.5rem;
-  width: calc(100% + 3rem);
+/* Simple mobile table handling */
+@media (max-width: 768px) {
+  .vp-doc {
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -301,7 +465,8 @@
   --vp-code-lang-color: #888888;
   
   /* Additional color variables for consistency */
-  --vp-c-green-soft: #f0f7ff;
+  --vp-c-blue-soft: #eff6ff;
+  --vp-c-green-soft: #f0fdf4;
   --vp-c-yellow-soft: #fffbeb;
   --vp-c-red-soft: #fef2f2;
   --vp-c-green-1: #22c55e;
@@ -312,49 +477,88 @@
   --vp-c-red-2: #dc2626;
 }
 
-/* Dark mode color overrides */
+/* Enhanced dark mode color overrides */
 :root.dark {
-  /* Main colors */
-  --vp-c-bg: #1a1a1a;
-  --vp-c-bg-soft: #222222;
-  --vp-c-bg-soft-down: #2a2a2a;
-  --vp-c-bg-elv: #252525;
-  --vp-c-bg-elv-up: #151515;
-  --vp-c-bg-elv-down: #2a2a2a;
-  --vp-c-bg-elv-mute: #303030;
+  /* Modern dark mode colors */
+  --vp-c-bg: #0d1117;
+  --vp-c-bg-soft: #161b22;
+  --vp-c-bg-soft-down: #1c2128;
+  --vp-c-bg-elev: #161b22;
+  --vp-c-bg-elev-up: #0d1117;
+  --vp-c-bg-elev-down: #1c2128;
+  --vp-c-bg-elev-mute: #1c2128;
+  --vp-c-bg-overlay: rgba(13, 17, 23, 0.95);
   
-  /* Text colors */
-  --vp-c-text-1: #e6e6e6;
-  --vp-c-text-2: #bfbfbf;
-  --vp-c-text-3: #8c8c8c;
+  /* Enhanced text colors for better readability */
+  --vp-c-text-1: #f0f6fc;
+  --vp-c-text-2: #c9d1d9;
+  --vp-c-text-3: #8b949e;
+  --vp-c-text-4: #656d76;
   
-  /* Divider colors */
-  --vp-c-divider: rgba(212, 212, 212, 0.15);
-  --vp-c-divider-light: rgba(212, 212, 212, 0.08);
-  --vp-c-gutter: #1f1f1f;
+  /* Improved divider colors for dark mode */
+  --vp-c-divider: #30363d;
+  --vp-c-divider-light: #21262d;
+  --vp-c-divider-lighter: #181b20;
+  --vp-c-gutter: #21262d;
   
-  /* Code block colors */
-  --vp-code-block-bg: #1e1e1e;
-  --vp-code-color: #dcdcdc;
-  --vp-code-line-highlight-color: rgba(255, 255, 255, 0.07);
-  --vp-code-lang-color: #a3a3a3;
+  /* Code block colors for dark mode */
+  --vp-code-block-bg: #0d1117;
+  --vp-code-color: #f0f6fc;
+  --vp-code-line-highlight-color: rgba(240, 246, 252, 0.04);
+  --vp-code-lang-color: #8b949e;
   
-  /* Brand colors adjustments for dark mode */
-  --vp-c-brand-1: #6fa8ff;
-  --vp-c-brand-2: #5a9aff;
-  --vp-c-brand-3: #4a8aff;
-  --vp-c-brand-soft: rgba(111, 168, 255, 0.16);
+  /* Enhanced brand colors for dark mode */
+  --vp-c-brand-1: #58a6ff;
+  --vp-c-brand-2: #4c8edb;
+  --vp-c-brand-3: #3b7ddd;
+  --vp-c-brand-soft: rgba(88, 166, 255, 0.12);
+  --vp-c-brand-gradient: linear-gradient(135deg, #58a6ff 0%, #4c8edb 100%);
+  
+  /* Updated accent colors for dark mode */
+  --vp-c-accent: #fbbf24;
+  --vp-c-accent-soft: rgba(251, 191, 36, 0.1);
+  --vp-c-success: #34d399;
+  --vp-c-warning: #fbbf24;
+  --vp-c-error: #f87171;
   
   /* Additional color variables for dark mode */
-  --vp-c-green-soft: #1a283d;
-  --vp-c-yellow-soft: #3d301a;
-  --vp-c-red-soft: #3d1a1f;
-  --vp-c-green-1: #4ade80;
-  --vp-c-green-2: #22c55e;
+  --vp-c-blue-soft: #1e3a8a;
+  --vp-c-green-soft: #064e3b;
+  --vp-c-yellow-soft: #78350f;
+  --vp-c-red-soft: #7f1d1d;
+  --vp-c-bg-overlay: rgba(15, 15, 35, 0.9);
+  --vp-c-divider-lighter: rgba(248, 250, 252, 0.04);
+  --vp-c-green-1: #34d399;
+  --vp-c-green-2: #10b981;
   --vp-c-yellow-1: #fbbf24;
   --vp-c-yellow-2: #f59e0b;
   --vp-c-red-1: #f87171;
   --vp-c-red-2: #ef4444;
+  
+  /* Enhanced shadows for dark mode */
+  --vp-shadow-1: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --vp-shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --vp-shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --vp-shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --vp-shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --vp-shadow-glow: 0 0 0 1px rgba(59, 130, 246, 0.1), 0 0 20px rgba(59, 130, 246, 0.2);
+  
+  /* Enhanced shadows for dark mode */
+  --vp-shadow-1: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --vp-shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --vp-shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --vp-shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --vp-shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --vp-shadow-glow: 0 0 0 1px rgba(129, 140, 248, 0.1), 0 0 20px rgba(129, 140, 248, 0.2);
+  
+  /* Updated mesh gradient for dark mode */
+  --vp-mesh-gradient: radial-gradient(at 40% 20%, hsla(228, 100%, 74%, 0.08) 0px, transparent 50%), 
+                     radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 0.08) 0px, transparent 50%),
+                     radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 0.05) 0px, transparent 50%),
+                     radial-gradient(at 80% 50%, hsla(340, 100%, 76%, 0.08) 0px, transparent 50%),
+                     radial-gradient(at 0% 100%, hsla(22, 100%, 77%, 0.08) 0px, transparent 50%),
+                     radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 0.08) 0px, transparent 50%),
+                     radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0.08) 0px, transparent 50%);
 }
 
 /* Better responsive behavior */
@@ -372,13 +576,13 @@
 
 /* Search improvements */
 .VPLocalSearchBox .input {
-  background: var(--vp-c-bg-elv);
+  background: var(--vp-c-bg-elev);
   border: 1px solid var(--vp-c-divider-light);
   border-radius: var(--vp-radius);
   padding: 0.5rem 1rem;
 }
 
-/* Button styling */
+/* Simple button styling */
 :root {
   --vp-button-brand-border: transparent;
   --vp-button-brand-text: #fff;
@@ -393,6 +597,16 @@
 
 .VPButton {
   border-radius: var(--vp-radius-small);
+  font-weight: var(--vp-font-weight-medium);
+  transition: background-color 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+  box-shadow: var(--vp-shadow-1);
+}
+
+.VPButton:hover {
+  box-shadow: var(--vp-shadow-2);
 }
 
 /* Improved layout spacing */
@@ -406,17 +620,26 @@
   border-bottom: 1px solid var(--vp-c-divider-light);
 }
 
-/* List improvements */
-.vp-doc ul, .vp-doc ol {
-  padding-left: 1.25rem;
+/* Simple list styling */
+.vp-doc ul, 
+.vp-doc ol {
+  padding-left: 1.5rem;
   margin: 1rem 0;
 }
 
-.vp-doc li {
-  margin-bottom: 0.3rem;
+.vp-doc ul li {
+  margin-bottom: 0.5rem;
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
 }
 
-/* Blockquote styling */
+.vp-doc ol li {
+  margin-bottom: 0.5rem;
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+}
+
+/* Simple blockquote styling */
 .vp-doc blockquote {
   border-left: 4px solid var(--vp-c-brand-1);
   background-color: var(--vp-c-bg-soft);
@@ -425,11 +648,106 @@
   border-radius: 0 var(--vp-radius) var(--vp-radius) 0;
 }
 
-/* Improved content area */
+.vp-doc blockquote p {
+  margin: 0;
+  color: var(--vp-c-text-2);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.vp-doc blockquote cite {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875em;
+  color: var(--vp-c-text-3);
+  font-style: normal;
+}
+
+/* Clean content area styling */
 .VPDoc {
-  padding: 32px 0;
+  padding: 2rem 0;
 }
 
 .VPDoc.has-aside .content-container {
   max-width: 100%;
+}
+
+/* Simple focus states */
+*:focus {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+}
+
+button:focus,
+.VPButton:focus,
+a:focus {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+}
+
+/* Simple scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vp-c-bg-soft);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vp-c-divider-light);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--vp-c-text-3);
+}
+
+/* Removed complex animations for better performance */
+
+/* Print styles */
+@media print {
+  .VPNavBar,
+  .VPSidebar,
+  .VPLocalSearchBox,
+  .VPButton {
+    display: none !important;
+  }
+  
+  .VPContent {
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  .vp-doc {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --vp-c-divider: rgba(0, 0, 0, 0.3);
+    --vp-c-divider-light: rgba(0, 0, 0, 0.15);
+    --vp-c-text-2: #000000;
+  }
+  
+  :root.dark {
+    --vp-c-divider: rgba(255, 255, 255, 0.5);
+    --vp-c-divider-light: rgba(255, 255, 255, 0.25);
+    --vp-c-text-2: #ffffff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
