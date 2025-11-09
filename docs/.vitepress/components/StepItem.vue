@@ -113,4 +113,69 @@ const stepNumber = computed(() => props.step);
   z-index: -1;
   transition: all 0.3s ease;
 }
+
+.dark .step-number {
+  background-color: white;
+  color: #212121;
+  border-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dark .step-title {
+  color: #e0e0e0;
+  border-bottom-color: #424242;
+}
+
+.dark .step-body {
+  color: #bdbdbd;
+}
+
+.dark .step-body :deep(code) {
+  background-color: #616161;
+  color: #e0e0e0;
+}
+
+.dark .step-body :deep(pre) {
+  background-color: #616161;
+  color: #e0e0e0;
+}
+
+.dark .step-line {
+  background-color: white;
+  opacity: 0.8;
+}
+
+/* 也支持系统级暗色模式 */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) .step-number {
+    background-color: white;
+    color: #212121;
+    border-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  :root:not(.light) .step-title {
+    color: #e0e0e0;
+    border-bottom-color: #424242;
+  }
+
+  :root:not(.light) .step-body {
+    color: #bdbdbd;
+  }
+
+  :root:not(.light) .step-body :deep(code) {
+    background-color: #616161;
+    color: #e0e0e0;
+  }
+
+  :root:not(.light) .step-body :deep(pre) {
+    background-color: #616161;
+    color: #e0e0e0;
+  }
+
+  :root:not(.light) .step-line {
+    background-color: white;
+    opacity: 0.8;
+  }
+}
 </style>
