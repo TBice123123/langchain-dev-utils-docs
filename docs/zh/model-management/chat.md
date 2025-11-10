@@ -44,6 +44,13 @@ description="该大模型提供商所支持的所有 tool_choice 取值"
 :required="false"
 :default="null"
 />
+<Params
+name="keep_reasoning_content"
+type="bool"
+description="是否保留模型推理内容（reasoning_content）在后续 messages 中，默认 False，仅对推理模型生效。"
+:required="false"
+:default="false"
+/>
 
 对于上述参数的具体使用方法如下：
 
@@ -170,6 +177,34 @@ register_model_provider(
 
 2. **强制工具调用以确保结构化输出**  
    默认情况下，本库不会强制模型调用特定工具，可能导致结构化输出为 `None`。若你的模型提供商支持强制调用指定工具（例如允许设置`tool_choice={"type": "function", "function": {"name": "get_weather"}}`），则可在本参数中包含 `"specific"`。 启用后，系统在绑定对应工具的时候也会传入上述的参数，强制模型调用指定工具，确保输出符合预期结构。
+
+<StepItem step="5" title="设置 keep_reasoning_content（可选）"></StepItem>
+
+这个参数仅在 `chat_model` 为字符串且为 `openai-compatible` 的时候有效。但与别的参数不同的是，它仅仅针对推理模型。这个参数的作用是用于控制最终传给模型的上下文历史记录（`messages`）中要不要保留模型推理内容（`reasoning content`）。默认是 `False`，即不保留，这也是大部分模型提供商要求的方式，即最终传给大模型的上下文内容不应该包含推理内容。如下所示，这是大多数提供商的 `messages` 格式，不包含推理内容：
+
+```json
+[
+  { "role": "user", "content": "你好" },
+  { "role": "assistant", "content": "你好！有什么我可以帮你的吗？" }
+]
+```
+
+但是有些提供商也会建议保留推理内容进一步提高推理能力，尤其是在面对多步工具调用的复杂任务场景。**本参数的作用就是为了应对这个情况。** 当参数为 `True`（保留推理内容）时，传入模型的 `messages` 如下：
+
+```json
+[
+  { "role": "user", "content": "你好" },
+  {
+    "role": "assistant",
+    "content": "你好！有什么我可以帮你的吗？",
+    "reasoning_content": "用户说了‘你好’，这是打招呼，我应该礼貌回应并主动询问需求。"
+  }
+]
+```
+
+值得注意的是，大部分情况下你不应该主动设置这个参数为 `true`，因为传入推理内容会导致上下文消耗增多，有些提供商甚至不允许传入推理内容（如 DeepSeek）。除非模型提供商文档中明确建议传入，此时你可以考虑传入。
+
+**注意**：上面例子比较简单，实际在智能体场景下部分 message 可能会包含工具调用等内容。
 
 ## 批量注册
 

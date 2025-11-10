@@ -44,6 +44,13 @@ description="All supported tool_choice values for this LLM provider"
 :required="false"
 :default="null"
 />
+<Params
+name="keep_reasoning_content"
+type="bool"
+description="Whether to keep the model's reasoning content (reasoning_content) in the subsequent messages, default False, only takes effect for reasoning models."
+:required="false"
+:default="false"
+/>
 
 The specific usage of these parameters is as follows:
 
@@ -170,6 +177,34 @@ This parameter is primarily used in the following two scenarios:
 
 2. **Forcing tool calls to ensure structured output**  
    By default, this library does not force the model to call a specific tool, which might result in structured output being `None`. If your model provider supports forcing the call of a specified tool (e.g., allowing setting `tool_choice={"type": "function", "function": {"name": "get_weather"}}`), you can include `"specific"` in this parameter. When enabled, the system will also pass the corresponding parameter when binding the tool, forcing the model to call the specified tool and ensuring the output conforms to the expected structure.
+
+<StepItem step="5" title="Set keep_reasoning_content (Optional)"></StepItem>
+
+This parameter is only valid when `chat_model` is a string and set to `openai-compatible`. Unlike other parameters, it applies exclusively to reasoning models. Its purpose is to control whether the model's reasoning content (`reasoning content`) is retained in the final context history (`messages`) passed to the model. The default value is `False`, meaning reasoning content is not retained—this is the approach required by most model providers, as the final context sent to the large model should not include reasoning details. Below is the standard `messages` format used by most providers, which excludes reasoning content:
+
+```json
+[
+  { "role": "user", "content": "Hello" },
+  { "role": "assistant", "content": "Hello! How can I assist you?" }
+]
+```
+
+However, some providers recommend retaining reasoning content to further enhance reasoning capabilities, particularly in complex scenarios involving multi-step tool calls. **This parameter is designed specifically to support such cases.** When set to `True` (retain reasoning content), the `messages` passed to the model will appear as follows:
+
+```json
+[
+  { "role": "user", "content": "Hello" },
+  {
+    "role": "assistant",
+    "content": "Hello! How can I assist you?",
+    "reasoning_content": "The user said 'Hello,' which is a greeting. I should respond politely and proactively ask about their needs."
+  }
+]
+```
+
+It is important to note that in most cases, you should not set this parameter to `True`, as including reasoning content increases context length and may be explicitly prohibited by certain providers (e.g., DeepSeek). Only if the model provider’s documentation explicitly recommends including reasoning content should you consider enabling this option.
+
+**Note**: The above example is simplified. In actual agent scenarios, some messages may include tool calls and other complex elements.
 
 ## Batch Registration
 

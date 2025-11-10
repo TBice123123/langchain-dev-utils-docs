@@ -5,11 +5,12 @@
 注册聊天模型的提供者。
 
 ```python
-
 def register_model_provider(
     provider_name: str,
     chat_model: ChatModelType,
     base_url: Optional[str] = None,
+    tool_choice: Optional[ToolChoiceType] = None,
+    keep_reasoning_content: bool = False,
 )-> None:
 ```
 
@@ -19,6 +20,7 @@ def register_model_provider(
 - `chat_model`：ChatModel 类或支持的提供者字符串类型，必填
 - `base_url`：可选字符串类型，提供者的 BaseURL
 - `tool_choice`：可选列表类型,代表模型提供商支持的`tool_choice`参数
+- `keep_reasoning_content`：可选布尔类型,是否在后续的 messages 中保留推理内容。
 
 **示例：**
 
@@ -95,6 +97,7 @@ class ChatModelProvider(TypedDict):
     chat_model: ChatModelType
     base_url: NotRequired[str]
     tool_choice: NotRequired[ToolChoiceType]
+    keep_reasoning_content: NotRequired[bool]
 ```
 
 **字段说明：**
@@ -103,6 +106,7 @@ class ChatModelProvider(TypedDict):
 - `chat_model`：BaseChatModel 类型或字符串类型，必填，聊天模型类或字符串
 - `base_url`：非必需字符串类型，基础 URL
 - `tool_choice`：非必需列表类型,代表模型提供商支持的`tool_choice`参数
+- `keep_reasoning_content`：非必需布尔类型,是否在后续的 messages 中保留推理内容。
 
 ## ToolChoiceType
 
