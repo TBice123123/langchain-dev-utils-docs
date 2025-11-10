@@ -143,19 +143,25 @@ This will provide an OpenAI-compatible API at `http://localhost:8000/v1`.
 :::
 
 <StepItem step="4" title="Set tool_choice (Optional)"></StepItem>
+This parameter takes effect only when `chat_model` is the string `"openai-compatible"`.
 
-This parameter only needs to be explicitly set when `chat_model` is the string `"openai-compatible"`. This library provides this parameter to enhance compatibility.
-Most model providers support the `tool_choice` parameter. In LangChain, the `bind_tools` method of some chat model classes allows setting it via the `tool_choice` parameter. This parameter typically accepts the following string values:
+**Background**
 
-- `auto`: Lets the model decide whether to call tools (default behavior for most providers);
-- `none`: Prevents calling any tools;
+`tool_choice` is a common parameter in the API endpoints of most model providers. This parameter typically accepts the following values:
+
+- `auto`: The model autonomously decides whether to call a tool (the default behavior for most providers);
+- `none`: Prohibits calling any tools;
 - `required`: Forces the model to call at least one tool;
 - `any`: Allows calling any tool (supported by some providers);
-- `Specific tool name`: Forces the model to call the specified tool by name.
+- `Specify a particular tool`: Forces the model to call a tool with a specified name (generally requiring the specific name of the tool to be passed; for example, in the OpenAI API, it would be passed as `tool_choice={"type": "function", "function": {"name": "get_weather"}}`).
 
-However, different model providers support different ranges of `tool_choice` values. To improve compatibility, this library introduces a configuration item to declare the actual `tool_choice` options supported by the current model.
+However, the support scope for `tool_choice` varies among different model providers. Some support most of the values mentioned above, while others only support the most basic `auto` value.
 
-This configuration item is a list of strings, where each string can only be one of `auto`, `none`, `any`, `required`, or `specific`. The first four correspond to standard `tool_choice` strategies, while `specific` is a special identifier specific to this library, representing the last strategy, i.e., forcing the call of a specified tool.
+Nevertheless, to enhance stability, some high-level wrapper libraries may pass a specific `tool_choice` parameter. In such cases, if the connected model provider's API does not support it, the call may throw an exception. To address this issue, the default approach of this library is to filter out any `tool_choice` parameter values, ensuring that no `tool_choice` parameter is ultimately passed to the large model API (even if the user explicitly provides a `tool_choice` parameter). This helps minimize errors caused by compatibility issues.
+
+However, there are scenarios where setting `tool_choice` is necessary to improve application stability. For example, in structured output scenarios, issues with prompts or model performance may result in `None` outputs. If the model provider supports the strategy of specifying a particular tool, `tool_choice` can be used to enhance the correctness of structured outputs.
+
+To address this, this library introduces this parameter (also named `tool_choice`; note that its role differs from the `tool_choice` parameter mentioned above). This configuration item is a list of strings, which is empty by default, meaning all `tool_choice` parameter values are filtered. Each string in the list can only be one of the following: `auto`, `none`, `any`, `required`, or `specific`. The first four correspond to the standard `tool_choice` strategies, while `specific` is a unique identifier in this library, representing the last strategy, i.e., specifying a particular tool.
 
 **Example**:  
 vLLM supports `"auto"`, `"none"`, `"required"`, and `tool_choice` specifying a concrete tool name. Therefore, in this library, this parameter should be set as:
@@ -179,32 +185,35 @@ This parameter is primarily used in the following two scenarios:
    By default, this library does not force the model to call a specific tool, which might result in structured output being `None`. If your model provider supports forcing the call of a specified tool (e.g., allowing setting `tool_choice={"type": "function", "function": {"name": "get_weather"}}`), you can include `"specific"` in this parameter. When enabled, the system will also pass the corresponding parameter when binding the tool, forcing the model to call the specified tool and ensuring the output conforms to the expected structure.
 
 <StepItem step="5" title="Set keep_reasoning_content (Optional)"></StepItem>
+This parameter takes effect only when `chat_model` is the string `"openai-compatible"`. Unlike other parameters, it applies specifically to reasoning models.
 
-This parameter is only valid when `chat_model` is a string and set to `openai-compatible`. Unlike other parameters, it applies exclusively to reasoning models. Its purpose is to control whether the model's reasoning content (`reasoning content`) is retained in the final context history (`messages`) passed to the model. The default value is `False`, meaning reasoning content is not retained—this is the approach required by most model providers, as the final context sent to the large model should not include reasoning details. Below is the standard `messages` format used by most providers, which excludes reasoning content:
+**Background**
+
+The purpose of this parameter is to control whether the model's reasoning content should be retained in the final context history (`messages`) passed to the model. The default value is `False`, meaning not to retain it. This is the approach required by most model providers, as the final context content passed to the large model should not include reasoning content. As shown below, this is the `messages` format used by most providers, which excludes reasoning content:
 
 ```json
 [
   { "role": "user", "content": "Hello" },
-  { "role": "assistant", "content": "Hello! How can I assist you?" }
+  { "role": "assistant", "content": "Hello! How can I assist you today?" }
 ]
 ```
 
-However, some providers recommend retaining reasoning content to further enhance reasoning capabilities, particularly in complex scenarios involving multi-step tool calls. **This parameter is designed specifically to support such cases.** When set to `True` (retain reasoning content), the `messages` passed to the model will appear as follows:
+However, some providers may recommend retaining reasoning content to further enhance reasoning capabilities, especially when dealing with complex tasks involving multi-step tool calls. **This parameter is designed specifically to address this scenario.** When the parameter is set to `True` (retain reasoning content), the `messages` passed to the model would look like this:
 
 ```json
 [
   { "role": "user", "content": "Hello" },
   {
     "role": "assistant",
-    "content": "Hello! How can I assist you?",
+    "content": "Hello! How can I assist you today?",
     "reasoning_content": "The user said 'Hello,' which is a greeting. I should respond politely and proactively ask about their needs."
   }
 ]
 ```
 
-It is important to note that in most cases, you should not set this parameter to `True`, as including reasoning content increases context length and may be explicitly prohibited by certain providers (e.g., DeepSeek). Only if the model provider’s documentation explicitly recommends including reasoning content should you consider enabling this option.
+It is important to note that in most cases, you should not actively set this parameter to `true`, as including reasoning content will increase context consumption. Some providers (such as DeepSeek) even prohibit passing reasoning content. Unless explicitly recommended in the model provider's documentation, you should generally avoid enabling this parameter.
 
-**Note**: The above example is simplified. In actual agent scenarios, some messages may include tool calls and other complex elements.
+**Note**: The example above is relatively simple. In actual agent scenarios, some messages may include tool calls or other elements.
 
 ## Batch Registration
 

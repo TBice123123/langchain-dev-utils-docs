@@ -144,21 +144,27 @@ vllm serve Qwen/Qwen3-4B \
 
 <StepItem step="4" title="设置 tool_choice（可选）"></StepItem>
 
-仅当 `chat_model` 为字符串 `"openai-compatible"` 时，才需要显式设置此参数。本库之所以提供该参数是为了增强兼容性。
-大多数模型提供商支持 `tool_choice` 参数。在 LangChain 中，部分对话模型类的 `bind_tools` 方法允许通过 `tool_choice` 参数来设置。该参数通常接受以下字符串值：
+仅当 `chat_model` 为字符串 `"openai-compatible"` 时，此参数才有效。
+
+**背景介绍**
+
+`tool_choice`是大部分模型提供商 API 端点常见的参数。该参数通常接受以下取值：
 
 - `auto`：由模型自主决定是否调用工具（大多数提供商的默认行为）；
 - `none`：禁止调用任何工具；
 - `required`：强制模型必须调用至少一个工具；
 - `any`：允许调用任意工具（部分提供商支持）；
-- `具体工具名称`：强制调用指定名称的工具。
+- `指定某一特定工具`：强制调用指定名称的工具（一般需要传递具体的工具的名称，例如在 OpenAI API 中，需要传递 `tool_choice={"type": "function", "function": {"name": "get_weather"}}`）。
 
-然而，不同模型提供商对 `tool_choice` 的支持范围并不一致。为提升兼容性，本库引入了一个配置项，用于声明当前模型实际支持的 `tool_choice` 选项。
+然而，不同模型提供商对 `tool_choice` 的支持范围并不一致。有些支持上述的大部分取值，有些仅支持最基础的`auto`取值。
+但是，某些高层封装库为了提高其稳定性，会传递某个特定的`tool_choice`参数，此时如果对接的模型提供商 API 不支持，则调用会引发异常。为了解决上述现象，本库默认的做法是过滤任何的`tool_choice`参数取值，使得最终传递给大模型 API 不会有`tool_choice`参数（哪怕使用者显示地传递了`tool_choice`参数），这样做能够尽可能的避免兼容性问题引发的错误。
 
-该配置项是一个字符串列表，每个字符串的取值只能是`auto`、`none`、`any`、`required`、`specific`。其中，前四项对应标准的 `tool_choice` 策略，而 `specific` 是本库特有的标识，表示最后一种策略，即强制调用指定的工具。
+但是，有些时候确实需要通过设置`tool_choice`来提升应用稳定性。例如在结构化输出的场景下，由于提示词问题或者模型性能问题可能会输出 None，此时如果模型提供商支持设置指定某一特定工具的策略方式，那么可以使用`tool_choice`来提高结构化输出的正确性。
+
+对此，本库引入了本参数（参数名称也是`tool_choice`，注意和上面的`tool_choice`参数的作用不同），该配置项是一个字符串列表，默认情况下是一个空列表，即过滤所有的`tool_choice`参数取值。每个字符串的取值只能是`auto`、`none`、`any`、`required`、`specific`。其中，前四项对应标准的 `tool_choice` 策略，而 `specific` 是本库特有的标识，表示最后一种策略，即指定某一特定工具。
 
 **示例**：  
-vLLM 支持 `"auto"`、`"none"`、`"required"` 以及指定具体工具名称的 `tool_choice`。因此，在本库中应将该参数设为：
+vLLM 支持 `"auto"`、`"none"`、`"required"` 以及指定特定工具的 `tool_choice`。因此，在本库中应将该参数设为：
 
 ```python
 from langchain_dev_utils.chat_models import register_model_provider
@@ -170,17 +176,13 @@ register_model_provider(
 )
 ```
 
-本参数主要用于以下两种场景：
-
-1. **针对高层封装库的调用**  
-   某些高层封装（如 `langmem`）可能会传入 `tool_choice` 参数。若当前模型不支持该取值，可通过本参数显式声明模型实际支持的选项（如 `["auto"]`）。系统会自动检测传入的 `tool_choice` 值是否在支持列表中；若不支持，则回退为 `None`（即不传递该参数），避免因不兼容导致报错。
-
-2. **强制工具调用以确保结构化输出**  
-   默认情况下，本库不会强制模型调用特定工具，可能导致结构化输出为 `None`。若你的模型提供商支持强制调用指定工具（例如允许设置`tool_choice={"type": "function", "function": {"name": "get_weather"}}`），则可在本参数中包含 `"specific"`。 启用后，系统在绑定对应工具的时候也会传入上述的参数，强制模型调用指定工具，确保输出符合预期结构。
-
 <StepItem step="5" title="设置 keep_reasoning_content（可选）"></StepItem>
 
-这个参数仅在 `chat_model` 为字符串且为 `openai-compatible` 的时候有效。但与别的参数不同的是，它仅仅针对推理模型。这个参数的作用是用于控制最终传给模型的上下文历史记录（`messages`）中要不要保留模型推理内容（`reasoning content`）。默认是 `False`，即不保留，这也是大部分模型提供商要求的方式，即最终传给大模型的上下文内容不应该包含推理内容。如下所示，这是大多数提供商的 `messages` 格式，不包含推理内容：
+仅当 `chat_model` 为字符串 `"openai-compatible"` 时，此参数才有效。但与别的参数不同的是，它仅仅针对推理模型。
+
+**背景介绍**
+
+这个参数的作用是用于控制最终传给模型的上下文历史记录（`messages`）中要不要保留模型推理内容（`reasoning content`）。默认是 `False`，即不保留，这也是大部分模型提供商要求的方式，即最终传给大模型的上下文内容不应该包含推理内容。如下所示，这是大多数提供商的 `messages` 格式，不包含推理内容：
 
 ```json
 [
