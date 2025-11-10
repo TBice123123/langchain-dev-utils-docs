@@ -20,7 +20,7 @@ def register_model_provider(
 - `chat_model`: ChatModel class or supported provider string type, required
 - `base_url`: optional string, provider's BaseURL
 - `tool_choice`: optional list type, represents the `tool_choice` parameters supported by the model provider
-- `keep_reasoning_content`: optional boolean, whether to retain reasoning content in subsequent messages.
+- `keep_reasoning_content`: optional boolean, whether to retain `reasoning_content` in subsequent messages.
 
 **Example:**
 
@@ -106,7 +106,7 @@ class ChatModelProvider(TypedDict):
 - `chat_model`: BaseChatModel type or string type, required, chat model class or string
 - `base_url`: non-required string type, base URL
 - `tool_choice`: non-required list type, represents the `tool_choice` parameters supported by the model provider
-- `keep_reasoning_content`: non-required boolean type, whether to retain reasoning content in subsequent messages.
+- `keep_reasoning_content`: non-required boolean type, whether to retain `reasoning_content` in subsequent messages.
 
 ## ToolChoiceType
 
