@@ -149,19 +149,17 @@ This parameter takes effect only when `chat_model` is the string `"openai-compat
 
 `tool_choice` is a common parameter in the API endpoints of most model providers. This parameter typically accepts the following values:
 
-- `auto`: The model autonomously decides whether to call a tool (the default behavior for most providers);
-- `none`: Prohibits calling any tools;
+- `auto`: The model decides whether to call a tool (the default behavior for most providers);
+- `none`: Prohibits the model from calling any tool;
 - `required`: Forces the model to call at least one tool;
-- `any`: Allows calling any tool (supported by some providers);
-- `Specify a particular tool`: Forces the model to call a tool with a specified name (generally requiring the specific name of the tool to be passed; for example, in the OpenAI API, it would be passed as `tool_choice={"type": "function", "function": {"name": "get_weather"}}`).
+- `Specify a particular tool`: Forces the model to call a tool with a specified name (generally requiring the specific name of the tool to be passed. For example, in the OpenAI API, it is passed as `tool_choice={"type": "function", "function": {"name": "get_weather"}}`).
 
-However, the support scope for `tool_choice` varies among different model providers. Some support most of the values mentioned above, while others only support the most basic `auto` value.
+However, the extent of support for `tool_choice` varies among different model providers. Some support most of the values mentioned above, while others only support the most basic `auto` value.  
+Nevertheless, to enhance stability, some high-level encapsulation libraries may pass a specific `tool_choice` parameter. If the connected model provider’s API does not support this, the call may trigger an exception. To address this issue, the default approach of this library is to filter out any `tool_choice` parameter values, ensuring that no `tool_choice` parameter is ultimately passed to the large model API (even if the user explicitly passes a `tool_choice` parameter). This approach minimizes errors caused by compatibility issues.
 
-Nevertheless, to enhance stability, some high-level wrapper libraries may pass a specific `tool_choice` parameter. In such cases, if the connected model provider's API does not support it, the call may throw an exception. To address this issue, the default approach of this library is to filter out any `tool_choice` parameter values, ensuring that no `tool_choice` parameter is ultimately passed to the large model API (even if the user explicitly provides a `tool_choice` parameter). This helps minimize errors caused by compatibility issues.
+However, there are scenarios where setting `tool_choice` is necessary to improve application stability. For example, in structured output scenarios, issues with prompts or model performance may result in a `None` output. If the model provider supports the strategy of specifying a particular tool, `tool_choice` can be used to enhance the accuracy of structured outputs.
 
-However, there are scenarios where setting `tool_choice` is necessary to improve application stability. For example, in structured output scenarios, issues with prompts or model performance may result in `None` outputs. If the model provider supports the strategy of specifying a particular tool, `tool_choice` can be used to enhance the correctness of structured outputs.
-
-To address this, this library introduces this parameter (also named `tool_choice`; note that its role differs from the `tool_choice` parameter mentioned above). This configuration item is a list of strings, which is empty by default, meaning all `tool_choice` parameter values are filtered. Each string in the list can only be one of the following: `auto`, `none`, `any`, `required`, or `specific`. The first four correspond to the standard `tool_choice` strategies, while `specific` is a unique identifier in this library, representing the last strategy, i.e., specifying a particular tool.
+To address this, this library introduces this parameter (also named `tool_choice`; note that its role differs from the `tool_choice` parameter mentioned above). This configuration item is a list of strings, which is empty by default, meaning all `tool_choice` parameter values are filtered out. Each string in the list can only take the values `auto`, `none`, `required`, `any`, or `specific`. Among these, the first three correspond to standard `tool_choice` strategies, while the remaining two—`any` (equivalent to `required`, which may be deprecated in the future) and `specific` (a unique identifier in this library, representing the last strategy of specifying a particular tool)—are handled accordingly.
 
 **Example**:  
 vLLM supports `"auto"`, `"none"`, `"required"`, and `tool_choice` specifying a concrete tool name. Therefore, in this library, this parameter should be set as:
@@ -175,14 +173,6 @@ register_model_provider(
     tool_choice=["auto", "none", "required", "specific"]  #[!code highlight]
 )
 ```
-
-This parameter is primarily used in the following two scenarios:
-
-1. **For calls from high-level wrapper libraries**  
-   Some high-level wrappers (like `langmem`) might pass a `tool_choice` parameter. If the current model does not support that value, you can explicitly declare the model's actual supported options (e.g., `["auto"]`) using this parameter. The system will automatically check if the incoming `tool_choice` value is in the supported list; if not, it falls back to `None` (i.e., not passing the parameter), avoiding errors due to incompatibility.
-
-2. **Forcing tool calls to ensure structured output**  
-   By default, this library does not force the model to call a specific tool, which might result in structured output being `None`. If your model provider supports forcing the call of a specified tool (e.g., allowing setting `tool_choice={"type": "function", "function": {"name": "get_weather"}}`), you can include `"specific"` in this parameter. When enabled, the system will also pass the corresponding parameter when binding the tool, forcing the model to call the specified tool and ensuring the output conforms to the expected structure.
 
 <StepItem step="5" title="Set keep_reasoning_content (Optional)"></StepItem>
 This parameter takes effect only when `chat_model` is the string `"openai-compatible"`. Unlike other parameters, it applies specifically to reasoning models.

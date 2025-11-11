@@ -331,12 +331,11 @@ print(response)
 
 With `ModelRouterMiddleware`, you can easily build a multi-model, multi-capability Agent that automatically selects the optimal model based on task type, improving response quality and efficiency.
 
-::: tip Note
-In `model_list`, the `tools` field in each dictionary is used to control the range of tools it can use:
+::: tip Tool Permission Configuration  
+The tool permissions for each model in the `model_list` are determined by the configuration of its `tools` field, which follows the rules below:
 
-- If explicitly passing `[]`, it means the model does not use any tools
-- If passing `[tool1, tool2,...]`, it means the model can only use the specified tools
-- If the `tools` field is not passed, it means the model can use all registered tools
+- **When undefined**: The model inherits all tools loaded in the `tools` parameter of `create_agent`.
+- **When defined as an empty list `[]`**: The model is explicitly disabled from using any tools.
+- **When defined as a non-empty list `[tool1, tool2, ...]`**: This list acts as a "tool whitelist," strictly restricting the model to only call the tools specified in the list. All tools listed here must have been preloaded into the `tools` parameter of `create_agent`.
 
-In short: When the `tools` parameter is provided, the model can only use the tools in that list; if the list is empty, the model has no tools available; when this parameter is not provided, the model has access to all tools by default.
 :::
