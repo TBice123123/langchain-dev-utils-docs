@@ -9,9 +9,8 @@ def register_model_provider(
     provider_name: str,
     chat_model: ChatModelType,
     base_url: Optional[str] = None,
-    tool_choice: Optional[ToolChoiceType] = None,
-    keep_reasoning_content: bool = False,
-)-> None:
+    provider_config: Optional[ProviderConfig] = None,
+) -> None:
 ```
 
 **Parameters:**
@@ -19,36 +18,35 @@ def register_model_provider(
 - `provider_name`: string, required, custom provider name
 - `chat_model`: ChatModel class or supported provider string type, required
 - `base_url`: optional string, provider's BaseURL
-- `tool_choice`: optional list type, represents the `tool_choice` parameters supported by the model provider
-- `keep_reasoning_content`: optional boolean, whether to retain `reasoning_content` in subsequent messages.
+- `provider_config`: optional ProviderConfig type, model provider configuration
 
-**Example:**
+**Examples:**
 
 ```python
-register_model_provider("fakechat",FakeChatModel)
+register_model_provider("fakechat", FakeChatModel)
 register_model_provider("vllm", "openai-compatible", base_url="http://localhost:8000/v1")
 ```
 
 ## batch_register_model_provider
 
-Bulk registers model providers.
+Batch registers model providers.
 
 ```python
 def batch_register_model_provider(
-    providers: list[ChatModelProvider]
-) -> None
+    providers: list[ChatModelProvider],
+) -> None:
 ```
 
 **Parameters:**
 
 - `providers`: ChatModelProvider list type, required, list of provider configurations
 
-**Example:**
+**Examples:**
 
 ```python
 batch_register_model_provider([
-    {"provider": "fakechat", "chat_model": FakeChatModel},
-    {"provider": "vllm", "chat_model": "openai-compatible", "base_url": "http://localhost:8000/v1"},
+    {"provider_name": "fakechat", "chat_model": FakeChatModel},
+    {"provider_name": "vllm", "chat_model": "openai-compatible", "base_url": "http://localhost:8000/v1"},
 ])
 ```
 
@@ -67,13 +65,13 @@ def load_chat_model(
 
 **Parameters:**
 
-- `model`: string, required, model name, formatted as `model_name` or `provider_name:model_name`
+- `model`: string, required, model name in format `model_name` or `provider_name:model_name`
 - `model_provider`: optional string, model provider name
 - `**kwargs`: any type, optional, additional model parameters
 
-**Return Value:** BaseChatModel type, the loaded chat model instance
+**Returns:** BaseChatModel type, loaded chat model instance
 
-**Example:**
+**Examples:**
 
 ```python
 model = load_chat_model("vllm:qwen3-4b")
@@ -81,11 +79,28 @@ model = load_chat_model("vllm:qwen3-4b")
 
 ## ChatModelType
 
-The supported types for the `chat_model` parameter when registering a model provider.
+Supported types for the `chat_model` parameter when registering a model provider.
 
 ```python
 ChatModelType = Union[type[BaseChatModel], Literal["openai-compatible"]]
 ```
+
+## ProviderConfig
+
+Configuration for model providers.
+
+```python
+class ProviderConfig(TypedDict):
+    supported_tool_choice: NotRequired[ToolChoiceType]
+    keep_reasoning_content: NotRequired[bool]
+    support_json_mode: NotRequired[bool]
+```
+
+**Field Descriptions:**
+
+- `supported_tool_choice`: optional list type, represents the `tool_choice` parameters supported by the model provider
+- `keep_reasoning_content`: optional boolean, whether to retain reasoning content (`reasoning_content`) in subsequent messages
+- `support_json_mode`: optional boolean, whether to support the `json_mode` structured output method
 
 ## ChatModelProvider
 
@@ -93,25 +108,23 @@ Chat model provider configuration type.
 
 ```python
 class ChatModelProvider(TypedDict):
-    provider: str
+    provider_name: str
     chat_model: ChatModelType
     base_url: NotRequired[str]
-    tool_choice: NotRequired[ToolChoiceType]
-    keep_reasoning_content: NotRequired[bool]
+    provider_config: NotRequired[ProviderConfig]
 ```
 
 **Field Descriptions:**
 
-- `provider`: string type, required, provider name
-- `chat_model`: BaseChatModel type or string type, required, chat model class or string
-- `base_url`: non-required string type, base URL
-- `tool_choice`: non-required list type, represents the `tool_choice` parameters supported by the model provider
-- `keep_reasoning_content`: non-required boolean type, whether to retain `reasoning_content` in subsequent messages.
+- `provider_name`: string, required, provider name
+- `chat_model`: BaseChatModel type or string type, required, supports passing chat model class or string (currently only supports `"openai-compatible"`)
+- `base_url`: optional string, base URL
+- `provider_config`: optional ProviderConfig type, represents model provider configuration
 
 ## ToolChoiceType
 
-The supported types for the `tool_choice` parameter.
+Supported types for the `tool_choice` parameter.
 
 ```python
-ToolChoiceType = list[Literal["auto", "none", "any", "required", "specific"]]
+ToolChoiceType = list[Literal["auto", "none", "required", "specific"]]
 ```

@@ -38,18 +38,11 @@ description="对话模型基础 URL"
 :default="null"
 />
 <Params
-name="tool_choice"
-type="list[string]"
-description="该大模型提供商所支持的所有 tool_choice 取值"
+name="provider_config"
+type="dict"
+description="对话模型提供商相关配置"
 :required="false"
 :default="null"
-/>
-<Params
-name="keep_reasoning_content"
-type="bool"
-description="是否保留模型推理内容（reasoning_content）在后续 messages 中，默认 False，仅对推理模型生效。"
-:required="false"
-:default="false"
 />
 
 对于上述参数的具体使用方法如下：
@@ -82,7 +75,7 @@ register_model_provider(
 **2.类型为 str**
 
 当 `chat_model` 参数为字符串时，其目前唯一取值为 `"openai-compatible"`，表示将通过模型提供商的 **OpenAI 兼容 API** 进行接入。因为目前很多模型提供商都支持 OpenAI 兼容 API，例如[vLLM](https://github.com/vllm-project/vllm)、[OpenRouter](https://openrouter.ai/)、[Together AI](https://together.ai/) 等。
-此时，本库会使用内置的 `BaseChatOpenAICompatible` 作为实际的聊天模型。
+此时，本库会使用内置的 `BaseChatOpenAICompatible` 作为模板类来创建实际的对话模型类。
 
 `BaseChatOpenAICompatible` 继承自 `langchain-openai` 中的 `BaseChatOpenAI`，并在其基础上进行了多项兼容性优化。为确保功能正常，请务必安装标准版的 `langchain-dev-utils`（安装方法详见 [安装文档](../installation.md)）。
 
@@ -94,8 +87,8 @@ register_model_provider(
 2. **优化结构化输出的默认行为**：  
    在调用 `with_structured_output` 时，`method` 参数的默认值被调整为 `"function_calling"`（而非 `ChatOpenAI` 默认的 `"json_schema"`），从而更好地兼容其它模型。
 
-3. **支持配置 tool_choice**：  
-   对于大多数兼容 OpenAI API 的模型提供商，其 tool_choice 参数可能与 OpenAI 官方 API 支持的有所不同。因此，该对话模型类支持用户指定支持的 `tool_choice`（见下文）。
+3. **支持配置相关配置参数**：  
+   针对与 OpenAI 官方 API 部分参数存在差异的情况，本库提供了 `provider_config` 参数用于解决本问题，例如，不同模型提供商对 `tool_choice` 的支持方式不一致时，可通过在 `provider_config` 中设置 `supported_tool_choice` 进行适配。
 
 <StepItem step="3" title="设置 base_url（可选）"></StepItem>
 
@@ -142,11 +135,16 @@ vllm serve Qwen/Qwen3-4B \
 完成后会提供一个 OpenAI 兼容 API，地址为`http://localhost:8000/v1`。
 :::
 
-<StepItem step="4" title="设置 tool_choice（可选）"></StepItem>
+<StepItem step="4" title="设置 provider_config（可选）"></StepItem>
 
-仅当 `chat_model` 为字符串 `"openai-compatible"` 时，此参数才有效。
+仅当 `chat_model` 为字符串 `"openai-compatible"` 时，此参数才有效。用于配置模型提供商的相关参数。
+目前支持配置以下提供商参数：
 
-**背景介绍**
+- `supported_tool_choice`：支持的 `tool_choice` 取值。
+- `keep_reasoning_content`：是否在传给模型的历史上下文消息中保留推理内容（`reasoning_content`）。
+- `support_json_mode`：是否支持 `json_mode`的结构化输出方式。
+
+**1. supported_tool_choice**
 
 `tool_choice`是大部分模型提供商 API 端点常见的参数。该参数通常接受以下取值：
 
@@ -160,10 +158,11 @@ vllm serve Qwen/Qwen3-4B \
 
 但是，有些时候确实需要通过设置`tool_choice`来提升应用稳定性。例如在结构化输出的场景下，由于提示词问题或者模型性能问题可能会输出 None，此时如果模型提供商支持设置指定某一特定工具的策略方式，那么可以使用`tool_choice`来提高结构化输出的正确性。
 
-对此，本库引入了本参数（参数名称也是`tool_choice`，注意和上面的`tool_choice`参数的作用不同），该配置项是一个字符串列表，默认情况下是一个空列表，即过滤所有的`tool_choice`参数取值。每个字符串的取值只能是`auto`、`none`、`required`、`any`、`specific`。其中，前三项对应标准的 `tool_choice` 策略，而剩余的两个，`any`等同于`required`后续可能会考虑将其废弃，`specific` 是本库特有的标识，表示最后一种策略，即指定某一特定工具。
+对此，本库引入了本配置项`supported_tool_choice`，该配置项是一个字符串列表，默认情况下是一个空列表，即过滤所有的`tool_choice`参数取值。每个字符串的取值只能是`auto`、`none`、`required`、`specific`。其中，前三项对应标准的 `tool_choice` 策略，而`specific` 是本库特有的标识，表示最后一种策略，即指定某一特定工具。
 
-**示例**：  
-vLLM 支持 `"auto"`、`"none"`、`"required"` 以及指定特定工具的 `tool_choice`。因此，在本库中应将该参数设为：
+例如：
+
+vLLM 支持 `auto`、`none`、`required` 以及指定特定工具的 `tool_choice`（即全部的可能的`tool_choice`取值）。因此，在本库中应将该参数设为：
 
 ```python
 from langchain_dev_utils.chat_models import register_model_provider
@@ -171,15 +170,19 @@ from langchain_dev_utils.chat_models import register_model_provider
 register_model_provider(
     provider_name="vllm",
     chat_model="openai-compatible",
-    tool_choice=["auto", "none", "required", "specific"]  #[!code highlight]
+    provider_config={"supported_tool_choice": ["auto", "none", "required", "specific"]},
 )
 ```
 
-<StepItem step="5" title="设置 keep_reasoning_content（可选）"></StepItem>
+**2. support_json_mode**
 
-仅当 `chat_model` 为字符串 `"openai-compatible"` 时，此参数才有效。但与别的参数不同的是，它仅仅针对推理模型。
+结构化输出的实现主要依赖两种方式：`function_calling` 与 `json_mode`。其中，`function_calling` 是当前最常用的方式，适用于绝大多数大模型 API；而 `json_mode` 是部分模型提供商提供的一种结构化输出方式，允许模型直接生成符合指定 JSON Schema 的结构化响应，无需预先定义工具函数，从而简化调用流程并提升输出一致性。
 
-**背景介绍**
+在 OpenAI API 中，启用 `json_mode` 需显式设置 `response_format={"type": "json_object"}`。
+
+若你的模型提供商支持 `json_mode`，可将`support_json_mode`参数设为 `True`，并在调用 `with_structured_output` 时显式指定 `method="json_mode"` 以启用该模式。
+
+**3. keep_reasoning_content**
 
 这个参数的作用是用于控制最终传给模型的上下文历史记录（`messages`）中要不要保留模型推理内容（`reasoning content`）。默认是 `False`，即不保留，这也是大部分模型提供商要求的方式，即最终传给大模型的上下文内容不应该包含推理内容。如下所示，这是大多数提供商的 `messages` 格式，不包含推理内容：
 
@@ -211,7 +214,7 @@ register_model_provider(
 
 如果你需要注册多个模型提供商，可以多次使用`register_model_provider`函数。但是这样显然特别麻烦，因此本库提供了一个批量注册的函数`batch_register_model_provider`。
 
-其接收的参数是 providers，其为一个字典列表，每个字典有四个键分别是`provider`、`chat_model`、`base_url`(可选)、`tool_choice`(可选)。每个键的意义与`register_model_provider`函数中的参数意义相同。
+其接收的参数是 providers，其为一个字典列表，每个字典有四个键分别是`provider_name`、`chat_model`、`base_url`(可选)、`provider_config`(可选)。每个键的意义与`register_model_provider`函数中的参数意义相同。
 
 示例代码如下：
 
@@ -225,11 +228,11 @@ from langchain_core.language_models.fake_chat_models import FakeChatModel
 batch_register_model_provider(
     providers=[
         {
-            "provider": "fake_provider",
+            "provider_name": "fake_provider",
             "chat_model": FakeChatModel,
         },
         {
-            "provider": "vllm",
+            "provider_name": "vllm",
             "chat_model": "openai-compatible",
             "base_url": "http://localhost:8000/v1",
         },
@@ -384,6 +387,7 @@ print(response)
 ```
 
 :::
+
 ::: details 结构化输出
 默认采用`function_calling`方法，因此模型需要支持工具调用
 
@@ -402,7 +406,9 @@ response = model.invoke([HumanMessage("你好，我叫张三，今年25岁")])
 print(response)
 ```
 
+同时，如果你的模型提供商支持`json_mode`，则可在注册模型提供商时，将`provider_config`参数中的`support_json_mode`设置为`True`，并在调用`with_structured_output`时将`method`参数指定为`"json_mode"`以启用该模式。此时，建议在提示词中明确引导模型按照指定的 JSON Schema 格式输出结构化数据。
 :::
+
 除此之外，由于该类继承了`BaseChatOpenAI`,因此支持传递`BaseChatOpenAI`的模型参数，例如`temperature`, `extra_body`等。
 示例代码如下：
 

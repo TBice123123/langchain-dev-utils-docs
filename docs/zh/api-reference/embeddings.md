@@ -43,8 +43,8 @@ def batch_register_embeddings_provider(
 
 ```python
 batch_register_embeddings_provider([
-    {"provider": "fakeembeddings", "embeddings_model": FakeEmbeddings},
-    {"provider": "vllm", "embeddings_model": "openai-compatible", "base_url": "http://localhost:8000/v1"},
+    {"provider_name": "fakeembeddings", "embeddings_model": FakeEmbeddings},
+    {"provider_name": "vllm", "embeddings_model": "openai-compatible", "base_url": "http://localhost:8000/v1"},
 ])
 ```
 
@@ -89,13 +89,13 @@ EmbeddingsType = Union[type[Embeddings], Literal["openai-compatible"]]
 
 ```python
 class EmbeddingProvider(TypedDict):
-    provider: str
+    provider_name: str
     embeddings_model: EmbeddingsType
     base_url: NotRequired[str]
 ```
 
 **字段说明：**
 
-- `provider`：字符串类型，必填，提供者名称
+- `provider_name`：字符串类型，必填，提供者名称
 - `embeddings_model`：Embeddings 类型或字符串类型，必填，嵌入模型类或字符串
 - `base_url`：非必需字符串类型，基础 URL

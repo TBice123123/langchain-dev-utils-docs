@@ -131,11 +131,11 @@ from langchain_core.embeddings.fake import FakeEmbeddings
 batch_register_embeddings_provider(
     providers=[
         {
-            "provider": "fake_provider",
+            "provider_name": "fake_provider",
             "embeddings_model": FakeEmbeddings,
         },
         {
-            "provider": "vllm",
+            "provider_name": "vllm",
             "embeddings_model": "openai-compatible",
             "base_url": "http://localhost:8000/v1",
         },

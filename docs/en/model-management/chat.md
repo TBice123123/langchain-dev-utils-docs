@@ -8,7 +8,7 @@
 >
 > **Estimated Reading Time**: 10 minutes
 
-In `langchain`, the `init_chat_model` function can be used to initialize a chat model instance, but it supports a limited number of model providers. If you wish to use more model providers (especially if your preferred provider is not supported by this function), you can utilize the chat model management functionality provided by this library.
+In `langchain`, the `init_chat_model` function can be used to initialize a chat model instance, but the model providers it supports are relatively limited. If you wish to use more model providers (especially if your preferred provider is not supported by this function), you can utilize the chat model management functionality provided by this library.
 
 To use a chat model, you first need to register the chat model provider using `register_model_provider`, and then you can use `load_chat_model` to load the chat model.
 
@@ -38,28 +38,21 @@ description="Chat model base URL"
 :default="null"
 />
 <Params
-name="tool_choice"
-type="list[string]"
-description="All supported tool_choice values for this LLM provider"
+name="provider_config"
+type="dict"
+description="Chat model provider related configuration"
 :required="false"
 :default="null"
 />
-<Params
-name="keep_reasoning_content"
-type="bool"
-description="Whether to keep the model's reasoning content (reasoning_content) in the subsequent messages, default False, only takes effect for reasoning models."
-:required="false"
-:default="false"
-/>
 
-The specific usage of these parameters is as follows:
+The specific usage of the above parameters is as follows:
 
 <StepItem step="1" title="Set provider_name"></StepItem>
-First, you need to specify the model provider by passing the `provider_name` parameter. This name can be customized, but it's recommended to use a meaningful name (like `vllm`) that refers to the actual provider. Please note that the name should not contain a colon `:`, as this symbol will later be used to separate the provider from the model name.
+First, you need to pass the `provider_name` parameter to specify the model provider. This name can be customized, but it is recommended to use a meaningful name (e.g., `vllm`) to refer to the actual provider. Please note that the name should not contain a colon `:`, as this character will later be used to separate the provider from the model name.
 
 <StepItem step="2" title="Set chat_model"></StepItem>
 
-Next, you need to pass the `chat_model` parameter, which accepts two types: a LangChain `ChatModel` class or a `str`.
+Next, you need to pass the `chat_model` parameter, which accepts two types: a LangChain `ChatModel` or a `str`.
 
 We explain the different types for this parameter separately:
 
@@ -81,27 +74,27 @@ In this example, we use the built-in `FakeChatModel` from `langchain_core`, whic
 
 **2. Type is str**
 
-When the `chat_model` parameter is a string, its only currently accepted value is `"openai-compatible"`, indicating that it will connect via the model provider's **OpenAI-compatible API**. This is because many model providers now support the OpenAI-compatible API, such as [vLLM](https://github.com/vllm-project/vllm), [OpenRouter](https://openrouter.ai/), [Together AI](https://together.ai/), etc.
-In this case, the library will use the built-in `BaseChatOpenAICompatible` as the actual chat model.
+When the `chat_model` parameter is a string, its only current valid value is `"openai-compatible"`, indicating that it will be connected via the model provider's **OpenAI-compatible API**. This is because many model providers currently support the OpenAI-compatible API, such as [vLLM](https://github.com/vllm-project/vllm), [OpenRouter](https://openrouter.ai/), [Together AI](https://together.ai/), etc.
+In this case, the library will use the built-in `BaseChatOpenAICompatible` as the template class to create the actual chat model class.
 
-`BaseChatOpenAICompatible` inherits from `BaseChatOpenAI` in `langchain-openai` and includes several compatibility optimizations on top of it. To ensure proper functionality, make sure to install the standard version of `langchain-dev-utils` (see [Installation Documentation](../installation.md) for installation instructions).
+`BaseChatOpenAICompatible` inherits from `BaseChatOpenAI` in `langchain-openai` and includes multiple compatibility optimizations. To ensure proper functionality, please make sure to install the standard version of `langchain-dev-utils` (see [Installation Documentation](../installation.md) for installation methods).
 
-Compared to directly using `ChatOpenAI` provided by `langchain-openai`, this library's `BaseChatOpenAICompatible` offers the following advantages:
+Compared to directly using `ChatOpenAI` provided by `langchain-openai`, this library's `BaseChatOpenAICompatible` has the following advantages:
 
-1. **Supports outputting more types of reasoning content (`reasoning_content`)**:  
-   `ChatOpenAI` can only output reasoning content natively supported by official OpenAI models, whereas `OpenAICompatibleChatModel` can output reasoning content from other model providers (e.g., openrouter).
+1. **Supports output of more types of reasoning content (`reasoning_content`)**:  
+   `ChatOpenAI` can only output reasoning content natively supported by official OpenAI models, while `OpenAICompatibleChatModel` can output reasoning content from other model providers (e.g., OpenRouter).
 
-2. **Optimized default behavior for structured output**:  
-   When calling `with_structured_output`, the default value for the `method` parameter is adjusted to `"function_calling"` (instead of `"json_schema"` which is the default for `ChatOpenAI`), providing better compatibility with other models.
+2. **Optimizes default behavior for structured output**:  
+   When calling `with_structured_output`, the default value of the `method` parameter is adjusted to `"function_calling"` (instead of the default `"json_schema"` in `ChatOpenAI`), providing better compatibility with other models.
 
-3. **Supports configuring tool_choice**:  
-   For most model providers compatible with the OpenAI API, their `tool_choice` parameter might differ from those supported by the official OpenAI API. Therefore, this chat model class allows users to specify the supported `tool_choice` values (see below).
+3. **Supports configuration of related parameters**:  
+   For cases where parameters differ from the official OpenAI API, this library provides the `provider_config` parameter to address this issue. For example, when different model providers have inconsistent support for `tool_choice`, you can adapt by setting `supported_tool_choice` in `provider_config`.
 
 <StepItem step="3" title="Set base_url (Optional)"></StepItem>
 
-This parameter only needs to be set when `chat_model` is a string (specifically `"openai-compatible"`). You can pass the `base_url` directly in this function, or set the `API_BASE` environment variable for the model provider.
+This parameter only needs to be set when `chat_model` is a string (specifically `"openai-compatible"`). You can pass `base_url` directly in this function or set the model provider's `API_BASE`.
 
-For example, suppose we want to use a model deployed by vLLM, we can set it like this:
+For example, suppose we want to use a model deployed by vLLM. We can set it like this:
 
 ```python
 from langchain_dev_utils.chat_models import register_model_provider
@@ -113,7 +106,7 @@ register_model_provider(
 )
 ```
 
-Or like this:
+Or set it like this:
 
 ```bash
 export VLLM_API_BASE=http://localhost:8000/v1
@@ -129,7 +122,7 @@ register_model_provider(
 ```
 
 ::: tip Supplement
-`vllm` is a well-known large model deployment framework that can serve large models as an OpenAI-compatible API. For example, to deploy the qwen3-4b model, you can use the following command:
+`vllm` is a well-known large model deployment framework that can deploy large models as OpenAI-compatible APIs. For example, to deploy the qwen3-4b model, you can use the following command:
 
 ```bash
 vllm serve Qwen/Qwen3-4B \
@@ -139,30 +132,37 @@ vllm serve Qwen/Qwen3-4B \
 --served-model-name qwen3-4b
 ```
 
-This will provide an OpenAI-compatible API at `http://localhost:8000/v1`.
+After completion, it will provide an OpenAI-compatible API at `http://localhost:8000/v1`.
 :::
 
-<StepItem step="4" title="Set tool_choice (Optional)"></StepItem>
-This parameter takes effect only when `chat_model` is the string `"openai-compatible"`.
+<StepItem step="4" title="Set provider_config (Optional)"></StepItem>
 
-**Background**
+This parameter is only effective when `chat_model` is the string `"openai-compatible"`. It is used to configure parameters related to the model provider.
+Currently, the following provider parameters are supported for configuration:
 
-`tool_choice` is a common parameter in the API endpoints of most model providers. This parameter typically accepts the following values:
+- `supported_tool_choice`: Supported `tool_choice` values.
+- `keep_reasoning_content`: Whether to retain reasoning content (`reasoning_content`) in the historical context messages passed to the model.
+- `support_json_mode`: Whether to support the `json_mode` structured output method.
 
-- `auto`: The model decides whether to call a tool (the default behavior for most providers);
-- `none`: Prohibits the model from calling any tool;
-- `required`: Forces the model to call at least one tool;
-- `Specify a particular tool`: Forces the model to call a tool with a specified name (generally requiring the specific name of the tool to be passed. For example, in the OpenAI API, it is passed as `tool_choice={"type": "function", "function": {"name": "get_weather"}}`).
+**1. supported_tool_choice**
 
-However, the extent of support for `tool_choice` varies among different model providers. Some support most of the values mentioned above, while others only support the most basic `auto` value.  
-Nevertheless, to enhance stability, some high-level encapsulation libraries may pass a specific `tool_choice` parameter. If the connected model provider’s API does not support this, the call may trigger an exception. To address this issue, the default approach of this library is to filter out any `tool_choice` parameter values, ensuring that no `tool_choice` parameter is ultimately passed to the large model API (even if the user explicitly passes a `tool_choice` parameter). This approach minimizes errors caused by compatibility issues.
+`tool_choice` is a common parameter for API endpoints of most model providers. This parameter typically accepts the following values:
 
-However, there are scenarios where setting `tool_choice` is necessary to improve application stability. For example, in structured output scenarios, issues with prompts or model performance may result in a `None` output. If the model provider supports the strategy of specifying a particular tool, `tool_choice` can be used to enhance the accuracy of structured outputs.
+- `auto`: Let the model decide whether to call tools (default behavior for most providers);
+- `none`: Prohibit calling any tools;
+- `required`: Force the model to call at least one tool;
+- `Specify a specific tool`: Force the call of a tool with a specified name (generally requires passing the specific tool's name, e.g., in the OpenAI API, you need to pass `tool_choice={"type": "function", "function": {"name": "get_weather"}}`).
 
-To address this, this library introduces this parameter (also named `tool_choice`; note that its role differs from the `tool_choice` parameter mentioned above). This configuration item is a list of strings, which is empty by default, meaning all `tool_choice` parameter values are filtered out. Each string in the list can only take the values `auto`, `none`, `required`, `any`, or `specific`. Among these, the first three correspond to standard `tool_choice` strategies, while the remaining two—`any` (equivalent to `required`, which may be deprecated in the future) and `specific` (a unique identifier in this library, representing the last strategy of specifying a particular tool)—are handled accordingly.
+However, different model providers do not consistently support the range of `tool_choice` values. Some support most of the values mentioned above, while others only support the most basic `auto` value.
+However, some high-level encapsulation libraries might pass a specific `tool_choice` parameter for stability. If the connected model provider API does not support it, the call will throw an exception. To solve this, this library's default approach is to filter out any `tool_choice` parameter values, ensuring that no `tool_choice` parameter is ultimately passed to the large model API (even if the user explicitly passes a `tool_choice` parameter). This helps avoid errors caused by compatibility issues as much as possible.
 
-**Example**:  
-vLLM supports `"auto"`, `"none"`, `"required"`, and `tool_choice` specifying a concrete tool name. Therefore, in this library, this parameter should be set as:
+However, sometimes it is necessary to set `tool_choice` to improve application stability. For example, in structured output scenarios, None might be output due to prompt issues or model performance problems. If the model provider supports the strategy of specifying a particular tool, then `tool_choice` can be used to improve the correctness of structured output.
+
+To address this, this library introduces the configuration item `supported_tool_choice`. This configuration item is a list of strings. By default, it is an empty list, meaning it filters all `tool_choice` parameter values. Each string value can only be `auto`, `none`, `required`, or `specific`. The first three correspond to standard `tool_choice` strategies, while `specific` is a unique identifier of this library, representing the last strategy, i.e., specifying a particular tool.
+
+For example:
+
+vLLM supports `auto`, `none`, `required`, and `tool_choice` that specifies a particular tool (i.e., all possible `tool_choice` values). Therefore, in this library, this parameter should be set as:
 
 ```python
 from langchain_dev_utils.chat_models import register_model_provider
@@ -170,46 +170,51 @@ from langchain_dev_utils.chat_models import register_model_provider
 register_model_provider(
     provider_name="vllm",
     chat_model="openai-compatible",
-    tool_choice=["auto", "none", "required", "specific"]  #[!code highlight]
+    provider_config={"supported_tool_choice": ["auto", "none", "required", "specific"]},
 )
 ```
 
-<StepItem step="5" title="Set keep_reasoning_content (Optional)"></StepItem>
-This parameter takes effect only when `chat_model` is the string `"openai-compatible"`. Unlike other parameters, it applies specifically to reasoning models.
+**2. support_json_mode**
 
-**Background**
+The implementation of structured output mainly relies on two methods: `function_calling` and `json_mode`. Among them, `function_calling` is the most commonly used method currently, applicable to the vast majority of large model APIs; while `json_mode` is a structured output method provided by some model providers, allowing the model to directly generate structured responses conforming to a specified JSON Schema without pre-defining tool functions, thus simplifying the calling process and improving output consistency.
 
-The purpose of this parameter is to control whether the model's reasoning content should be retained in the final context history (`messages`) passed to the model. The default value is `False`, meaning not to retain it. This is the approach required by most model providers, as the final context content passed to the large model should not include reasoning content. As shown below, this is the `messages` format used by most providers, which excludes reasoning content:
+In the OpenAI API, enabling `json_mode` requires explicitly setting `response_format={"type": "json_object"}`.
+
+If your model provider supports `json_mode`, you can set the `support_json_mode` parameter to `True` and explicitly specify `method="json_mode"` when calling `with_structured_output` to enable this mode.
+
+**3. keep_reasoning_content**
+
+The purpose of this parameter is to control whether to retain the model's reasoning content in the final historical context (`messages`) passed to the model. The default is `False`, meaning not to retain it. This is the method required by most model providers, i.e., the final context content passed to the large model should not include reasoning content. As shown below, this is the `messages` format for most providers, which does not include reasoning content:
 
 ```json
 [
   { "role": "user", "content": "Hello" },
-  { "role": "assistant", "content": "Hello! How can I assist you today?" }
+  { "role": "assistant", "content": "Hello! How can I help you?" }
 ]
 ```
 
-However, some providers may recommend retaining reasoning content to further enhance reasoning capabilities, especially when dealing with complex tasks involving multi-step tool calls. **This parameter is designed specifically to address this scenario.** When the parameter is set to `True` (retain reasoning content), the `messages` passed to the model would look like this:
+However, some providers also recommend retaining reasoning content to further improve reasoning ability, especially in complex task scenarios involving multi-step tool calls. **This parameter is intended to handle this situation.** When the parameter is `True` (retain reasoning content), the `messages` passed to the model are as follows:
 
 ```json
 [
   { "role": "user", "content": "Hello" },
   {
     "role": "assistant",
-    "content": "Hello! How can I assist you today?",
-    "reasoning_content": "The user said 'Hello,' which is a greeting. I should respond politely and proactively ask about their needs."
+    "content": "Hello! How can I help you?",
+    "reasoning_content": "The user said 'Hello', which is a greeting. I should respond politely and proactively ask for needs."
   }
 ]
 ```
 
-It is important to note that in most cases, you should not actively set this parameter to `true`, as including reasoning content will increase context consumption. Some providers (such as DeepSeek) even prohibit passing reasoning content. Unless explicitly recommended in the model provider's documentation, you should generally avoid enabling this parameter.
+It is worth noting that in most cases you should not actively set this parameter to `true` because passing reasoning content will increase context consumption, and some providers even do not allow passing reasoning content (e.g., DeepSeek). Unless the model provider's documentation explicitly recommends passing it, you can consider passing it then.
 
-**Note**: The example above is relatively simple. In actual agent scenarios, some messages may include tool calls or other elements.
+**Note**: The above example is relatively simple; in actual agent scenarios, some messages may contain tool calls and other content.
 
 ## Batch Registration
 
-If you need to register multiple model providers, you can use the `register_model_provider` function multiple times. However, this can be cumbersome. Therefore, this library provides a batch registration function `batch_register_model_provider`.
+If you need to register multiple model providers, you can use the `register_model_provider` function multiple times. However, this is obviously very troublesome. Therefore, this library provides a batch registration function `batch_register_model_provider`.
 
-It accepts a parameter `providers`, which is a list of dictionaries. Each dictionary has four keys: `provider`, `chat_model`, `base_url` (optional), and `tool_choice` (optional). The meaning of each key is the same as the corresponding parameter in the `register_model_provider` function.
+It receives the parameter `providers`, which is a list of dictionaries. Each dictionary has four keys: `provider_name`, `chat_model`, `base_url` (optional), and `provider_config` (optional). The meaning of each key is the same as the corresponding parameter in the `register_model_provider` function.
 
 Example code:
 
@@ -223,11 +228,11 @@ from langchain_core.language_models.fake_chat_models import FakeChatModel
 batch_register_model_provider(
     providers=[
         {
-            "provider": "fake_provider",
+            "provider_name": "fake_provider",
             "chat_model": FakeChatModel,
         },
         {
-            "provider": "vllm",
+            "provider_name": "vllm",
             "chat_model": "openai-compatible",
             "base_url": "http://localhost:8000/v1",
         },
@@ -242,7 +247,7 @@ print(model.invoke("Hello"))
 ```
 
 ::: warning Note
-Both `register_model_provider` and its corresponding batch registration function `batch_register_model_provider` are implemented based on a global dictionary. To avoid multi-threading concurrency issues, please ensure all registrations are completed during the project startup phase. Do not dynamically register providers during runtime.
+Both `register_model_provider` and its corresponding batch registration function `batch_register_model_provider` are implemented based on a global dictionary. To avoid multi-threading concurrency issues, please ensure all registration operations are completed during the project startup phase. Do not dynamically register during runtime.
 :::
 
 ## Loading a Chat Model
@@ -263,12 +268,11 @@ description="Chat model provider name"
 :required="false"
 :default="null"
 />
-
-Additionally, the following points should be noted when using this function:
+Also, the following points should be noted when using this function:
 
 **1. Additional Parameters**
 
-This function can also accept any number of keyword arguments, such as `temperature`, `max_tokens`, etc. For specifics, refer to the documentation of the corresponding model integration class (if `chat_model` is `"openai-compatible"`, you can refer to `ChatOpenAI`).
+This function can also accept any number of keyword arguments, such as `temperature`, `max_tokens`, etc. For details, refer to the corresponding model integration class documentation (if `chat_model` is `"openai-compatible"`, you can refer to `ChatOpenAI`).
 
 **2. model Parameter Format**
 
@@ -277,12 +281,12 @@ The `model` parameter supports two formats:
 1. `provider_name:model_name`
 2. `model_name`
 
-Here, `provider_name` is the name of the provider registered via the `register_model_provider` function.
+Among them, `provider_name` is the provider name registered via the `register_model_provider` function.
 
-The `model_provider` parameter has the same meaning as `provider_name` above and is optional:
+The `model_provider` parameter has the same meaning as the above `provider_name` and is an optional parameter:
 
-- If `model_provider` is not provided, the `model` parameter must be in the `provider_name:model_name` format.
-- If `model_provider` is provided, the `model` parameter must be in the `model_name` format.
+- If `model_provider` is not passed, the `model` parameter must be in the `provider_name:model_name` format;
+- If `model_provider` is passed, the `model` parameter must be in the `model_name` format.
 
 Example code:
 
@@ -295,7 +299,7 @@ response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
 
-You can also pass the `model_provider` parameter directly.
+You can also directly pass the `model_provider` parameter.
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -311,9 +315,9 @@ export VLLM_API_KEY=vllm
 
 **3. Characteristics of the Chat Model Class when chat_model is a String**
 
-For the case mentioned above where `chat_model` is a string (i.e., `"openai-compatible"`), it provides the basic functionalities of a LangChain `ChatModel`, including the following:
+For the case where `chat_model` is a string (i.e., `"openai-compatible"`) as mentioned above, it provides the basic functionality of LangChain's `ChatModel`, including the following:
 
-::: details Standard Invocation
+::: details Regular Invocation
 For example:
 
 ```python
@@ -325,7 +329,7 @@ response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
 
-Also supports asynchronous invocation.
+Also supports asynchronous
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -350,7 +354,7 @@ for chunk in model.stream([HumanMessage("Hello")]):
     print(chunk)
 ```
 
-Also supports asynchronous streaming invocation.
+Also supports asynchronous streaming calls
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -383,8 +387,9 @@ print(response)
 ```
 
 :::
+
 ::: details Structured Output
-Uses the `function_calling` method by default, so the model needs to support tool calling.
+By default, the `function_calling` method is used, so the model needs to support tool calling.
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -401,20 +406,22 @@ response = model.invoke([HumanMessage("Hello, my name is Zhang San, I am 25 year
 print(response)
 ```
 
+Additionally, if your model provider supports `json_mode`, you can set `support_json_mode` in the `provider_config` parameter to `True` when registering the model provider, and specify the `method` parameter as `"json_mode"` when calling `with_structured_output` to enable this mode. In this case, it is recommended to explicitly guide the model in the prompt to output structured data according to the specified JSON Schema.
 :::
-In addition, since this class inherits from `BaseChatOpenAI`, it supports passing model parameters specific to `BaseChatOpenAI`, such as `temperature`, `extra_body`, etc.
+
+Furthermore, since this class inherits from `BaseChatOpenAI`, it supports passing model parameters of `BaseChatOpenAI`, such as `temperature`, `extra_body`, etc.
 Example code:
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
 
-model = load_chat_model("vllm:qwen3-4b", extra_body={"chat_template_kwargs": {"enable_thinking": False}}) # Use extra_body to pass additional parameters, here disabling thinking mode
+model = load_chat_model("vllm:qwen3-4b", extra_body={"chat_template_kwargs": {"enable_thinking": False}}) # Use extra_body to pass additional parameters, here to disable thinking mode
 response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
 
-Also, it supports multimodal data. You can use the OpenAI-compatible multimodal data format or directly use `content_block` from `langchain`. For example:
+Also, it supports passing multimodal data. You can use the OpenAI-compatible multimodal data format or directly use `content_block` in `langchain`. For example:
 
 ```python
 from langchain_core.messages import HumanMessage
@@ -446,7 +453,7 @@ print(response)
 
 **4. Compatibility with Official Functions**
 
-For model providers already supported by the official `init_chat_model` function, you can also load them directly using the `load_chat_model` function without additional registration. Therefore, if you need to integrate multiple models, some of which are officially supported and others are not, consider using `load_chat_model` uniformly for loading. For example:
+For model providers already supported by the official `init_chat_model` function, you can also directly use the `load_chat_model` function to load them without additional registration. Therefore, if you need to integrate multiple models, some of which are officially supported and others are not, you can consider uniformly using `load_chat_model` for loading. For example:
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -463,10 +470,10 @@ print(response)
 ```
 
 <BestPractice>
-    <p>For using this module, the following recommendations are provided:</p>
+    <p>For the use of this module, the following recommendations are provided:</p>
     <ol>
-        <li>If all your models are supported by the official <code>init_chat_model</code>, please use that function directly for best compatibility and stability.</li>
-        <li>If some models are not officially supported, or you need to integrate providers not covered by the official function, you can use the functions in this module.</li>
-        <li>If there is no suitable model integration library available, but the provider offers an OpenAI-compatible API, then you can use the functions in this module.</li>
+        <li>If all models are supported by the official <code>init_chat_model</code>, please use that function directly for optimal compatibility and stability.</li>
+        <li>If some models are not officially supported, or you need to integrate providers not covered by the official function, you can use the functions of this module.</li>
+        <li>If there is no suitable model integration library available, but the provider offers an OpenAI-compatible API, you can use the functions of this module.</li>
     </ol>
 </BestPractice>
