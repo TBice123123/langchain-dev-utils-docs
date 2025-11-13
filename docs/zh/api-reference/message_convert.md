@@ -7,7 +7,7 @@
 ```python
 def convert_reasoning_content_for_ai_message(
     model_response: AIMessage,
-    think_tag: Tuple[str, str] = ("<think>", "</think>")
+    think_tag: Tuple[str, str] = ("<think>", "</think>"),
 ) -> AIMessage
 ```
 
@@ -32,17 +32,17 @@ response = convert_reasoning_content_for_ai_message(
 
 ```python
 def convert_reasoning_content_for_chunk_iterator(
-    model_response: Iterator[BaseMessageChunk],
+    model_response: Iterator[AIMessageChunk | AIMessage],
     think_tag: Tuple[str, str] = ("<think>", "</think>"),
-) -> Iterator[BaseMessageChunk]
+) -> Iterator[AIMessageChunk | AIMessage]
 ```
 
 **参数说明：**
 
-- `model_response`：BaseMessageChunk 迭代器类型，必填，消息块的迭代器
+- `model_response`：AIMessageChunk 或 AIMessage 迭代器类型，必填，消息块的迭代器
 - `think_tag`：字符串元组类型，可选，推理内容的开始和结束标签，默认 `("<think>", "</think>")`
 
-**返回值：** BaseMessageChunk 迭代器类型，处理后的消息块迭代器
+**返回值：** AIMessageChunk 或 AIMessage 迭代器类型，处理后的消息块迭代器
 
 **示例：**
 
@@ -59,14 +59,14 @@ for chunk in convert_reasoning_content_for_chunk_iterator(
 
 ```python
 async def aconvert_reasoning_content_for_chunk_iterator(
-    model_response: AsyncIterator[BaseMessageChunk],
+    model_response: AsyncIterator[AIMessageChunk | AIMessage],
     think_tag: Tuple[str, str] = ("<think>", "</think>"),
-) -> AsyncIterator[BaseMessageChunk]
+) -> AsyncIterator[AIMessageChunk | AIMessage]
 ```
 
 **参数说明：**
 
-- `model_response`：BaseMessageChunk 异步迭代器类型，必填，消息块的异步迭代器
+- `model_response`：AIMessageChunk 或 AIMessage 异步迭代器类型，必填，消息块的异步迭代器
 - `think_tag`：字符串元组类型，可选，推理内容的开始和结束标签，默认 `("<think>", "</think>")`
 
 **返回值：** BaseMessageChunk 异步迭代器类型，处理后的异步消息块迭代器

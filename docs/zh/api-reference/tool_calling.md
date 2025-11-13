@@ -30,9 +30,8 @@ if has_tool_calling(response):
 
 ```python
 def parse_tool_calling(
-    message: AIMessage,
-    first_tool_call_only: bool = False
-) -> Union[Tuple[str, Dict[str, Any]], List[Tuple[str, Dict[str, Any]]]]
+    message: AIMessage, first_tool_call_only: bool = False
+) -> Union[tuple[str, dict], list[tuple[str, dict]]]]
 ```
 
 **参数说明：**

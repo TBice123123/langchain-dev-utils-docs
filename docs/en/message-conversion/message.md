@@ -22,7 +22,7 @@ Parameters are as follows:
 
 <Params
 name="model_response"
-type="AIMessage | Iterable[AIMessageChunk]"
+type="AIMessage | Iterable[AIMessageChunk | AIMessage]"
 description="AI message response returned by the model"
 :required="true"
 :default="null"

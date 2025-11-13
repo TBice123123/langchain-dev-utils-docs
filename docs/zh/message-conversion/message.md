@@ -22,7 +22,7 @@
 
 <Params
 name="model_response"
-type="AIMessage | Iterable[AIMessageChunk]"
+type="AIMessage | Iterable[AIMessageChunk | AIMessage]"
 description="模型返回的 AI 消息响应"
 :required="true"
 :default="null"

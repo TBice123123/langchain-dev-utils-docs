@@ -2,21 +2,21 @@
 
 ## convert_reasoning_content_for_ai_message
 
-Merges reasoning chains into the final response.
+Merges reasoning chain into the final response.
 
 ```python
 def convert_reasoning_content_for_ai_message(
     model_response: AIMessage,
-    think_tag: Tuple[str, str] = ("<think>", "</think>")
+    think_tag: Tuple[str, str] = ("<think>", "</think>"),
 ) -> AIMessage
 ```
 
 **Parameters:**
 
-- `model_response`: AIMessage type, required. AI message containing reasoning content.
-- `think_tag`: Tuple of strings, optional. Start and end tags for reasoning content, defaults to `("<think>", "</think>")`.
+- `model_response`: AIMessage type, required, AI message containing reasoning content
+- `think_tag`: String tuple type, optional, start and end tags for reasoning content, default `("<think>", "</think>")`
 
-**Return Value:** AIMessage type, message with merged reasoning content.
+**Return Value:** AIMessage type, message with merged reasoning content
 
 **Example:**
 
@@ -32,17 +32,17 @@ Merges reasoning content for streaming message chunks.
 
 ```python
 def convert_reasoning_content_for_chunk_iterator(
-    model_response: Iterator[BaseMessageChunk],
+    model_response: Iterator[AIMessageChunk | AIMessage],
     think_tag: Tuple[str, str] = ("<think>", "</think>"),
-) -> Iterator[BaseMessageChunk]
+) -> Iterator[AIMessageChunk | AIMessage]
 ```
 
 **Parameters:**
 
-- `model_response`: Iterator of BaseMessageChunk type, required. Iterator of message chunks.
-- `think_tag`: Tuple of strings, optional. Start and end tags for reasoning content, defaults to `("<think>", "</think>")`.
+- `model_response`: Iterator of AIMessageChunk or AIMessage type, required, iterator of message chunks
+- `think_tag`: String tuple type, optional, start and end tags for reasoning content, default `("<think>", "</think>")`
 
-**Return Value:** Iterator of BaseMessageChunk type, processed message chunk iterator.
+**Return Value:** Iterator of AIMessageChunk or AIMessage type, processed message chunk iterator
 
 **Example:**
 
@@ -59,17 +59,17 @@ Asynchronous version of `convert_reasoning_content_for_chunk_iterator`.
 
 ```python
 async def aconvert_reasoning_content_for_chunk_iterator(
-    model_response: AsyncIterator[BaseMessageChunk],
+    model_response: AsyncIterator[AIMessageChunk | AIMessage],
     think_tag: Tuple[str, str] = ("<think>", "</think>"),
-) -> AsyncIterator[BaseMessageChunk]
+) -> AsyncIterator[AIMessageChunk | AIMessage]
 ```
 
 **Parameters:**
 
-- `model_response`: AsyncIterator of BaseMessageChunk type, required. Async iterator of message chunks.
-- `think_tag`: Tuple of strings, optional. Start and end tags for reasoning content, defaults to `("<think>", "</think>")`.
+- `model_response`: AsyncIterator of AIMessageChunk or AIMessage type, required, asynchronous iterator of message chunks
+- `think_tag`: String tuple type, optional, start and end tags for reasoning content, default `("<think>", "</think>")`
 
-**Return Value:** AsyncIterator of BaseMessageChunk type, processed async message chunk iterator.
+**Return Value:** AsyncIterator of BaseMessageChunk type, processed asynchronous message chunk iterator
 
 **Example:**
 
@@ -92,9 +92,9 @@ def merge_ai_message_chunk(
 
 **Parameters:**
 
-- `chunks`: Sequence of AIMessageChunk type, required. List of message chunks to be merged.
+- `chunks`: Sequence of AIMessageChunk type, required, list of message chunks to merge
 
-**Return Value:** AIMessage type, merged message.
+**Return Value:** AIMessage type, merged message
 
 **Example:**
 
@@ -117,11 +117,11 @@ def format_sequence(
 
 **Parameters:**
 
-- `inputs`: List of Message, Document, or string types, required. List of items to be formatted.
-- `separator`: String type, optional. Separator string, defaults to "-".
-- `with_num`: Boolean type, optional. Whether to add numeric prefixes, defaults to False.
+- `inputs`: List of Message, Document, or strings type, required, list of items to format
+- `separator`: String type, optional, separator string, default "-"
+- `with_num`: Boolean type, optional, whether to add numeric prefix, default False
 
-**Return Value:** String type, formatted string.
+**Return Value:** String type, formatted string
 
 **Example:**
 
