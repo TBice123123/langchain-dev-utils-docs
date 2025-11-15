@@ -233,14 +233,20 @@ class PlanMiddleware(AgentMiddleware):
         self,
         *,
         system_prompt: Optional[str] = None,
-        tools: Optional[list[BaseTool]] = None,
+        write_plan_tool_description: Optional[str] = None,
+        finish_sub_plan_tool_description: Optional[str] = None,
+        read_plan_tool_description: Optional[str] = None,
+        use_read_plan_tool: bool = True,
     ) -> None:
 ```
 
 **Parameters:**
 
 - `system_prompt`: Optional str, system prompt
-- `tools`: Optional list of BaseTool, list of tools
+- `write_plan_tool_description`: Optional str, description for the write_plan tool
+- `finish_sub_plan_tool_description`: Optional str, description for the finish_sub_plan tool
+- `read_plan_tool_description`: Optional str, description for the read_plan tool
+- `use_read_plan_tool`: Optional bool, whether to use the read_plan tool
 
 **Example:**
 

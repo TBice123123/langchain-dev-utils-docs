@@ -2,30 +2,33 @@
 
 > [!NOTE]
 >
-> **Feature Overview**: Provides utility tools to facilitate Agent development.
+> **Overview**: Utility components designed to facilitate Agent development.
 >
-> **Prerequisites**: Understand LangChain's [Middleware](https://docs.langchain.com/oss/python/langchain/middleware).
+> **Prerequisites**: Familiarity with LangChain's [Middleware](https://docs.langchain.com/oss/python/langchain/middleware).
 >
 > **Estimated Reading Time**: 10 minutes
 
-Middleware components are specifically built for `langchain` pre-built Agents. The official library provides some built-in middleware. Based on practical scenarios and the usage context of this library, we provide additional middleware.
-They can be broadly categorized into further encapsulations of official middleware and custom middleware defined by this library.
+Middleware are components specifically built for LangChain’s pre-built Agents. The official LangChain library provides several built-in middleware. This library extends that functionality by offering additional middleware tailored to practical use cases and our specific requirements. These can be broadly categorized into:
 
-## Encapsulated Official Middleware
+- Enhanced wrappers around official middleware
+- Custom middleware developed within this library
 
-These are further encapsulations of official middleware, similar to this library's `create_agent` function, supporting model specification via strings that are compatible with `load_chat_model` (requires prior registration).
-Specifically, there are four middleware types:
+## Wrapped Official Middleware
 
-- SummarizationMiddleware
-- LLMToolSelectorMiddleware
-- ModelFallbackMiddleware
-- LLMToolEmulator
+These are refined versions of LangChain’s official middleware, similar in spirit to this library’s `create_agent` function. They support specifying models via strings compatible with `load_chat_model` (model registration is required).
+
+The following four middleware are currently provided:
+
+- `SummarizationMiddleware`
+- `LLMToolSelectorMiddleware`
+- `ModelFallbackMiddleware`
+- `LLMToolEmulator`
 
 ### SummarizationMiddleware
 
-The core function is to compress conversation content, with functionality completely consistent with the official [SummarizationMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#summarization). However, it only allows string parameters to specify the model.
+Its core purpose is to compress conversation history, identical in functionality to the official [SummarizationMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#summarization). However, it only accepts model specifications as strings.
 
-Usage Example:
+**Usage Example**:
 
 ```python
 from langchain_core.messages import AIMessage
@@ -40,15 +43,15 @@ agent = create_agent(
             messages_to_keep=1,
         )
     ],
-    system_prompt="You are an intelligent AI assistant that can solve user problems",
+    system_prompt="You are an intelligent AI assistant capable of solving user problems.",
 )
-# big_text is a text containing a large amount of content, omitted here
+# big_text is a placeholder for a large block of text
 big_messages = [
     HumanMessage(content="Hello, who are you?"),
-    AIMessage(content="I am your AI assistant"),
-    HumanMessage(content="Write a beautiful long text"),
-    AIMessage(content=f"Okay, I will write a beautiful long text, the content is: {big_text}"),
-    HumanMessage(content="Why did you write this long text?"),
+    AIMessage(content="I'm your AI assistant."),
+    HumanMessage(content="Write a beautiful long passage."),
+    AIMessage(content=f"Sure, here is a beautiful long passage: {big_text}"),
+    HumanMessage(content="Why did you write this long passage?"),
 ]
 response = agent.invoke({"messages": big_messages})
 print(response)
@@ -56,32 +59,27 @@ print(response)
 
 ### LLMToolSelectorMiddleware
 
-The core function is to allow the LLM to select tools itself when dealing with a large number of tools, with functionality completely consistent with the official [LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-selector). However, it also only allows string specification for the model.
+Designed for scenarios with many tools, this middleware uses an LLM to select the most relevant subset before invoking the main model—functionally identical to the official [LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-selector), but only accepts string-based model specs.
 
-Usage Example:
+**Usage Example**:
 
 ```python
-from langchain_dev_utils.agents.middleware import (
-    LLMToolSelectorMiddleware,
-)
+from langchain_dev_utils.agents.middleware import LLMToolSelectorMiddleware
 
 @tool
 def get_current_weather() -> str:
-    """Get the current weather"""
-    return "The weather is sunny today"
-
+    """Get current weather."""
+    return "Sunny today"
 
 @tool
 def search() -> str:
-    """Search"""
+    """Perform a search."""
     return "Search results"
-
 
 @tool
 def run_python() -> str:
-    """Run Python code"""
-    return "Running Python code"
-
+    """Execute Python code."""
+    return "Python executed"
 
 agent = create_agent(
     "vllm:qwen3-4b",
@@ -98,14 +96,12 @@ print(response)
 
 ### ModelFallbackMiddleware
 
-Middleware for falling back to an alternative model when model invocation fails. Functionality is completely consistent with the official [ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback). However, it also only allows string specification for the model.
+This middleware enables fallback to alternative models when the primary model fails—functionally equivalent to the official [ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback), but restricted to string-based model identifiers.
 
-Usage Example:
+**Usage Example**:
 
 ```python
-from langchain_dev_utils.agents.middleware import (
-    ModelFallbackMiddleware,
-)
+from langchain_dev_utils.agents.middleware import ModelFallbackMiddleware
 
 agent = create_agent(
     model="vllm:qwen3-4b",
@@ -117,20 +113,18 @@ agent = create_agent(
     ],
 )
 
-response = agent.invoke({"messages": [HumanMessage(content="Hello.")]}),
+response = agent.invoke({"messages": [HumanMessage(content="Hello.")]})
 print(response)
 ```
 
 ### LLMToolEmulator
 
-Middleware for using large language models to simulate tool calls. Functionality is completely consistent with the official [LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator). However, it also only allows string specification for the model.
+This middleware simulates tool execution using an LLM for testing or prototyping—identical to the official [LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator), but only accepts string-based model specs.
 
-Usage Example:
+**Usage Example**:
 
 ```python
-from langchain_dev_utils.agents.middleware import (
-    LLMToolEmulator,
-)
+from langchain_dev_utils.agents.middleware import LLMToolEmulator
 
 agent = create_agent(
     model="vllm:qwen3-4b",
@@ -142,7 +136,7 @@ agent = create_agent(
     ],
 )
 
-response = agent.invoke({"messages": [HumanMessage(content="What time is it now?")]}),
+response = agent.invoke({"messages": [HumanMessage(content="What time is it now?")]})
 print(response)
 ```
 
@@ -150,40 +144,42 @@ print(response)
 
 ### PlanMiddleware
 
-Task planning middleware for structured decomposition and process management before executing complex tasks.
+A middleware for **task planning**, enabling structured decomposition and process management for complex tasks.
 
-::: tip 📝
-Task planning is an efficient context engineering management strategy. Before executing a task, the large language model first breaks down the overall task into multiple ordered subtasks, forming a task planning list (referred to as a plan in this library). It then executes each subtask in sequence, dynamically updating the task status after completing each step until all subtasks are completed.
+::: tip 📝  
+Task planning is an effective context engineering strategy. Before executing a task, the LLM first breaks it down into an ordered list of subtasks (called a _plan_ in this library). It then executes these subtasks sequentially, dynamically updating their status after each step until completion.
 :::
 
-This middleware is similar in function to the official LangChain [Plan middleware](https://docs.langchain.com/oss/python/langchain/middleware#planning), but differs in tool design. The official middleware only provides the `write_todo` tool, which is oriented towards a todo list structure; whereas this library provides three dedicated tools: `write_plan`, `finish_sub_plan`, and `read_plan`, specifically used for writing, modifying, and querying the planning list (plan list).
+This middleware serves a similar purpose to LangChain’s official [Planning Middleware](https://docs.langchain.com/oss/python/langchain/middleware#planning), but differs in tool design. The official version provides only a `write_todo` tool for managing a todo list, whereas this library offers three specialized tools for managing a _plan list_:
 
-Whether it's `todo` or `plan`, their essence is the same. Therefore, the key difference between this middleware and the official one lies in the tools provided. The official one adds and modifies through a single tool, while this library provides three tools: `write_plan` can be used to write a plan or update plan content, `finish_sub_plan` is used to update the status after completing a subtask, and `read_plan` is used to query the plan content.
+- `write_plan`: create or update the plan
+- `finish_sub_plan`: mark a subtask as completed
+- `read_plan`: query the current plan
 
-Specifically, they are represented by the following three functions:
+These correspond to the following factory functions:
 
-- `create_write_plan_tool`: Function to create a tool for writing plans
-- `create_finish_sub_plan_tool`: Function to create a tool for completing subtasks
-- `create_read_plan_tool`: Function to create a tool for querying plans
+- `create_write_plan_tool()`: creates a tool for writing/updating plans
+- `create_finish_sub_plan_tool()`: creates a tool for marking subtasks as finished
+- `create_read_plan_tool()`: creates a tool for reading the current plan
 
-The parameters these three functions receive are as follows:
+Each function accepts the following optional parameters:
 
-<Params
-name="description"
-type="string"
-description="Tool description. If not provided, the default tool description is used."
-:required="false"
-:default="null"
+<Params  
+name="description"  
+type="string"  
+description="Tool description. If omitted, a default description is used."  
+:required="false"  
+:default="null"  
+/>  
+<Params  
+name="message_key"  
+type="string"  
+description="Key used to update the messages field. Defaults to 'messages' if not provided. (Not applicable to read_plan.)"  
+:required="false"  
+:default="null"  
 />
-<Params
-name="message_key"
-type="string"
-description="Key used to update messages. If not provided, the default messages are used (read_plan tool does not have this parameter)."
-:required="false"
-:default="null"
-/>
 
-Usage example:
+**Basic Usage**:
 
 ```python
 from langchain_dev_utils.agents.middleware.plan import (
@@ -200,109 +196,126 @@ agent = create_agent(
 )
 ```
 
-Note that to use these three tools, you must ensure that the state Schema contains the `plan` key, otherwise an error will occur. For this, you can use the `PlanState` provided by this library to inherit the state Schema.
+> ⚠️ **Note**: To use these tools, your state schema **must** include a `plan` key. You can inherit from the provided `PlanState` to ensure compatibility.
 
-However, the usage above is not recommended in this library. The best practice should be to use PlanMiddleware.
-The parameters of PlanMiddleware are explained as follows:
+However, **direct use of these individual tools is discouraged**. Instead, use `PlanMiddleware`, which handles everything automatically.
 
-<Params
-name="system_prompt"
-type="string"
-description="Optional string type, system prompt."
-:required="false"
-:default="null"
+**PlanMiddleware Parameters**:
+
+<Params  
+name="system_prompt"  
+type="string"  
+description="Optional system prompt."  
+:required="false"  
+:default="null"  
+/>  
+<Params  
+name="write_plan_tool_description"  
+type="string"  
+description="Description for the write_plan tool."  
+:required="false"  
+:default="null"  
+/>  
+<Params  
+name="finish_sub_plan_tool_description"  
+type="string"  
+description="Description for the finish_sub_plan tool."  
+:required="false"  
+:default="null"  
+/>  
+<Params  
+name="read_plan_tool_description"  
+type="string"  
+description="Description for the read_plan tool."  
+:required="false"  
+:default="null"  
+/>  
+<Params  
+name="use_read_plan_tool"  
+type="bool"  
+description="Whether to enable the read_plan tool."  
+:required="false"  
+:default="true"  
 />
-<Params
-name="tools"
-type="list[BaseTool]"
-description="Optional BaseTool list type, tool list. If specified, they will be added to tools. Must be tools created via create_write_plan_tool, create_finish_sub_plan_tool, and create_read_plan_tool."
-:required="false"
-:default="null"
-/>
+
+**Recommended Usage**:
 
 ```python
-from langchain_dev_utils.agents.middleware import (
-    create_write_plan_tool,
-    create_finish_sub_plan_tool,
-    create_read_plan_tool,
-    PlanMiddleware,
-)
-
+from langchain_dev_utils.agents.middleware import PlanMiddleware
 
 agent = create_agent(
     model="vllm:qwen3-4b",
     middleware=[
         PlanMiddleware(
-            tools=[create_write_plan_tool(), create_finish_sub_plan_tool(), create_read_plan_tool()],
+            use_read_plan_tool=True,  # Set to False to disable read_plan
         )
     ],
 )
 
-
 response = agent.invoke(
-    {"messages": [HumanMessage(content="I'm going to New York for a few days, help me plan the itinerary")]}
+    {"messages": [HumanMessage(content="I'm going to New York for a few days. Help me plan my itinerary.")]}
 )
 print(response)
 ```
 
-**Note:**
+`PlanMiddleware` **requires** `write_plan` and `finish_sub_plan`. The `read_plan` tool is enabled by default but can be disabled via `use_read_plan_tool=False`.
 
-1. Both parameters of `PlanMiddleware` are optional. If no parameters are passed, the system will default to using `_DEFAULT_PLAN_SYSTEM_PROMPT` as the system prompt and automatically load the toolset created by `create_write_plan_tool`, `create_finish_sub_plan_tool`, and `create_read_plan_tool`.
-
-2. For the `tools` parameter, only tools created using `create_write_plan_tool`, `create_finish_sub_plan_tool`, and `create_read_plan_tool` are supported. Among them, `create_read_plan_tool` is an optional tool; when only the first two are passed, this middleware can still function normally but will not have the ability to read plans.
+<BestPractice>  
+In most cases, **use `PlanMiddleware` directly** instead of manually integrating the three underlying tools. The middleware automatically manages prompts and agent state, significantly reducing complexity.
+</BestPractice>
 
 ### ModelRouterMiddleware
 
-`ModelRouterMiddleware` is a middleware used for **dynamically routing to the most suitable model based on input content**. It uses a "router model" to analyze user requests and select the most appropriate model from a predefined model list to process the current task.
+`ModelRouterMiddleware` dynamically **routes requests to the most suitable model** based on input content. A dedicated “router model” analyzes the user query and selects the best model from a predefined list.
 
-Its parameters are as follows:
+**Parameters**:
 
-<Params
-name="router_model"
-type="BaseChatModel | string"
-description="The model used to make routing decisions. Can be a string (will be automatically loaded via load_chat_model), e.g., vllm:qwen3-4b; or directly pass an instantiated BaseChatModel object."
-:required="true"
-:default="null"
-/>
-<Params
-name="model_list"
-type="list[dict]"
-description="A list of model configurations, each element is a dictionary that must contain model_name (str), model_description (str), and optionally tools (list[BaseTool]), model_kwargs (dict), model_system_prompt (str)."
-:required="true"
-:default="null"
-/>
-<Params
-name="router_prompt"
-type="string"
-description="Custom prompt for the router model. If None (default), the built-in default prompt template is used."
-:required="false"
-:default="null"
+<Params  
+name="router_model"  
+type="BaseChatModel | string"  
+description="The model used to make routing decisions. Can be a string (e.g., 'vllm:qwen3-4b', loaded via load_chat_model) or an instantiated BaseChatModel."  
+:required="true"  
+:default="null"  
+/>  
+<Params  
+name="model_list"  
+type="list[dict]"  
+description="A list of model configurations. Each dict must include 'model_name' (str) and 'model_description' (str), and may optionally include 'tools' (list[BaseTool]), 'model_kwargs' (dict), and 'model_system_prompt' (str)."  
+:required="true"  
+:default="null"  
+/>  
+<Params  
+name="router_prompt"  
+type="string"  
+description="Custom prompt for the router model. If None (default), a built-in template is used."  
+:required="false"  
+:default="null"  
 />
 
 **Usage Example**
 
-First, define the model list:
+First, define your model list:
 
 ```python
 model_list = [
     {
         "model_name": "vllm:qwen3-8b",
-        "model_description": "Suitable for general tasks, such as dialogue, text generation, etc.",
+        "model_description": "Suitable for general tasks like chatting and text generation",
         "model_kwargs": {
             "temperature": 0.7,
             "extra_body": {"chat_template_kwargs": {"enable_thinking": False}}
         },
-        "model_system_prompt": "You are an assistant skilled in handling general tasks, such as dialogue, text generation, etc.",
+        "model_system_prompt": "You are an assistant skilled at general tasks such as conversation and text generation.",
     },
     {
         "model_name": "openrouter:qwen/qwen3-vl-32b-instruct",
-        "model_description": "Suitable for visual tasks",
-        "tools": [],  # If this model doesn't need any tools, set this field to an empty list []
+        "model_description": "Optimized for vision-related tasks",
+        "tools": [],  # Explicitly disable all tools
     },
     {
         "model_name": "openrouter:qwen/qwen3-coder-plus",
-        "model_description": "Suitable for code generation tasks",
-        "tools": [run_python_code],  # Only allows the use of run_python_code tool
+        "model_description": "Specialized for code generation",
+        "tools": [run_python_code],  # Only allow run_python_code
     },
 ]
 ```
@@ -314,7 +327,7 @@ from langchain_dev_utils.agents.middleware import ModelRouterMiddleware
 from langchain_core.messages import HumanMessage
 
 agent = create_agent(
-    model="vllm:qwen3-4b",  # This model is only a placeholder, actually dynamically replaced by the middleware
+    model="vllm:qwen3-4b",  # Placeholder; actual model is selected dynamically
     tools=[run_python_code, get_current_time],
     middleware=[
         ModelRouterMiddleware(
@@ -324,18 +337,18 @@ agent = create_agent(
     ],
 )
 
-# The routing middleware will automatically select the most suitable model based on the input content
-response = agent.invoke({"messages": [HumanMessage(content="Help me write a bubble sort code")]})
+# The middleware automatically selects the best model based on input
+response = agent.invoke({"messages": [HumanMessage(content="Write a bubble sort algorithm for me.")]})
 print(response)
 ```
 
-With `ModelRouterMiddleware`, you can easily build a multi-model, multi-capability Agent that automatically selects the optimal model based on task type, improving response quality and efficiency.
+With `ModelRouterMiddleware`, you can easily build a multi-model, multi-capability Agent that auto-selects the optimal model per task, enhancing both quality and efficiency.
 
-::: tip Tool Permission Configuration  
-The tool permissions for each model in the `model_list` are determined by the configuration of its `tools` field, which follows the rules below:
+::: tip Tool Permission Rules  
+Tool access for each model in `model_list` is controlled by its `tools` field as follows:
 
-- **When undefined**: The model inherits all tools loaded in the `tools` parameter of `create_agent`.
-- **When defined as an empty list `[]`**: The model is explicitly disabled from using any tools.
-- **When defined as a non-empty list `[tool1, tool2, ...]`**: This list acts as a "tool whitelist," strictly restricting the model to only call the tools specified in the list. All tools listed here must have been preloaded into the `tools` parameter of `create_agent`.
+- **Not specified**: Inherits all tools passed to `create_agent(tools=...)`.
+- **Empty list `[]`**: All tools are explicitly disabled.
+- **Non-empty list `[tool1, tool2, ...]`**: Acts as a _whitelist_—only these tools are allowed. All listed tools must already be registered in `create_agent(tools=...)`.
 
 :::

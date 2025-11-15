@@ -212,12 +212,33 @@ description="可选字符串类型，系统提示词。"
 :required="false"
 :default="null"
 />
-<Params
-name="tools"
-type="list[BaseTool]"
-description="可选 BaseTool 列表类型，工具列表，指定后会加入到 tools 中，必须是通过 create_write_plan_tool、create_finish_sub_plan_tool 以及 create_read_plan_tool 创建的工具。"
+<Params 
+name="write_plan_tool_description"
+type="string"
+description="可选字符串类型，写计划工具的描述。"
 :required="false"
 :default="null"
+/>
+<Params 
+name="finish_sub_plan_tool_description"
+type="string"
+description="可选字符串类型，完成子计划工具的描述。"
+:required="false"
+:default="null"
+/>
+<Params 
+name="read_plan_tool_description"
+type="string"
+description="可选字符串类型，读计划工具的描述。"
+:required="false"
+:default="null"
+/>
+<Params 
+name="use_read_plan_tool"
+type="bool"
+description="可选布尔类型，是否使用读计划工具。"
+:required="false"
+:default="true"
 />
 
 ```python
@@ -233,7 +254,7 @@ agent = create_agent(
     model="vllm:qwen3-4b",
     middleware=[
         PlanMiddleware(
-            tools=[create_write_plan_tool(), create_finish_sub_plan_tool(), create_read_plan_tool()],
+            use_read_plan_tool=True, #如果不使用读计划工具，可以设置此参数为False
         )
     ],
 )
@@ -245,11 +266,11 @@ response = agent.invoke(
 print(response)
 ```
 
-**注意:**
+`PlanMiddleware` 要求必须使用 `write_plan` 和 `finish_sub_plan` 两个工具，而 `read_plan` 工具默认启用；若不需要使用，可将 `use_read_plan_tool` 参数设为 `False`。
 
-1. `PlanMiddleware` 的两个参数均为可选。若不传入任何参数，系统将默认使用 `_DEFAULT_PLAN_SYSTEM_PROMPT` 作为系统提示词，并自动加载由 `create_write_plan_tool`、`create_finish_sub_plan_tool` 及 `create_read_plan_tool` 创建的工具集。
-
-2. 对于 `tools` 参数，仅支持使用 `create_write_plan_tool`、`create_finish_sub_plan_tool` 和 `create_read_plan_tool` 所创建的工具。其中，`create_read_plan_tool`为可选工具，仅传入前两者时，此中间件仍可正常运行，但将不具备读取计划的功能。
+<BestPractice>
+在大多数情况下，推荐直接使用 PlanMiddleware 来实现任务分解与执行，而不是手动调用底层的三个工具（write_plan、finish_sub_plan、read_plan）。中间件已自动处理提示词构造和智能体状态管理，显著降低使用复杂度。
+</BestPractice>
 
 ### ModelRouterMiddleware
 

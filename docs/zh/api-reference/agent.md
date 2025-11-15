@@ -233,14 +233,20 @@ class PlanMiddleware(AgentMiddleware):
         self,
         *,
         system_prompt: Optional[str] = None,
-        tools: Optional[list[BaseTool]] = None,
+        write_plan_tool_description: Optional[str] = None,
+        finish_sub_plan_tool_description: Optional[str] = None,
+        read_plan_tool_description: Optional[str] = None,
+        use_read_plan_tool: bool = True,
     ) -> None:
 ```
 
 **参数说明：**
 
 - `system_prompt`：可选字符串类型，系统提示词
-- `tools`：可选 BaseTool 列表类型，工具列表
+- `write_plan_tool_description`：可选字符串类型，写计划工具的描述
+- `finish_sub_plan_tool_description`：可选字符串类型，完成子计划工具的描述
+- `read_plan_tool_description`：可选字符串类型，读计划工具的描述
+- `use_read_plan_tool`：可选布尔类型，是否使用读计划工具
 
 **示例：**
 
