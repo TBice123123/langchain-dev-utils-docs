@@ -73,10 +73,18 @@ In this case, the library uses `langchain-openai`'s `OpenAIEmbeddings` as the ac
 Note that `OpenAIEmbeddings` defaults to tokenizing input text, which may cause errors when connecting to other OpenAI API-compatible embedding models. To solve this issue, this library explicitly sets the `check_embedding_ctx_length` parameter to `False` when loading the model, skipping the tokenization step to avoid compatibility issues.
 
 <StepItem step="3" title="Set base_url (optional)"></StepItem>
+Next, you need to decide **based on the actual situation** whether to set the API endpoint (i.e., the `base_url` parameter) for the embedding model provider. This step is **not always required**, and it depends specifically on the type of `embeddings_model`:
 
-For cases where `embeddings_model` is a string (specifically `"openai-compatible"`), you must also provide `base_url`. You can do this by either directly passing `base_url` in this function, or by setting the model provider's `API_BASE`.
+- **When `embeddings_model` is a string with the value `"openai-compatible"`**:  
+  You **must explicitly provide** the `base_url` parameter or specify the API endpoint via an environment variable. Otherwise, the embedding model client cannot be initialized because the system cannot infer the API endpoint.
 
-For example, if we want to use a model deployed with vllm, we can set it up like this:
+- **When `embeddings_model` is of type `Embeddings`**:  
+  The API endpoint for the embedding model is usually already defined within the class, so no additional `base_url` configuration is needed.  
+  **Only if you need to override the default API endpoint embedded in the class** should you explicitly pass the `base_url` parameter or set it via an environment variable. This override only takes effect for class fields named `api_base` or `base_url` (including cases where the field alias is either of these two names).
+
+For example, suppose you want to use an OpenAI-compatible embedding model deployed via vLLM. You can configure it as follows:
+
+**Method 1: Pass `base_url` directly**
 
 ```python
 from langchain_dev_utils.embeddings import register_embeddings_provider
@@ -88,11 +96,13 @@ register_embeddings_provider(
 )
 ```
 
-Or set it up like this:
+**Method 2: Configure via environment variable**
 
 ```bash
 export VLLM_API_BASE=http://localhost:8000/v1
 ```
+
+Then omit `base_url` in your code:
 
 ```python
 from langchain_dev_utils.embeddings import register_embeddings_provider
@@ -100,20 +110,23 @@ from langchain_dev_utils.embeddings import register_embeddings_provider
 register_embeddings_provider(
     provider_name="vllm",
     embeddings_model="openai-compatible"
+    # Automatically reads the VLLM_API_BASE environment variable
 )
 ```
 
-::: tip Additional Information
-`vllm` can also deploy Embeddings models. The reference command is as follows:
+> 💡 **Tip**: The environment variable naming convention is `${PROVIDER_NAME}_API_BASE` (all uppercase, with underscores).
+
+::: tip Additional Note
+`vllm` can also serve embedding models. Here’s an example command:
 
 ```bash
 vllm serve Qwen/Qwen3-Embedding-4B \
---task embed\
+--task embed \
 --served-model-name qwen3-embedding-4b \
 --host 0.0.0.0 --port 8000
 ```
 
-After completion, it will provide an OpenAI-compatible API at `http://localhost:8000/v1`.
+After running this, an OpenAI-compatible API will be available at `http://localhost:8000/v1`.
 :::
 
 ## Batch Registration

@@ -74,9 +74,18 @@ register_embeddings_provider(
 
 <StepItem step="3" title="设置 base_url（可选）"></StepItem>
 
-对于`embeddings_model`为字符串（具体是`"openai-compatible"`）的情况，你也必须提供`base_url`。你可以通过直接在本函数中传递`base_url`，或者设置模型的提供商的`API_BASE`。
+接下来，需要根据**实际情况**决定是否设置嵌入模型提供商的 API 地址（即`base_url`参数）。该步骤**并非总是必需**，具体取决于 `embeddings_model` 的类型：
 
-例如，假设我们要使用 vllm 部署的模型，那么可以这样设置：
+- **当 `embeddings_model` 为字符串且值为 `"openai-compatible"` 时**：  
+  必须显式提供 `base_url` 参数，或通过环境变量指定 API 地址。否则嵌入模型客户端无法初始化，因为系统无法推断 API 端点。
+
+- **当 `embeddings_model` 为 `Embeddings` 类型时**：  
+   嵌入模型的 API 地址通常已在类中定义，无需额外配置 `base_url`。  
+   **仅当你需要覆盖该类内置的默认 API 地址时**，才需显式传入 `base_url` 参数或通过环境变量设置；此覆盖仅对类中字段名为 `api_base` 或 `base_url` 的属性生效（包括字段别名 alias 为这两个名称的情况）。
+
+例如，假设我们要使用 vLLM 部署的 OpenAI 兼容的嵌入模型，那么可以这样设置：
+
+**方法一：直接传入 `base_url`**
 
 ```python
 from langchain_dev_utils.embeddings import register_embeddings_provider
@@ -88,11 +97,13 @@ register_embeddings_provider(
 )
 ```
 
-或者这样设置：
+**方法二：通过环境变量配置**
 
 ```bash
 export VLLM_API_BASE=http://localhost:8000/v1
 ```
+
+然后在代码中省略 `base_url`：
 
 ```python
 from langchain_dev_utils.embeddings import register_embeddings_provider
@@ -100,8 +111,11 @@ from langchain_dev_utils.embeddings import register_embeddings_provider
 register_embeddings_provider(
     provider_name="vllm",
     embeddings_model="openai-compatible"
+    # 自动读取 VLLM_API_BASE 环境变量
 )
 ```
+
+> 💡 提示：环境变量命名规则为 `${PROVIDER_NAME}_API_BASE`（全大写，下划线分隔）。
 
 ::: tip 补充
 `vllm`同时可以部署 Embeddings 模型，参考的指令如下:
