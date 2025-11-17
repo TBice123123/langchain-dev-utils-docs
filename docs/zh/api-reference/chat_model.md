@@ -15,10 +15,10 @@ def register_model_provider(
 
 **参数说明：**
 
-- `provider_name`：字符串类型，必填，自定义提供者名称
+- `provider_name`：字符串类型，必填，自定义提供商名称
 - `chat_model`：ChatModel 类或支持的提供者字符串类型，必填
-- `base_url`：可选字符串类型，提供者的 BaseURL
-- `provider_config`：可选 ProviderConfig 类型，模型提供商配置。
+- `base_url`：可选字符串类型，提供商的 BaseURL
+- `provider_config`：可选 ProviderConfig 类型，提供商配置。
 
 **示例：**
 

@@ -237,6 +237,7 @@ class PlanMiddleware(AgentMiddleware):
         finish_sub_plan_tool_description: Optional[str] = None,
         read_plan_tool_description: Optional[str] = None,
         use_read_plan_tool: bool = True,
+        message_key: Optional[str] = None,
     ) -> None:
 ```
 
@@ -247,6 +248,7 @@ class PlanMiddleware(AgentMiddleware):
 - `finish_sub_plan_tool_description`: Optional str, description for the finish_sub_plan tool
 - `read_plan_tool_description`: Optional str, description for the read_plan tool
 - `use_read_plan_tool`: Optional bool, whether to use the read_plan tool
+- `message_key`: Optional str, key for updating messages, defaults to "messages"
 
 **Example:**
 

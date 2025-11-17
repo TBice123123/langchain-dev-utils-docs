@@ -240,6 +240,13 @@ description="可选布尔类型，是否使用读计划工具。"
 :required="false"
 :default="true"
 />
+<Params 
+name="message_key"
+type="string"
+description="用于更新 messages 的键，若不传入则使用默认的 messages。"
+:required="false"
+:default="null"
+/>
 
 ```python
 from langchain_dev_utils.agents.middleware import (

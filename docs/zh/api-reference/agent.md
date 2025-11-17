@@ -237,6 +237,7 @@ class PlanMiddleware(AgentMiddleware):
         finish_sub_plan_tool_description: Optional[str] = None,
         read_plan_tool_description: Optional[str] = None,
         use_read_plan_tool: bool = True,
+        message_key: Optional[str] = None,
     ) -> None:
 ```
 
@@ -247,6 +248,7 @@ class PlanMiddleware(AgentMiddleware):
 - `finish_sub_plan_tool_description`：可选字符串类型，完成子计划工具的描述
 - `read_plan_tool_description`：可选字符串类型，读计划工具的描述
 - `use_read_plan_tool`：可选布尔类型，是否使用读计划工具
+- `message_key`：可选字符串类型，用于指定更新 messsage 的键值
 
 **示例：**
 

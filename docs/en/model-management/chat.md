@@ -91,10 +91,17 @@ Compared to directly using `ChatOpenAI` provided by `langchain-openai`, this lib
    For cases where parameters differ from the official OpenAI API, this library provides the `provider_config` parameter to address this issue. For example, when different model providers have inconsistent support for `tool_choice`, you can adapt by setting `supported_tool_choice` in `provider_config`.
 
 <StepItem step="3" title="Set base_url (Optional)"></StepItem>
+Next, you need to decide **based on the actual situation** whether to set the model provider's API address (i.e., the `base_url` parameter). This step is **not always required**, and it depends on the type of `chat_model`:
 
-This parameter only needs to be set when `chat_model` is a string (specifically `"openai-compatible"`). You can pass `base_url` directly in this function or set the model provider's `API_BASE`.
+- **When `chat_model` is a string with the value `"openai-compatible"`**:  
+  You **must explicitly provide** the `base_url` parameter (or specify the API address via an environment variable); otherwise, the model client cannot be initialized correctly.
 
-For example, suppose we want to use a model deployed by vLLM. We can set it like this:
+- **When `chat_model` is an instance of a subclass of `ChatModel`**:  
+  You typically **do not need to set `base_url`**, as the API address is already defined internally within the class. You only need to manually configure it if you wish to override the default API address used by that model integration class. In such cases, you can either explicitly pass the `base_url` parameter or specify it via an environment variable, just as described above.
+
+For example, suppose you want to use a vLLM-deployed OpenAI-compatible model. You can configure it as follows:
+
+**Method 1: Pass `base_url` directly**
 
 ```python
 from langchain_dev_utils.chat_models import register_model_provider
@@ -106,11 +113,13 @@ register_model_provider(
 )
 ```
 
-Or set it like this:
+**Method 2: Configure via environment variable**
 
 ```bash
 export VLLM_API_BASE=http://localhost:8000/v1
 ```
+
+Then omit `base_url` in your code:
 
 ```python
 from langchain_dev_utils.chat_models import register_model_provider
@@ -118,11 +127,14 @@ from langchain_dev_utils.chat_models import register_model_provider
 register_model_provider(
     provider_name="vllm",
     chat_model="openai-compatible"
+    # Automatically reads the VLLM_API_BASE environment variable
 )
 ```
 
-::: tip Supplement
-`vllm` is a well-known large model deployment framework that can deploy large models as OpenAI-compatible APIs. For example, to deploy the qwen3-4b model, you can use the following command:
+> 💡 **Tip**: The naming convention for environment variables is `${PROVIDER_NAME}_API_BASE` (all uppercase, underscore-separated).
+
+::: tip Additional Note
+`vLLM` is a well-known framework for deploying large language models, capable of serving them via an OpenAI-compatible API. For instance, to deploy the `qwen3-4b` model, you could run the following command:
 
 ```bash
 vllm serve Qwen/Qwen3-4B \
@@ -132,9 +144,8 @@ vllm serve Qwen/Qwen3-4B \
 --served-model-name qwen3-4b
 ```
 
-After completion, it will provide an OpenAI-compatible API at `http://localhost:8000/v1`.
+After successful deployment, it will expose an OpenAI-compatible API at `http://localhost:8000/v1`.
 :::
-
 <StepItem step="4" title="Set provider_config (Optional)"></StepItem>
 
 This parameter is only effective when `chat_model` is the string `"openai-compatible"`. It is used to configure parameters related to the model provider.

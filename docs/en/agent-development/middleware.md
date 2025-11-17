@@ -237,6 +237,13 @@ description="Whether to enable the read_plan tool."
 :required="false"  
 :default="true"  
 />
+<Params 
+name="message_key"
+type="string"
+description="Key used to update the messages field. Defaults to 'messages' if not provided."
+:required="false"
+:default="null"
+/>
 
 **Recommended Usage**:
 

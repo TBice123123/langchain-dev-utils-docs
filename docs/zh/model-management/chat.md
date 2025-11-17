@@ -92,9 +92,17 @@ register_model_provider(
 
 <StepItem step="3" title="设置 base_url（可选）"></StepItem>
 
-该参数仅在`chat_model`为字符串（具体是`"openai-compatible"`）时才需要进行设置。你可以通过直接在本函数中传递`base_url`，或者设置模型的提供商的`API_BASE`。
+接下来，需要根据**实际情况**决定是否设置模型提供商的 API 地址（即`base_url`参数）。该步骤**并非总是必需**，具体取决于 `chat_model` 的类型：
 
-例如，假设我们要使用 vllm 部署的模型，那么可以这样设置：
+- **当 `chat_model` 是字符串且值为 `"openai-compatible"` 时**：  
+  必须显式提供 `base_url` 参数（或通过环境变量指定 API 地址），否则将无法正确初始化模型客户端。
+
+- **当 `chat_model` 是 `ChatModel` 的子类实例时**：  
+  通常无需额外设置 `base_url`，因为模型的 API 地址已在类内部定义。仅当你希望覆盖该模型集成类的默认 API 地址时，才需要手动配置，配置方式和上述一样，可以显式提供 `base_url` 参数或者通过环境变量指定 API 地址。
+
+例如，假设我们要使用 vLLM 部署的 OpenAI 兼容模型，那么可以这样设置：
+
+**方法一：直接传入 `base_url`**
 
 ```python
 from langchain_dev_utils.chat_models import register_model_provider
@@ -106,11 +114,13 @@ register_model_provider(
 )
 ```
 
-或者这样设置：
+**方法二：通过环境变量配置**
 
 ```bash
 export VLLM_API_BASE=http://localhost:8000/v1
 ```
+
+然后在代码中省略 `base_url`：
 
 ```python
 from langchain_dev_utils.chat_models import register_model_provider
@@ -118,8 +128,11 @@ from langchain_dev_utils.chat_models import register_model_provider
 register_model_provider(
     provider_name="vllm",
     chat_model="openai-compatible"
+    # 自动读取 VLLM_API_BASE 环境变量
 )
 ```
+
+> 💡 提示：环境变量命名规则为 `${PROVIDER_NAME}_API_BASE`（全大写，下划线分隔）。
 
 ::: tip 补充
 `vllm`是知名的大模型部署框架，其可以将大模型部署为 OpenAI 兼容 API。例如我们要部署 qwen3-4b 模型。则可以使用如下指令：
