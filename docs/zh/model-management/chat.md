@@ -94,11 +94,12 @@ register_model_provider(
 
 接下来，需要根据**实际情况**决定是否设置模型提供商的 API 地址（即`base_url`参数）。该步骤**并非总是必需**，具体取决于 `chat_model` 的类型：
 
-- **当 `chat_model` 是字符串且值为 `"openai-compatible"` 时**：  
-  必须显式提供 `base_url` 参数（或通过环境变量指定 API 地址），否则将无法正确初始化模型客户端。
+- **当 `chat_model` 为字符串且值为 `"openai-compatible"` 时**：  
+  必须显式提供 `base_url` 参数，或通过环境变量指定 API 地址。否则模型客户端无法初始化，因为系统无法推断 API 端点。
 
-- **当 `chat_model` 是 `ChatModel` 的子类实例时**：  
-  通常无需额外设置 `base_url`，因为模型的 API 地址已在类内部定义。仅当你希望覆盖该模型集成类的默认 API 地址时，才需要手动配置，配置方式和上述一样，可以显式提供 `base_url` 参数或者通过环境变量指定 API 地址。
+- **当 `chat_model` 为 `ChatModel` 类型时**：  
+   模型的 API 地址通常已在类中定义，无需额外配置 `base_url`。  
+   **仅当你需要覆盖该类内置的默认 API 地址时**，才需显式传入 `base_url` 参数或通过环境变量设置；此覆盖仅对类中字段名为 `api_base` 或 `base_url` 的属性生效（包括字段别名 alias 为这两个名称的情况）。
 
 例如，假设我们要使用 vLLM 部署的 OpenAI 兼容模型，那么可以这样设置：
 

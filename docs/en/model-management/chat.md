@@ -91,13 +91,15 @@ Compared to directly using `ChatOpenAI` provided by `langchain-openai`, this lib
    For cases where parameters differ from the official OpenAI API, this library provides the `provider_config` parameter to address this issue. For example, when different model providers have inconsistent support for `tool_choice`, you can adapt by setting `supported_tool_choice` in `provider_config`.
 
 <StepItem step="3" title="Set base_url (Optional)"></StepItem>
+
 Next, you need to decide **based on the actual situation** whether to set the model provider's API address (i.e., the `base_url` parameter). This step is **not always required**, and it depends on the type of `chat_model`:
 
 - **When `chat_model` is a string with the value `"openai-compatible"`**:  
-  You **must explicitly provide** the `base_url` parameter (or specify the API address via an environment variable); otherwise, the model client cannot be initialized correctly.
+  You must explicitly provide the `base_url` parameter or specify the API endpoint via an environment variable. Otherwise, the model client cannot be initialized, as the system has no way to infer the API endpoint.
 
-- **When `chat_model` is an instance of a subclass of `ChatModel`**:  
-  You typically **do not need to set `base_url`**, as the API address is already defined internally within the class. You only need to manually configure it if you wish to override the default API address used by that model integration class. In such cases, you can either explicitly pass the `base_url` parameter or specify it via an environment variable, just as described above.
+- **When `chat_model` is of type `ChatModel`**:  
+  The API endpoint is typically already defined within the class, so no additional `base_url` configuration is needed.  
+  **You only need to explicitly provide `base_url` (via parameter or environment variable) if you intend to override the class’s default API endpoint**. This override applies only to class attributes named `api_base` or `base_url` (including fields whose alias is either `api_base` or `base_url`).
 
 For example, suppose you want to use a vLLM-deployed OpenAI-compatible model. You can configure it as follows:
 
