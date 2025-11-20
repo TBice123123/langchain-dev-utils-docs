@@ -39,17 +39,14 @@ description="Tuple containing start and end tags for reasoning content (defaults
 Usage example:
 
 ```python
-from typing import cast
 from langchain_dev_utils.message_convert import (
     convert_reasoning_content_for_ai_message,
     convert_reasoning_content_for_chunk_iterator,
 )
-from langchain_core.messages import AIMessage
-
 
 response = model.invoke("Hello")
 converted_response = convert_reasoning_content_for_ai_message(
-    cast(AIMessage, response), think_tag=("<start>", "<end>")
+    response, think_tag=("<start>", "<end>")
 )
 print(converted_response.content)
 

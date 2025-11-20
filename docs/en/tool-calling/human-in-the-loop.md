@@ -117,7 +117,7 @@ async def custom_handler(params: InterruptParams) -> Any:
         f"I want to call tool {params['tool_call_name']} with parameters {params['tool_call_args']}, please confirm whether to call it"
     )
     if response["type"] == "accept":
-        return await params["tool"].ainvoke(params["tool_call_args"], params["config"])
+        return await params["tool"].ainvoke(params["tool_call_args"])
     elif response["type"] == "reject":
         return "User rejected calling this tool"
     else:
