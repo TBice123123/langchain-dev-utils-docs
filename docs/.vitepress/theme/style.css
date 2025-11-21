@@ -8,16 +8,16 @@
   --vp-c-brand-3: #1e40af;
   --vp-c-brand-soft: rgba(37, 99, 235, 0.1);
   --vp-c-brand-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  
+
   /* Layout dimensions */
   --vp-layout-max-width: 1600px;
   --vp-sidebar-width: 280px;
-  
+
   /* Text colors for optimal readability */
   --vp-c-text-1: #1f2937;
   --vp-c-text-2: #4b5563;
   --vp-c-text-3: #6b7280;
-  
+
   /* Clean background colors */
   --vp-c-bg: #ffffff;
   --vp-c-bg-soft: #f9fafb;
@@ -27,17 +27,17 @@
   --vp-c-bg-elev-down: #f3f4f6;
   --vp-c-bg-elev-mute: #f9fafb;
   --vp-c-bg-overlay: rgba(255, 255, 255, 0.95);
-  
+
   /* Subtle border colors */
   --vp-c-divider: #e5e7eb;
   --vp-c-divider-light: #f3f4f6;
   --vp-c-gutter: #f3f4f6;
-  
+
   /* Refined shadow system */
   --vp-shadow-1: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   --vp-shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --vp-shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  
+
   /* Border radius */
   --vp-radius: 6px;
   --vp-radius-small: 4px;
@@ -45,38 +45,38 @@
   --vp-radius-xl: 12px;
   --vp-radius-2xl: 16px;
   --vp-radius-full: 9999px;
-  
+
   /* Shadow system */
   --vp-shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --vp-shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.06);
   --vp-shadow-glow: 0 0 0 1px rgba(37, 99, 235, 0.05), 0 0 20px rgba(37, 99, 235, 0.1);
-  
+
   /* Transition system */
   --vp-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --vp-transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --vp-transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   /* Mesh gradient background */
-  --vp-mesh-gradient: radial-gradient(at 40% 20%, hsla(228, 100%, 74%, 0.15) 0px, transparent 50%), 
-                     radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 0.15) 0px, transparent 50%),
-                     radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 0.15) 0px, transparent 50%),
-                     radial-gradient(at 80% 50%, hsla(340, 100%, 76%, 0.15) 0px, transparent 50%),
-                     radial-gradient(at 0% 100%, hsla(22, 100%, 77%, 0.15) 0px, transparent 50%),
-                     radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 0.15) 0px, transparent 50%),
-                     radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0.15) 0px, transparent 50%);
+  --vp-mesh-gradient: radial-gradient(at 40% 20%, hsla(228, 100%, 74%, 0.15) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 0.15) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 0.15) 0px, transparent 50%),
+    radial-gradient(at 80% 50%, hsla(340, 100%, 76%, 0.15) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(22, 100%, 77%, 0.15) 0px, transparent 50%),
+    radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 0.15) 0px, transparent 50%),
+    radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0.15) 0px, transparent 50%);
 }
 
 /* Professional typography */
 :root {
   --vp-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   --vp-font-family-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-  
+
   /* Clean font weights */
   --vp-font-weight-normal: 400;
   --vp-font-weight-medium: 500;
   --vp-font-weight-semibold: 600;
   --vp-font-weight-bold: 700;
-  
+
   /* Font size scale */
   --vp-font-size-xs: 0.75rem;
   --vp-font-size-sm: 0.875rem;
@@ -86,19 +86,18 @@
   --vp-font-size-2xl: 1.5rem;
   --vp-font-size-3xl: 1.875rem;
   --vp-font-size-4xl: 2.25rem;
-  
+
   /* Line height */
   --vp-line-height-tight: 1.25;
   --vp-line-height-normal: 1.5;
   --vp-line-height-relaxed: 1.625;
-  
+
   /* Letter spacing */
   --vp-tracking-tight: -0.025em;
   --vp-tracking-normal: 0em;
   --vp-tracking-wide: 0.025em;
   --vp-tracking-wider: 0.05em;
 }
-
 
 /* Clean main page layout */
 .VPContent {
@@ -108,22 +107,24 @@
 /* Enhanced dark mode background */
 :root.dark .VPContent {
   background: radial-gradient(circle at 25% 25%, rgba(88, 166, 255, 0.02) 0%, transparent 50%),
-              radial-gradient(circle at 75% 75%, rgba(88, 166, 255, 0.01) 0%, transparent 50%),
-              var(--vp-c-bg-soft);
+    radial-gradient(circle at 75% 75%, rgba(88, 166, 255, 0.01) 0%, transparent 50%),
+    var(--vp-c-bg-soft);
 }
 
 /* Clean card styling for code blocks */
 .vp-doc div[class*='language-'] {
-  border-radius: var(--vp-radius);
+  border-radius: var(--vp-radius-big);
   box-shadow: var(--vp-shadow-2);
-  margin: 1.5em 0;
+  margin: 1.8em 0;
   overflow: hidden;
   border: 1px solid var(--vp-c-divider);
-  transition: box-shadow 0.2s ease;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .vp-doc div[class*='language-']:hover {
   box-shadow: var(--vp-shadow-3);
+  transform: translateY(-2px);
 }
 
 /* Clean code block styling */
@@ -138,12 +139,31 @@
   font-family: var(--vp-font-family-mono);
 }
 
+/* Improved code highlighting */
+.vp-doc div[class*='language-'] .line {
+  transition: background-color 0.2s ease;
+}
+
+.vp-doc div[class*='language-'] .line:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+:root.dark .vp-doc div[class*='language-'] .line:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
 /* Custom tip, warning, danger blocks */
 .vp-doc .custom-block {
   border-left-width: 4px;
   padding: 1rem 1.25rem;
-  margin: 1.5rem 0;
-  border-radius: var(--vp-radius-small);
+  margin: 1.8rem 0;
+  border-radius: var(--vp-radius);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.vp-doc .custom-block:hover {
+  transform: translateX(2px);
 }
 
 .vp-doc .custom-block.tip,
@@ -194,7 +214,7 @@
   border-right: 1px solid var(--vp-c-divider-light);
 }
 
-.VPNavScreenMenu .item .active, 
+.VPNavScreenMenu .item .active,
 .VPNavScreenMenu .item:hover {
   color: var(--vp-c-brand-1);
   background-color: var(--vp-c-brand-soft);
@@ -218,7 +238,7 @@
   border-right: 1px solid var(--vp-c-divider-light);
 }
 
-.VPSidebarItem.level-0 > .item .text {
+.VPSidebarItem.level-0>.item .text {
   font-weight: var(--vp-font-weight-semibold);
   color: var(--vp-c-text-1);
 }
@@ -260,11 +280,11 @@
 }
 
 /* Modern header styling with better visual hierarchy */
-.vp-doc h1, 
-.vp-doc h2, 
-.vp-doc h3, 
-.vp-doc h4, 
-.vp-doc h5, 
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4,
+.vp-doc h5,
 .vp-doc h6 {
   font-weight: var(--vp-font-weight-bold);
   color: var(--vp-c-text-1);
@@ -297,27 +317,74 @@
   border-radius: 2px;
 }
 
-.vp-doc h2 {
-  font-size: 1.875rem;
-  font-weight: 600;
-  margin: 2rem 0 1rem 0;
-  color: var(--vp-c-text-1);
-  line-height: 1.3;
-  position: relative;
-  padding-left: 1rem;
-  border-bottom: 1px solid var(--vp-c-divider-light);
-  padding-bottom: 0.5rem;
-}
-
-.vp-doc h2::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.5rem;
-  width: 3px;
-  height: 1.5rem;
-  background: var(--vp-c-brand-1);
-  border-radius: 2px;
+/* Optimized h2 styling */
+.vp-doc h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin: 2.8rem 0 1.3rem 0;
+  color: var(--vp-c-text-1);
+  line-height: 1.3;
+  position: relative;
+  padding: 1rem 0 0.8rem 1.8rem;
+  border-bottom: 1px solid var(--vp-c-divider-light);
+  background: linear-gradient(to right, rgba(37, 99, 235, 0.03) 0%, transparent 100%);
+  transition: all 0.3s ease;
+  border-radius: var(--vp-radius-small) var(--vp-radius-small) 0 0;
+  overflow: hidden;
+}
+
+.vp-doc h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--vp-c-brand-1), var(--vp-c-brand-2));
+  border-radius: 2px 0 0 2px;
+  transition: all 0.3s ease;
+}
+
+.vp-doc h2::after {
+  content: '';
+  position: absolute;
+  left: 0.8rem;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--vp-c-brand-1);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  transform: translateY(50%);
+}
+
+.vp-doc h2:hover {
+  color: var(--vp-c-brand-1);
+  background: linear-gradient(to right, rgba(37, 99, 235, 0.05) 0%, transparent 100%);
+  transform: translateX(4px);
+  box-shadow: var(--vp-shadow-1);
+}
+
+.vp-doc h2:hover::before {
+  background: linear-gradient(to bottom, var(--vp-c-brand-2), var(--vp-c-brand-1));
+  width: 6px;
+}
+
+.vp-doc h2:hover::after {
+  background: var(--vp-c-brand-2);
+  transform: translateY(50%) scale(1.2);
+}
+
+/* Anchor link for h2 */
+.vp-doc h2 .header-anchor {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  margin-left: 0.5rem;
+  color: var(--vp-c-brand-1);
+}
+
+.vp-doc h2:hover .header-anchor {
+  opacity: 1;
 }
 
 .vp-doc h3 {
@@ -348,15 +415,20 @@
 
 /* Clean table styling */
 .vp-doc table {
-  border-radius: var(--vp-radius);
+  border-radius: var(--vp-radius-big);
   overflow: hidden;
   box-shadow: var(--vp-shadow-2);
   width: 100%;
-  margin: 1.5em 0;
+  margin: 1.8em 0;
   border-collapse: collapse;
   display: table;
   min-width: max-content;
   border: 1px solid var(--vp-c-divider);
+  transition: all 0.2s ease;
+}
+
+.vp-doc table:hover {
+  box-shadow: var(--vp-shadow-3);
 }
 
 .vp-doc table th {
@@ -377,7 +449,7 @@
   color: var(--vp-c-text-2);
 }
 
-.vp-doc table th, 
+.vp-doc table th,
 .vp-doc table td {
   vertical-align: top;
 }
@@ -424,13 +496,13 @@
     min-width: 100%;
     margin: 1.2em 0;
   }
-  
+
   /* Improve horizontal scrolling experience */
   .vp-doc table th,
   .vp-doc table td {
     padding: 0.6em 0.9em;
   }
-  
+
   /* Add a subtle indicator that the table is scrollable */
   .vp-doc table {
     position: relative;
@@ -439,12 +511,13 @@
 
 /* For very narrow viewports, adjust padding to maximize content space */
 @media (max-width: 480px) {
+
   .vp-doc table th,
   .vp-doc table td {
     padding: 0.4em 0.6em;
     font-size: 0.9em;
   }
-  
+
   .vp-doc table th {
     font-weight: var(--vp-font-weight-medium);
   }
@@ -463,7 +536,7 @@
   --vp-code-color: #393a34;
   --vp-code-line-highlight-color: rgba(0, 0, 0, 0.07);
   --vp-code-lang-color: #888888;
-  
+
   /* Additional color variables for consistency */
   --vp-c-blue-soft: #eff6ff;
   --vp-c-green-soft: #f0fdf4;
@@ -488,39 +561,39 @@
   --vp-c-bg-elev-down: #1c2128;
   --vp-c-bg-elev-mute: #1c2128;
   --vp-c-bg-overlay: rgba(13, 17, 23, 0.95);
-  
+
   /* Enhanced text colors for better readability */
   --vp-c-text-1: #f0f6fc;
   --vp-c-text-2: #c9d1d9;
   --vp-c-text-3: #8b949e;
   --vp-c-text-4: #656d76;
-  
+
   /* Improved divider colors for dark mode */
   --vp-c-divider: #30363d;
   --vp-c-divider-light: #21262d;
   --vp-c-divider-lighter: #181b20;
   --vp-c-gutter: #21262d;
-  
+
   /* Code block colors for dark mode */
   --vp-code-block-bg: #0d1117;
   --vp-code-color: #f0f6fc;
   --vp-code-line-highlight-color: rgba(240, 246, 252, 0.04);
   --vp-code-lang-color: #8b949e;
-  
+
   /* Enhanced brand colors for dark mode */
   --vp-c-brand-1: #58a6ff;
   --vp-c-brand-2: #4c8edb;
   --vp-c-brand-3: #3b7ddd;
   --vp-c-brand-soft: rgba(88, 166, 255, 0.12);
   --vp-c-brand-gradient: linear-gradient(135deg, #58a6ff 0%, #4c8edb 100%);
-  
+
   /* Updated accent colors for dark mode */
   --vp-c-accent: #fbbf24;
   --vp-c-accent-soft: rgba(251, 191, 36, 0.1);
   --vp-c-success: #34d399;
   --vp-c-warning: #fbbf24;
   --vp-c-error: #f87171;
-  
+
   /* Additional color variables for dark mode */
   --vp-c-blue-soft: #1e3a8a;
   --vp-c-green-soft: #064e3b;
@@ -534,15 +607,7 @@
   --vp-c-yellow-2: #f59e0b;
   --vp-c-red-1: #f87171;
   --vp-c-red-2: #ef4444;
-  
-  /* Enhanced shadows for dark mode */
-  --vp-shadow-1: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
-  --vp-shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --vp-shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-  --vp-shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
-  --vp-shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.3);
-  --vp-shadow-glow: 0 0 0 1px rgba(59, 130, 246, 0.1), 0 0 20px rgba(59, 130, 246, 0.2);
-  
+
   /* Enhanced shadows for dark mode */
   --vp-shadow-1: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
   --vp-shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
@@ -550,15 +615,47 @@
   --vp-shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
   --vp-shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.3);
   --vp-shadow-glow: 0 0 0 1px rgba(129, 140, 248, 0.1), 0 0 20px rgba(129, 140, 248, 0.2);
-  
+
   /* Updated mesh gradient for dark mode */
-  --vp-mesh-gradient: radial-gradient(at 40% 20%, hsla(228, 100%, 74%, 0.08) 0px, transparent 50%), 
-                     radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 0.08) 0px, transparent 50%),
-                     radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 0.05) 0px, transparent 50%),
-                     radial-gradient(at 80% 50%, hsla(340, 100%, 76%, 0.08) 0px, transparent 50%),
-                     radial-gradient(at 0% 100%, hsla(22, 100%, 77%, 0.08) 0px, transparent 50%),
-                     radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 0.08) 0px, transparent 50%),
-                     radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0.08) 0px, transparent 50%);
+  --vp-mesh-gradient: radial-gradient(at 40% 20%, hsla(228, 100%, 74%, 0.08) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 0.08) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 0.05) 0px, transparent 50%),
+    radial-gradient(at 80% 50%, hsla(340, 100%, 76%, 0.08) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(22, 100%, 77%, 0.08) 0px, transparent 50%),
+    radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 0.08) 0px, transparent 50%),
+    radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0.08) 0px, transparent 50%);
+}
+
+/* Improved dark mode h2 styling */
+:root.dark .vp-doc h2 {
+  color: var(--vp-c-text-1);
+  border-bottom-color: var(--vp-c-divider);
+  background: linear-gradient(to right, rgba(88, 166, 255, 0.03) 0%, transparent 100%);
+}
+
+:root.dark .vp-doc h2::before {
+  background: linear-gradient(to bottom, var(--vp-c-brand-1), var(--vp-c-brand-2));
+  box-shadow: 0 0 8px rgba(88, 166, 255, 0.2);
+}
+
+:root.dark .vp-doc h2::after {
+  background: var(--vp-c-brand-1);
+  box-shadow: 0 0 6px rgba(88, 166, 255, 0.3);
+}
+
+:root.dark .vp-doc h2:hover {
+  background: linear-gradient(to right, rgba(88, 166, 255, 0.05) 0%, transparent 100%);
+  box-shadow: var(--vp-shadow-1);
+}
+
+:root.dark .vp-doc h2:hover::before {
+  background: linear-gradient(to bottom, var(--vp-c-brand-2), var(--vp-c-brand-1));
+  box-shadow: 0 0 12px rgba(88, 166, 255, 0.4);
+}
+
+:root.dark .vp-doc h2:hover::after {
+  background: var(--vp-c-brand-2);
+  box-shadow: 0 0 8px rgba(88, 166, 255, 0.5);
 }
 
 /* Better responsive behavior */
@@ -596,13 +693,50 @@
 }
 
 .VPButton {
-  border-radius: var(--vp-radius-small);
+  border-radius: var(--vp-radius);
   font-weight: var(--vp-font-weight-medium);
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 0.875rem;
   box-shadow: var(--vp-shadow-1);
+  position: relative;
+  overflow: hidden;
+}
+
+.VPButton::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+.VPButton:focus:not(:active)::after {
+  animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 1;
+  }
+
+  20% {
+    transform: scale(25, 25);
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(40, 40);
+  }
 }
 
 .VPButton:hover {
@@ -621,7 +755,7 @@
 }
 
 /* Simple list styling */
-.vp-doc ul, 
+.vp-doc ul,
 .vp-doc ol {
   padding-left: 1.5rem;
   margin: 1rem 0;
@@ -672,17 +806,15 @@
   max-width: 100%;
 }
 
-/* Simple focus states */
-*:focus {
-  outline: 2px solid var(--vp-c-brand-1);
-  outline-offset: 2px;
-}
-
-button:focus,
-.VPButton:focus,
-a:focus {
-  outline: 2px solid var(--vp-c-brand-1);
-  outline-offset: 2px;
+/* Remove focus outlines to disable the selection box effect on click */
+*:focus {
+  outline: none;
+}
+
+button:focus,
+.VPButton:focus,
+a:focus {
+  outline: none;
 }
 
 /* Simple scrollbar styling */
@@ -704,22 +836,46 @@ a:focus {
   background: var(--vp-c-text-3);
 }
 
-/* Removed complex animations for better performance */
+/* Improved outline navigation */
+.VPDocOutlineItem .link {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.VPDocOutlineItem .link::before {
+  content: '';
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  background: var(--vp-c-brand-1);
+  border-radius: 50%;
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity 0.2s ease;
+}
+
+.VPDocOutlineItem .link:hover::before,
+.VPDocOutlineItem .link.active::before {
+  opacity: 1;
+}
 
 /* Print styles */
 @media print {
+
   .VPNavBar,
   .VPSidebar,
   .VPLocalSearchBox,
   .VPButton {
     display: none !important;
   }
-  
+
   .VPContent {
     max-width: 100% !important;
     margin: 0 !important;
   }
-  
+
   .vp-doc {
     background: white !important;
     color: black !important;
@@ -733,7 +889,7 @@ a:focus {
     --vp-c-divider-light: rgba(0, 0, 0, 0.15);
     --vp-c-text-2: #000000;
   }
-  
+
   :root.dark {
     --vp-c-divider: rgba(255, 255, 255, 0.5);
     --vp-c-divider-light: rgba(255, 255, 255, 0.25);
@@ -743,6 +899,7 @@ a:focus {
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -750,4 +907,59 @@ a:focus {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Responsive h2 styling */
+@media (max-width: 768px) {
+  .vp-doc h2 {
+    font-size: 1.6rem;
+    padding: 0.9rem 0 0.7rem 1.5rem;
+    margin: 2.2rem 0 1.1rem 0;
+  }
+
+  .vp-doc h2::before {
+    width: 3px;
+  }
+
+  .vp-doc h2::after {
+    left: 0.6rem;
+  }
+
+  .vp-doc h2:hover {
+    transform: translateX(3px);
+  }
+
+  .vp-doc h2:hover::before {
+    width: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vp-doc h2 {
+    font-size: 1.45rem;
+    padding: 0.8rem 0 0.6rem 1.2rem;
+    margin: 2rem 0 0.9rem 0;
+  }
+
+  .vp-doc h2::before {
+    width: 2px;
+  }
+
+  .vp-doc h2::after {
+    left: 0.5rem;
+    width: 6px;
+    height: 6px;
+  }
+
+  .vp-doc h2:hover {
+    transform: translateX(2px);
+  }
+
+  .vp-doc h2:hover::before {
+    width: 3px;
+  }
+
+  .vp-doc h2:hover::after {
+    transform: translateY(55%) scale(1.1);
+  }
 }
