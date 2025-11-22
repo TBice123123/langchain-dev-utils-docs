@@ -1,11 +1,11 @@
 # Pipeline Module API Reference
 
-## sequential_pipeline
+## create_sequential_pipeline
 
 Combines multiple subgraphs with identical states in a sequential manner.
 
 ```python
-def sequential_pipeline(
+def create_sequential_pipeline(
     sub_graphs: list[SubGraph],
     state_schema: type[StateT],
     graph_name: Optional[str] = None,
@@ -35,7 +35,7 @@ def sequential_pipeline(
 **Example:**
 
 ```python
-sequential_pipeline(
+create_sequential_pipeline(
     sub_graphs=[graph1, graph2],
     state_schema=State,
     graph_name="sequential_pipeline",
@@ -45,12 +45,12 @@ sequential_pipeline(
 )
 ```
 
-## parallel_pipeline
+## create_parallel_pipeline
 
 Combines multiple subgraphs with identical states in a parallel manner.
 
 ```python
-def parallel_pipeline(
+def create_parallel_pipeline(
     sub_graphs: list[SubGraph],
     state_schema: type[StateT],
     graph_name: Optional[str] = None,
@@ -87,7 +87,7 @@ def parallel_pipeline(
 **Example:**
 
 ```python
-parallel_pipeline(
+create_parallel_pipeline(
     sub_graphs=[graph1, graph2],
     state_schema=State,
     graph_name="parallel_pipeline",

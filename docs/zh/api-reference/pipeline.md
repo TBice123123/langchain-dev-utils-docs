@@ -1,11 +1,11 @@
 # Pipeline 模块的 API 参考
 
-## sequential_pipeline
+## create_sequential_pipeline
 
 将多个状态相同的子图以串行方式组合。
 
 ```python
-def sequential_pipeline(
+def create_sequential_pipeline(
     sub_graphs: list[SubGraph],
     state_schema: type[StateT],
     graph_name: Optional[str] = None,
@@ -35,7 +35,7 @@ def sequential_pipeline(
 **示例：**
 
 ```python
-sequential_pipeline(
+create_sequential_pipeline(
     sub_graphs=[graph1, graph2],
     state_schema=State,
     graph_name="sequential_pipeline",
@@ -45,12 +45,12 @@ sequential_pipeline(
 )
 ```
 
-## parallel_pipeline
+## create_parallel_pipeline
 
 将多个状态相同的子图以并行方式组合。
 
 ```python
-def parallel_pipeline(
+def create_parallel_pipeline(
     sub_graphs: list[SubGraph],
     state_schema: type[StateT],
     graph_name: Optional[str] = None,
@@ -87,7 +87,7 @@ def parallel_pipeline(
 **示例：**
 
 ```python
-parallel_pipeline(
+create_parallel_pipeline(
     sub_graphs=[graph1, graph2],
     state_schema=State,
     graph_name="parallel_pipeline",

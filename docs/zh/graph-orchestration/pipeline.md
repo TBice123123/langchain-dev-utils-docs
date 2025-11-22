@@ -14,7 +14,7 @@
 
 通过下面函数实现:
 
-- `sequential_pipeline` - 以串行方式组合多个状态图
+- `create_sequential_pipeline` - 以串行方式组合多个状态图
 
 其参数如下:
 <Params
@@ -92,7 +92,7 @@ import datetime
 from langchain.agents import AgentState
 from langchain_core.messages import HumanMessage
 from langchain_dev_utils.agents import create_agent
-from langchain_dev_utils.pipeline import sequential_pipeline
+from langchain_dev_utils.pipeline import create_sequential_pipeline
 from langchain_core.tools import tool
 from langchain_dev_utils.chat_models import register_model_provider
 
@@ -121,7 +121,7 @@ def get_current_user():
 
 
 # 构建顺序管道（所有子图顺序执行）
-graph = sequential_pipeline(
+graph = create_sequential_pipeline(
     sub_graphs=[
         create_agent(
             model="vllm:qwen3-4b",
@@ -162,7 +162,7 @@ graph.add_edge("__start__", "graph1")
 graph = graph.compile()
 ```
 
-不过，上述写法仍显繁琐。因此，更推荐使用 sequential_pipeline 函数，它能通过一行代码快速构建串行执行图，更为简洁高效。
+不过，上述写法仍显繁琐。因此，更推荐使用 `create_sequential_pipeline` 函数，它能通过一行代码快速构建串行执行图，更为简洁高效。
 :::
 
 ## 并行管道
@@ -171,7 +171,7 @@ graph = graph.compile()
 
 通过下面函数实现:
 
-- `parallel_pipeline` - 以并行方式组合多个状态图
+- `create_parallel_pipeline` - 以并行方式组合多个状态图
 
 其参数如下:
 
@@ -254,10 +254,10 @@ description="LangGraph 的 Cache。"
 ### 基础并行示例
 
 ```python
-from langchain_dev_utils.pipeline import parallel_pipeline
+from langchain_dev_utils.pipeline import create_parallel_pipeline
 
 # 构建并行管道（所有子图并行执行）
-graph = parallel_pipeline(
+graph = create_parallel_pipeline(
     sub_graphs=[
         create_agent(
             model="vllm:qwen3-4b",
@@ -296,7 +296,7 @@ print(response)
 # 构建并行管道（所有子图并行执行）
 from langgraph.types import Send
 
-graph = parallel_pipeline(
+graph = create_parallel_pipeline(
     sub_graphs=[
         create_agent(
             model="vllm:qwen3-4b",

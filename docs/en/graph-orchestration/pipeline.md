@@ -14,7 +14,7 @@ Connects state graphs sequentially, forming a serial execution flow.
 
 Implemented via the following function:
 
-- `sequential_pipeline` - Combines multiple state graphs in a sequential manner
+- `create_sequential_pipeline` - Combines multiple state graphs in a sequential manner
 
 Its parameters are as follows:
 <Params
@@ -92,7 +92,7 @@ import datetime
 from langchain.agents import AgentState
 from langchain_core.messages import HumanMessage
 from langchain_dev_utils.agents import create_agent
-from langchain_dev_utils.pipeline import sequential_pipeline
+from langchain_dev_utils.pipeline import create_sequential_pipeline
 from langchain_core.tools import tool
 from langchain_dev_utils.chat_models import register_model_provider
 
@@ -121,7 +121,7 @@ def get_current_user():
 
 
 # Build sequential pipeline (all subgraphs execute in order)
-graph = sequential_pipeline(
+graph = create_sequential_pipeline(
     sub_graphs=[
         create_agent(
             model="vllm:qwen3-4b",
@@ -162,7 +162,7 @@ graph.add_edge("__start__", "graph1")
 graph = graph.compile()
 ```
 
-However, the above approach is still somewhat verbose. Therefore, it is recommended to use the `sequential_pipeline` function, which can quickly build a sequential execution graph with a single line of code, making it more concise and efficient.
+However, the above approach is still somewhat verbose. Therefore, it is recommended to use the `create_sequential_pipeline` function, which can quickly build a sequential execution graph with a single line of code, making it more concise and efficient.
 :::
 
 ## Parallel Pipeline
@@ -171,7 +171,7 @@ Combines multiple state graphs in parallel, supporting flexible parallel executi
 
 Implemented via the following function:
 
-- `parallel_pipeline` - Combines multiple state graphs in a parallel manner
+- `create_parallel_pipeline` - Combines multiple state graphs in a parallel manner
 
 Its parameters are as follows:
 
@@ -254,10 +254,10 @@ Usage Example:
 ### Basic Parallel Example
 
 ```python
-from langchain_dev_utils.pipeline import parallel_pipeline
+from langchain_dev_utils.pipeline import create_parallel_pipeline
 
 # Build parallel pipeline (all subgraphs execute in parallel)
-graph = parallel_pipeline(
+graph = create_parallel_pipeline(
     sub_graphs=[
         create_agent(
             model="vllm:qwen3-4b",
@@ -296,7 +296,7 @@ The branch function needs to return a list of `Send` objects.
 # Build parallel pipeline (all subgraphs execute in parallel)
 from langgraph.types import Send
 
-graph = parallel_pipeline(
+graph = create_parallel_pipeline(
     sub_graphs=[
         create_agent(
             model="vllm:qwen3-4b",
