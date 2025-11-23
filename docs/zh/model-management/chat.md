@@ -507,7 +507,7 @@ from langchain_core.messages import HumanMessage
 # 加载模型时需指定提供商与模型名称
 model = load_chat_model("openai:gpt-4o-mini")
 # 或显式指定提供商参数
-model = load_chat_model("openai:gpt-4o-mini", model_provider="openai")
+model = load_chat_model("gpt-4o-mini", model_provider="openai")
 
 # 注意：必须指定模型提供商，无法仅根据模型名称自动推断
 response = model.invoke([HumanMessage("Hello")])

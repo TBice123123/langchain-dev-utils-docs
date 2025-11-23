@@ -507,7 +507,7 @@ from langchain_core.messages import HumanMessage
 # When loading a model, you need to specify the provider and model name
 model = load_chat_model("openai:gpt-4o-mini")
 # Or explicitly specify the provider parameter
-model = load_chat_model("openai:gpt-4o-mini", model_provider="openai")
+model = load_chat_model("gpt-4o-mini", model_provider="openai")
 
 # Note: You must specify the model provider; it cannot be automatically inferred based solely on the model name
 response = model.invoke([HumanMessage("Hello")])
