@@ -263,9 +263,9 @@ print(model.invoke("Hello"))
 Both `register_model_provider` and its corresponding batch registration function `batch_register_model_provider` are implemented based on a global dictionary. To avoid multi-threading concurrency issues, please ensure all registration operations are completed during the project startup phase. Do not dynamically register during runtime.
 :::
 
-## Loading a Chat Model
+## Loading Chat Models
 
-The function to load a chat model is `load_chat_model`, which accepts the following parameters:
+The function for loading chat models is `load_chat_model`, which accepts the following parameters:
 
 <Params
 name="model"
@@ -281,25 +281,26 @@ description="Chat model provider name"
 :required="false"
 :default="null"
 />
-Also, the following points should be noted when using this function:
+
+Additionally, there are some important points to note when using this function:
 
 **1. Additional Parameters**
 
-This function can also accept any number of keyword arguments, such as `temperature`, `max_tokens`, etc. For details, refer to the corresponding model integration class documentation (if `chat_model` is `"openai-compatible"`, you can refer to `ChatOpenAI`).
+This function can also accept any number of keyword arguments, such as `temperature`, `max_tokens`, etc. For specific details, refer to the corresponding model integration class documentation (if the chat_model is `openai-compatible`, you can refer to `ChatOpenAI`).
 
-**2. model Parameter Format**
+**2. Model Parameter Format**
 
 The `model` parameter supports two formats:
 
 1. `provider_name:model_name`
 2. `model_name`
 
-Among them, `provider_name` is the provider name registered via the `register_model_provider` function.
+Where `provider_name` is the provider name registered through the `register_model_provider` function.
 
-The `model_provider` parameter has the same meaning as the above `provider_name` and is an optional parameter:
+The `model_provider` parameter has the same meaning as the `provider_name` above and is an optional parameter:
 
-- If `model_provider` is not passed, the `model` parameter must be in the `provider_name:model_name` format;
-- If `model_provider` is passed, the `model` parameter must be in the `model_name` format.
+- If `model_provider` is not provided, the `model` parameter must be in the format `provider_name:model_name`;
+- If `model_provider` is provided, the `model` parameter must be in the format `model_name`.
 
 Example code:
 
@@ -312,7 +313,7 @@ response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
 
-You can also directly pass the `model_provider` parameter.
+Alternatively, you can directly pass the `model_provider` parameter.
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -320,15 +321,15 @@ from langchain_dev_utils.chat_models import load_chat_model
 model = load_chat_model("qwen3-4b", model_provider="vllm")
 ```
 
-**Note**: Although vLLM itself may not require an api_key, because this chat model class requires an api_key, you must set it.
+**Note**: Although vllm itself may not require an api_key, this chat model class does require an api_key, so you must set the api_key.
 
 ```bash
 export VLLM_API_KEY=vllm
 ```
 
-**3. Characteristics of the Chat Model Class when chat_model is a String**
+**3. Features of Chat Model Class when chat_model is a String**
 
-For the case where `chat_model` is a string (i.e., `"openai-compatible"`) as mentioned above, it provides the basic functionality of LangChain's `ChatModel`, including the following:
+For the case where `chat_model` is a string (i.e., `"openai-compatible"`), it supports the following features and functionalities:
 
 ::: details Regular Invocation
 For example:
@@ -342,7 +343,11 @@ response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
 
-Also supports asynchronous
+:::
+
+::: details Asynchronous Invocation
+
+Also supports asynchronous invocation
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -367,6 +372,9 @@ for chunk in model.stream([HumanMessage("Hello")]):
     print(chunk)
 ```
 
+:::
+
+::: details Asynchronous Streaming Output
 Also supports asynchronous streaming calls
 
 ```python
@@ -381,7 +389,7 @@ async for chunk in model.astream([HumanMessage("Hello")]):
 :::
 
 ::: details Tool Calling
-Note: Ensure the model supports tool calling.
+Note: Ensure the model supports tool calling
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -391,18 +399,18 @@ import datetime
 
 @tool
 def get_current_time() -> str:
-    """Get the current timestamp"""
+    """Get current timestamp"""
     return str(datetime.datetime.now().timestamp())
 
 model = load_chat_model("vllm:qwen3-4b").bind_tools([get_current_time])
-response = model.invoke([HumanMessage("Get the current timestamp")])
+response = model.invoke([HumanMessage("Get current timestamp")])
 print(response)
 ```
 
 :::
 
 ::: details Structured Output
-By default, the `function_calling` method is used, so the model needs to support tool calling.
+By default, the `function_calling` method is used, so the model needs to support tool calling
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -415,12 +423,14 @@ class User(BaseModel):
     age: int
 
 model = load_chat_model("vllm:qwen3-4b").with_structured_output(User)
-response = model.invoke([HumanMessage("Hello, my name is Zhang San, I am 25 years old")])
+response = model.invoke([HumanMessage("Hello, my name is Zhang San, I'm 25 years old")])
 print(response)
 ```
 
-Additionally, if your model provider supports `json_mode`, you can set `support_json_mode` in the `provider_config` parameter to `True` when registering the model provider, and specify the `method` parameter as `"json_mode"` when calling `with_structured_output` to enable this mode. In this case, it is recommended to explicitly guide the model in the prompt to output structured data according to the specified JSON Schema.
+Additionally, if your model provider supports `json_mode`, you can set `support_json_mode` to `True` in the `provider_config` parameter when registering the model provider, and specify the `method` parameter as `"json_mode"` when calling `with_structured_output` to enable this mode. In this case, it is recommended to explicitly guide the model to output structured data according to the specified JSON Schema format in the prompt.
 :::
+
+::: details Passing Model Parameters
 
 Furthermore, since this class inherits from `BaseChatOpenAI`, it supports passing model parameters of `BaseChatOpenAI`, such as `temperature`, `extra_body`, etc.
 Example code:
@@ -429,17 +439,21 @@ Example code:
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
 
-model = load_chat_model("vllm:qwen3-4b", extra_body={"chat_template_kwargs": {"enable_thinking": False}}) # Use extra_body to pass additional parameters, here to disable thinking mode
+model = load_chat_model("vllm:qwen3-4b", extra_body={"chat_template_kwargs": {"enable_thinking": False}}) # Using extra_body to pass additional parameters, here disabling thinking mode
 response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
 
-Also, it supports passing multimodal data. You can use the OpenAI-compatible multimodal data format or directly use `content_block` in `langchain`. For example:
+:::
+
+::: details Passing Multimodal Data
+
+Also supports passing multimodal data, you can use OpenAI-compatible multimodal data format or directly use `content_block` in `langchain`. For example:
 
 ```python
+from langchain_dev_utils.chat_models import register_model_provider, load_chat_model
 from langchain_core.messages import HumanMessage
 
-from langchain_dev_utils.chat_models import register_model_provider
 
 register_model_provider(
     provider_name="openrouter",
@@ -464,20 +478,38 @@ response = model.invoke(messages)
 print(response)
 ```
 
-**4. Compatibility with Official Functions**
+:::
 
-For model providers already supported by the official `init_chat_model` function, you can also directly use the `load_chat_model` function to load them without additional registration. Therefore, if you need to integrate multiple models, some of which are officially supported and others are not, you can consider uniformly using `load_chat_model` for loading. For example:
+::: details OpenAI's Latest `responses_api`
+
+Finally, it should be emphasized that this model class also supports OpenAI's latest `responses_api`. However, currently only a few providers support this API style. If your model provider supports this API style, you can pass the `use_responses_api` parameter as `True`.
+For example, if vllm supports `responses_api`, you can use it like this:
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
 
-# When loading the model, specify the provider and model name
+model = load_chat_model("vllm:qwen3-4b", use_responses_api=True)
+response = model.invoke([HumanMessage(content="Hello")])
+print(response)
+```
+
+:::
+
+## 4. Compatibility with Official Functions
+
+For model providers already supported by the official `init_chat_model` function, you can also directly use the `load_chat_model` function for loading without additional registration. Therefore, if you need to connect to multiple models simultaneously, where some providers are officially supported and others are not, you can consider using `load_chat_model` uniformly for loading. For example:
+
+```python
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_core.messages import HumanMessage
+
+# When loading a model, you need to specify the provider and model name
 model = load_chat_model("openai:gpt-4o-mini")
 # Or explicitly specify the provider parameter
 model = load_chat_model("openai:gpt-4o-mini", model_provider="openai")
 
-# Note: The model provider must be specified; it cannot be automatically inferred solely from the model name.
+# Note: You must specify the model provider; it cannot be automatically inferred based solely on the model name
 response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```

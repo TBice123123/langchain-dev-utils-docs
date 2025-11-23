@@ -329,7 +329,7 @@ export VLLM_API_KEY=vllm
 
 **3.chat_model 为字符串情况下的对话模型类特点**
 
-对于上面提到的`chat_model`为字符串（即`"openai-compatible"`）的情况，其提供了`langchain`的`ChatModel`的基本功能包括如下：
+对于上面提到的`chat_model`为字符串（即`"openai-compatible"`）的情况，其支持以下特点以及功能：
 
 ::: details 普通调用
 例如：
@@ -343,7 +343,11 @@ response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
 
-同样也支持异步
+:::
+
+::: details 异步调用
+
+同样支持异步调用
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -368,6 +372,9 @@ for chunk in model.stream([HumanMessage("Hello")]):
     print(chunk)
 ```
 
+:::
+
+::: details 异步流式输出
 同样也支持异步的流式调用
 
 ```python
@@ -423,6 +430,8 @@ print(response)
 同时，如果你的模型提供商支持`json_mode`，则可在注册模型提供商时，将`provider_config`参数中的`support_json_mode`设置为`True`，并在调用`with_structured_output`时将`method`参数指定为`"json_mode"`以启用该模式。此时，建议在提示词中明确引导模型按照指定的 JSON Schema 格式输出结构化数据。
 :::
 
+::: details 传递模型参数
+
 除此之外，由于该类继承了`BaseChatOpenAI`,因此支持传递`BaseChatOpenAI`的模型参数，例如`temperature`, `extra_body`等。
 示例代码如下：
 
@@ -435,12 +444,16 @@ response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
 
+:::
+
+::: details 传递多模态数据
+
 另外，也支持传递多模态数据，你可以使用 OpenAI 兼容的多模态数据格式或者直接使用`langchain`中的`content_block`。例如：
 
 ```python
+from langchain_dev_utils.chat_models import register_model_provider, load_chat_model
 from langchain_core.messages import HumanMessage
 
-from langchain_dev_utils.chat_models import register_model_provider
 
 register_model_provider(
     provider_name="openrouter",
@@ -464,6 +477,24 @@ model = load_chat_model("openrouter:qwen/qwen3-vl-8b-thinking")
 response = model.invoke(messages)
 print(response)
 ```
+
+:::
+
+::: details OpenAI 最新的`responses_api`
+
+最后，还需要强调一点，该模型类也支持 OpenAI 最新的`responses_api`。但是目前仅有少量的提供商支持该风格的 API。如果你的模型提供商支持该 API 风格，则可以在传入`use_responses_api`参数为`True`。
+例如 vllm 支持`responses_api`，则可以这样使用：
+
+```python
+from langchain_dev_utils.chat_models import load_chat_model
+from langchain_core.messages import HumanMessage
+
+model = load_chat_model("vllm:qwen3-4b", use_responses_api=True)
+response = model.invoke([HumanMessage(content="你好")])
+print(response)
+```
+
+:::
 
 **4.与官方函数兼容情况**
 
