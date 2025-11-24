@@ -223,6 +223,23 @@ It is worth noting that in most cases you should not actively set this parameter
 
 **Note**: The above example is relatively simple; in actual agent scenarios, some messages may contain tool calls and other content.
 
+::: info Note  
+Different models from the same provider may vary in their support for the aforementioned parameters. Therefore, this library treats `supported_tool_choice`, `support_json_mode`, and `keep_reasoning_content` as **instance-level configuration attributes**.
+
+- When calling `register_model_provider`, the `provider_config` parameter sets the **default values** for these instance attributes across all models of that provider.
+- At runtime, you can override these defaults by passing them as keyword arguments to `load_chat_model`, allowing fine-grained adaptation to the capabilities of a specific model.
+
+For example:
+```python
+model = load_chat_model(
+    "vllm:qwen3-4b",
+    supported_tool_choice=["auto"]  # assuming the qwen3-4b model served by vLLM only supports the 'auto' strategy
+)
+```
+This approach enables you to maintain clean global configurations while still allowing precise, per-model customization.
+:::
+
+
 ## Batch Registration
 
 If you need to register multiple model providers, you can use the `register_model_provider` function multiple times. However, this is obviously very troublesome. Therefore, this library provides a batch registration function `batch_register_model_provider`.

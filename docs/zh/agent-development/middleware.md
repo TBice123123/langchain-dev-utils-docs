@@ -36,8 +36,8 @@ agent = create_agent(
     middleware=[
         SummarizationMiddleware(
             model="vllm:qwen3-4b",
-            max_tokens_before_summary=100,
-            messages_to_keep=1,
+            trigger=("tokens", 50),
+            keep=("messages", 1),
         )
     ],
     system_prompt="你是一个智能的AI助手，可以解决用户的问题",
@@ -359,7 +359,7 @@ print(response)
 
 通过 `ModelRouterMiddleware`，你可以轻松构建一个多模型、多能力的 Agent，根据任务类型自动选择最优模型，提升响应质量与效率。
 
-::: tip 工具权限配置  
+::: info 工具权限配置  
 `model_list` 中每个模型的工具权限，由其 `tools` 字段的配置决定，此配置遵循以下规则：
 
 - **未定义时**：模型继承 `create_agent` 参数`tools`载入的全部工具。

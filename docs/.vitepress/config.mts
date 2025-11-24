@@ -77,7 +77,7 @@ export default defineConfig({
                 collapsed: true,
                 items: [
                   {
-                    text: "prebuilt",
+                    text: "prebuilt agent functions",
                     link: "/en/agent-development/prebuilt",
                   },
                   {
@@ -188,7 +188,7 @@ export default defineConfig({
                 collapsed: true,
                 items: [
                   {
-                    text: "预构建",
+                    text: "预构建智能体函数",
                     link: "/zh/agent-development/prebuilt",
                   },
                   {

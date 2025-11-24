@@ -224,6 +224,23 @@ register_model_provider(
 
 **注意**：上面例子比较简单，实际在智能体场景下部分 message 可能会包含工具调用等内容。
 
+:::info 注意
+同一模型提供商的不同模型，对上述参数的支持程度可能各不相同。因此，本库将 `supported_tool_choice`、`support_json_mode` 和 `keep_reasoning_content` 作为**模型实例级别的配置属性（即实例属性）**。
+
+- 在调用 `register_model_provider` 时，通过 `provider_config` 设置的是该模型类的实例属性的**默认值**；
+- 实际使用时，你可以在 `load_chat_model` 中通过关键字参数**覆盖这些默认值**，以适配具体模型的能力。
+
+例如：
+```python
+model = load_chat_model(
+    "vllm:qwen3-4b",
+    supported_tool_choice=["auto"] #假设vllm部署的qwen3-4b模型只支持auto策略
+)
+```
+这种方式允许你在保持全局配置简洁的同时，灵活地针对特定模型进行精细化调整。
+:::
+
+
 ## 批量注册
 
 如果你需要注册多个模型提供商，可以多次使用`register_model_provider`函数。但是这样显然特别麻烦，因此本库提供了一个批量注册的函数`batch_register_model_provider`。

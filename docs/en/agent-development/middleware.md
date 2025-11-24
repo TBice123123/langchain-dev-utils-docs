@@ -39,19 +39,19 @@ agent = create_agent(
     middleware=[
         SummarizationMiddleware(
             model="vllm:qwen3-4b",
-            max_tokens_before_summary=100,
-            messages_to_keep=1,
+            trigger=("tokens", 50),
+            keep=("messages", 1),
         )
     ],
     system_prompt="You are an intelligent AI assistant capable of solving user problems.",
 )
-# big_text is a placeholder for a large block of text
+# big_text is a text containing a large amount of content, omitted here
 big_messages = [
-    HumanMessage(content="Hello, who are you?"),
-    AIMessage(content="I'm your AI assistant."),
-    HumanMessage(content="Write a beautiful long passage."),
-    AIMessage(content=f"Sure, here is a beautiful long passage: {big_text}"),
-    HumanMessage(content="Why did you write this long passage?"),
+    HumanMessage(content="Hello, who are you"),
+    AIMessage(content="I am your AI assistant"),
+    HumanMessage(content="Write a beautiful long text"),
+    AIMessage(content=f"Okay, I will write a beautiful long text, the content is: {big_text}"),
+    HumanMessage(content="Why did you write this long text?"),
 ]
 response = agent.invoke({"messages": big_messages})
 print(response)
@@ -351,7 +351,7 @@ print(response)
 
 With `ModelRouterMiddleware`, you can easily build a multi-model, multi-capability Agent that auto-selects the optimal model per task, enhancing both quality and efficiency.
 
-::: tip Tool Permission Rules  
+::: info Tool Permission Rules  
 Tool access for each model in `model_list` is controlled by its `tools` field as follows:
 
 - **Not specified**: Inherits all tools passed to `create_agent(tools=...)`.
