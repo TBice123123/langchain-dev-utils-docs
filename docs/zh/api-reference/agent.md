@@ -170,22 +170,24 @@ class SummarizationMiddleware(_SummarizationMiddleware):
     def __init__(
         self,
         model: str,
-        max_tokens_before_summary: Optional[int] = None,
-        messages_to_keep: Optional[int] = None,
-        token_counter: Optional[TokenCounter] = None,
-        summary_prompt: Optional[str] = None,
-        summary_prefix: Optional[str] = None,
+        *,
+        trigger: ContextSize | list[ContextSize] | None = None,
+        keep: ContextSize = ("messages", _DEFAULT_MESSAGES_TO_KEEP),
+        token_counter: TokenCounter = count_tokens_approximately,
+        summary_prompt: str = DEFAULT_SUMMARY_PROMPT,
+        trim_tokens_to_summarize: int | None = _DEFAULT_TRIM_TOKEN_LIMIT,
+        **deprecated_kwargs: Any,
     ) -> None:
 ```
 
 **参数说明：**
 
 - `model`：字符串类型，必填，可由 `load_chat_model` 加载的模型标识符字符串。可指定为 "provider:model-name" 格式
-- `max_tokens_before_summary`：可选整数类型，摘要前保留的 token 数
-- `messages_to_keep`：可选整数类型，摘要前保留的消息数
+- `trigger`：可选 ContextSize 类型或者列表类型，触发摘要的上下文大小
+- `keep`：可选 ContextSize 类型，保留的上下文大小
 - `token_counter`：可选 TokenCounter 类型，token 计数器
 - `summary_prompt`：可选字符串类型，摘要提示词
-- `summary_prefix`：可选字符串类型，摘要前缀
+- `trim_tokens_to_summarize`：可选整数类型，摘要前要截取的 token 数
 
 **示例：**
 

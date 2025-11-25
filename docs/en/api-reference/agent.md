@@ -160,38 +160,40 @@ def create_read_plan_tool(
 ```python
 read_plan_tool = create_read_plan_tool()
 ```
-
 ## SummarizationMiddleware
 
-Middleware for agent context summarization.
+Middleware for intelligent agent context summarization.
 
 ```python
 class SummarizationMiddleware(_SummarizationMiddleware):
     def __init__(
         self,
         model: str,
-        max_tokens_before_summary: Optional[int] = None,
-        messages_to_keep: Optional[int] = None,
-        token_counter: Optional[TokenCounter] = None,
-        summary_prompt: Optional[str] = None,
-        summary_prefix: Optional[str] = None,
+        *,
+        trigger: ContextSize | list[ContextSize] | None = None,
+        keep: ContextSize = ("messages", _DEFAULT_MESSAGES_TO_KEEP),
+        token_counter: TokenCounter = count_tokens_approximately,
+        summary_prompt: str = DEFAULT_SUMMARY_PROMPT,
+        trim_tokens_to_summarize: int | None = _DEFAULT_TRIM_TOKEN_LIMIT,
+        **deprecated_kwargs: Any,
     ) -> None:
 ```
 
 **Parameters:**
 
-- `model`: str, required. Model identifier string loadable by `load_chat_model`. Can be specified in "provider:model-name" format
-- `max_tokens_before_summary`: Optional int, number of tokens to keep before summarization
-- `messages_to_keep`: Optional int, number of messages to keep before summarization
-- `token_counter`: Optional TokenCounter type, token counter
-- `summary_prompt`: Optional str, summarization prompt
-- `summary_prefix`: Optional str, summarization prefix
+- `model`：str, required. Model identifier string loadable by `load_chat_model`. Can be specified in "provider:model-name" format
+- `trigger`：Optional ContextSize type or list of ContextSize type, trigger context size for summarization
+- `keep`：Optional ContextSize type, keep context size
+- `token_counter`：Optional TokenCounter type, token counter function
+- `summary_prompt`：Optional str, summary prompt
+- `trim_tokens_to_summarize`：Optional int, token limit for summarization
 
 **Example:**
 
 ```python
 summarization_middleware = SummarizationMiddleware(model="vllm:qwen3-4b")
 ```
+
 
 ## LLMToolSelectorMiddleware
 

@@ -66,16 +66,19 @@ from langchain_dev_utils.agents.middleware import (
 )
 
 @tool
+def get_current_time() -> str:
+    """获取当前时间"""
+    return "14:00"
+
+@tool
 def get_current_weather() -> str:
     """获取当前天气"""
     return "今天天气晴朗"
-
 
 @tool
 def search() -> str:
     """搜索"""
     return "搜索结果"
-
 
 @tool
 def run_python() -> str:
@@ -117,7 +120,7 @@ agent = create_agent(
     ],
 )
 
-response = agent.invoke({"messages": [HumanMessage(content="你好。")]}),
+response = agent.invoke({"messages": [HumanMessage(content="你好。")]})
 print(response)
 ```
 
@@ -249,13 +252,7 @@ description="用于更新 messages 的键，若不传入则使用默认的 messa
 />
 
 ```python
-from langchain_dev_utils.agents.middleware import (
-    create_write_plan_tool,
-    create_finish_sub_plan_tool,
-    create_read_plan_tool,
-    PlanMiddleware,
-)
-
+from langchain_dev_utils.agents.middleware import PlanMiddleware
 
 agent = create_agent(
     model="vllm:qwen3-4b",
@@ -265,7 +262,6 @@ agent = create_agent(
         )
     ],
 )
-
 
 response = agent.invoke(
     {"messages": [HumanMessage(content="我要去New York玩几天，帮我规划行程")]}
