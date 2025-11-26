@@ -64,9 +64,9 @@ description="嵌入模型提供商名称"
 
 注册嵌入模型提供商需调用 `register_embeddings_provider`。根据 `embeddings_model` 类型不同，注册方式略有差异。
 
-### 情况一：`embeddings_model` 为 `Embeddings` 类（适用于已有 LangChain 嵌入模型类）
+### 情况一：已有 LangChain 嵌入模型类
 
-适用于 LangChain 已集成的嵌入模型（参考 [嵌入模型集成列表](https://docs.langchain.com/oss/python/integrations/text_embedding)），直接传入模型类即可。
+若嵌入模型提供商已有现成且合适的LangChain集成（详见 [嵌入模型集成列表](https://docs.langchain.com/oss/python/integrations/text_embedding)），请将相应的嵌入模型类直接传入 `embeddings_model` 参数。
 
 <StepItem step="1" title="设置 provider_name"></StepItem>
 
@@ -95,11 +95,11 @@ register_embeddings_provider(
 - 覆盖机制仅对模型类中字段名为 `api_base` 或 `base_url`（含别名）的属性生效。
 
 
-### 情况二：`embeddings_model` 为字符串 `"openai-compatible"`（适用于 OpenAI 兼容 API 服务）
+### 情况二：未有 LangChain 嵌入模型类，但提供商支持 OpenAI 兼容 API
 
 类似于对话模型，很多嵌入模型提供商也提供 **OpenAI 兼容 API**。当无现成 LangChain 集成但支持该协议时，可使用此模式。
 
-系统将使用 `OpenAIEmbeddings`（来自 `langchain-openai`）构建嵌入客户端，并自动禁用上下文长度检查（设置 `check_embedding_ctx_length=False`）以提升兼容性。
+系统将使用 `OpenAIEmbeddings`（来自 `langchain-openai`）构建嵌入模型实例，并自动禁用上下文长度检查（设置 `check_embedding_ctx_length=False`）以提升兼容性。
 
 <StepItem step="1" title="设置 provider_name"></StepItem>
 
@@ -219,11 +219,11 @@ model = load_embeddings("text-embedding-3-large", provider="openai")
 ```
 
 <BestPractice>
-    <p>对于本模块的使用，建议如下：</p>
+    <p>对于本模块的使用，可以根据下面三种情况进行选择：</p>
     <ol>
-        <li>若所有嵌入模型均被官方 <code>init_embeddings</code> 支持，请优先使用官方函数，以获得最佳兼容性。</li>
-        <li>若需接入非官方支持的嵌入服务（尤其是 OpenAI 兼容 API），请使用本模块的注册与加载机制。</li>
-        <li>当项目中混合使用官方与非官方模型时，可统一使用 <code>load_embeddings</code> 简化调用逻辑。</li>
+        <li>若接入的所有嵌入模型提供商均被官方 <code>init_embeddings</code> 支持，请直接使用官方函数，以获得最佳兼容性。</li>
+        <li>若接入的部分嵌入模型提供商为非官方支持，可利用本模块的注册与加载机制，先利用<code>register_embeddings_provider</code>注册模型提供商，然后使用<code>load_embeddings</code>加载模型。</li>
+        <li>若接入的嵌入模型提供商暂无适合的集成，但提供商提供了 OpenAI 兼容的 API（如 vLLM、OpenRouter），则推荐利用本模块的功能，先利用<code>register_embeddings_provider</code>注册模型提供商（embeddings_model传入<code>openai-compatible</code>），然后使用<code>load_embeddings</code>加载模型。</li>
     </ol>
 </BestPractice>
 

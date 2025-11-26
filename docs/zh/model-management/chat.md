@@ -3,7 +3,7 @@
 > [!NOTE]  
 > **功能概述**：提供更高效、更便捷的对话模型管理，支持多种模型提供商。  
 > **前置要求**：了解 LangChain [对话模型](https://docs.langchain.com/oss/python/langchain/models)。  
-> **预计阅读时间**：10 分钟。
+> **预计阅读时间**：15分钟。
 
 ## 概述
 
@@ -70,11 +70,11 @@ description="对话模型提供商名称"
 
 ## 注册模型提供商
 
-注册对话模型提供商需调用 `register_model_provider`。对于不同的 `chat_model` 类型，注册步骤略有不同。
+注册对话模型提供商需调用 `register_model_provider`。对于不同的情况，注册步骤略有不同。
 
-### 情况一：`chat_model` 为 `BaseChatModel` 类（适用于已有 LangChain 对话模型类）
+### 情况一：已有 LangChain 对话模型类
 
-此情况适用于已有的 LangChain 集成模型（可以参考[对话模型类集成](https://docs.langchain.com/oss/python/integrations/chat)），直接传入模型类即可。
+若模型提供商已有现成且合适的LangChain 集成（详见[对话模型类集成](https://docs.langchain.com/oss/python/integrations/chat)），请将相应的集成对话模型类作为 chat_model 参数传入。 
 
 <StepItem step="1" title="设置 provider_name"></StepItem>
 
@@ -102,11 +102,11 @@ register_model_provider(
 - 覆盖机制仅对模型类中字段名为 `api_base` 或 `base_url`（含别名）的属性生效。
 
 
-### 情况二：`chat_model` 为字符串 `"openai-compatible"`（适用于 OpenAI 兼容 API 服务）
+### 情况二：未有 LangChain 对话模型类，但模型提供商支持 OpenAI 兼容 API
 
 很多模型提供商都支持 **OpenAI 兼容 API** 的服务，例如：[vLLM](https://github.com/vllm-project/vllm)、[OpenRouter](https://openrouter.ai/)、[Together AI](https://www.together.ai/)等。当你接入的模型提供商未有合适的 LangChain 对话模型类时，但提供商支持OpenAI 兼容 API 时，可以考虑使用此情况。
 
-系统将使用内置 `BaseChatOpenAICompatible` 类构建对应于特定提供商的对话模型类。该类继承自 `langchain-openai` 的 `BaseChatOpenAI`，并增强以下能力：
+本库将使用内置 `BaseChatOpenAICompatible` 类构建对应于特定提供商的对话模型类。该类继承自 `langchain-openai` 的 `BaseChatOpenAI`，并增强以下能力：
 
 1. **支持更多 `reasoning_content` 格式**：可解析非 OpenAI 提供商的推理内容（`reasoning_content`）输出；
 2. **结构化输出默认使用 `function_calling`**：比 `json_schema` 兼容性更广；
@@ -189,7 +189,7 @@ register_model_provider(
 )
 ```
 ::: info 提示
-在结构化输出的场景下，如果不设置强制工具调用，则模型可能会因为自身问题而不调用对应的结构化工具，从而导致输出结果为`None`，故如果你的模型提供商支持指定具体工具，可以注册时显式设置本参数以保证结构化输出稳定性。
+在利用`function calling`方法实现结构化输出场景中，模型可能因自身问题从而导致未调用相应结构化工具，导致输出结果为 `None`。因此，如果您的模型提供商支持通过 `tool_choice` 参数指定调用特定的工具，那么可以在注册时显式设置该参数，以确保结构化输出的稳定性和可靠性。
 :::
 
 **2. support_json_mode**
@@ -294,12 +294,19 @@ model = load_chat_model("qwen3-4b", model_provider="vllm")
 export VLLM_API_KEY=vllm
 ```
 
-### 功能支持（仅限 `"openai-compatible"` 情况）
-对于上面提到的`chat_model`为字符串（即`"openai-compatible"`）的情况，其支持以下特点以及功能：
+### 模型方法和参数
+对于**情况一**，其所有方法与参数均与该对应的对话模型类保持一致。  
+而对于**情况二**，则模型的方法和参数如下：
+- 支持`invoke`、`ainvoke`、`stream`、`astream`等方法。
+- 支持`bind_tools`方法，进行工具调用。
+- 支持`with_structured_output`方法，进行结构化输出。
+- 支持传递`BaseChatOpenAI`的参数，例如`temperature`、`top_p`、`max_tokens`等。
+- 支持传递多模态数据
+- 支持OpenAI最新的`responses api`
 
-::: details 普通调用
-例如：
+:::details 普通调用
 
+支持`invoke`进行简单的调用：
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -308,13 +315,7 @@ model = load_chat_model("vllm:qwen3-4b")
 response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
-
-:::
-
-::: details 异步调用
-
-同样支持异步调用
-
+同时也支持`ainvoke`进行异步调用：
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -323,12 +324,11 @@ model = load_chat_model("vllm:qwen3-4b")
 response = await model.ainvoke([HumanMessage("Hello")])
 print(response)
 ```
-
 :::
 
 ::: details 流式输出
-例如：
 
+支持`stream`进行流式输出：
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -337,12 +337,7 @@ model = load_chat_model("vllm:qwen3-4b")
 for chunk in model.stream([HumanMessage("Hello")]):
     print(chunk)
 ```
-
-:::
-
-::: details 异步流式输出
-同样也支持异步的流式调用
-
+以及`astream`进行异步流式调用：
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -351,12 +346,11 @@ model = load_chat_model("vllm:qwen3-4b")
 async for chunk in model.astream([HumanMessage("Hello")]):
     print(chunk)
 ```
-
 :::
 
 ::: details 工具调用
-注意：需要保证模型支持工具调用
 
+如果模型本身支持工具调用，那么可以直接使用`bind_tools`方法进行工具调用：
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -372,12 +366,11 @@ model = load_chat_model("vllm:qwen3-4b").bind_tools([get_current_time])
 response = model.invoke([HumanMessage("获取当前时间戳")])
 print(response)
 ```
-
 :::
 
 ::: details 结构化输出
-默认采用`function_calling`方法，因此模型需要支持工具调用
 
+支持结构化输出，默认采用`function_calling`方法，因此模型需要支持工具调用：
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -392,15 +385,12 @@ model = load_chat_model("vllm:qwen3-4b").with_structured_output(User)
 response = model.invoke([HumanMessage("你好，我叫张三，今年25岁")])
 print(response)
 ```
-
-同时，如果你的模型提供商支持`json_mode`，则可在注册模型提供商时，将`provider_config`参数中的`support_json_mode`设置为`True`，并在调用`with_structured_output`时将`method`参数指定为`"json_mode"`以启用该模式。此时，建议在提示词中明确引导模型按照指定的 JSON Schema 格式输出结构化数据。
+同时，如果你的模型提供商支持`json_mode`，则可在注册模型提供商时，将`provider_config`参数中的`support_json_mode`设置为`True`，并在调用`with_structured_output`时将`method`参数指定为`"json_mode"`以启用该模式。最后请在提示词中明确引导模型按照指定的 JSON Schema 格式输出结构化数据。
 :::
 
 ::: details 传递模型参数
 
-除此之外，由于该类继承了`BaseChatOpenAI`,因此支持传递`BaseChatOpenAI`的模型参数，例如`temperature`, `extra_body`等。
-示例代码如下：
-
+除此之外，由于该类继承了`BaseChatOpenAI`,因此支持传递`BaseChatOpenAI`的模型参数，例如`temperature`, `extra_body`等：
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -409,13 +399,11 @@ model = load_chat_model("vllm:qwen3-4b",extra_body={"chat_template_kwargs": {"en
 response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
-
 :::
 
 ::: details 传递多模态数据
 
-另外，也支持传递多模态数据，你可以使用 OpenAI 兼容的多模态数据格式或者直接使用`langchain`中的`content_block`。例如：
-
+支持传递多模态数据，你可以使用 OpenAI 兼容的多模态数据格式或者直接使用`langchain`中的`content_block`。例如：
 ```python
 from langchain_dev_utils.chat_models import register_model_provider, load_chat_model
 from langchain_core.messages import HumanMessage
@@ -443,12 +431,11 @@ model = load_chat_model("openrouter:qwen/qwen3-vl-8b-thinking")
 response = model.invoke(messages)
 print(response)
 ```
-
 :::
 
 ::: details OpenAI 最新的`responses_api`
 
-最后，还需要强调一点，该模型类也支持 OpenAI 最新的`responses_api`。但是目前仅有少量的提供商支持该风格的 API。如果你的模型提供商支持该 API 风格，则可以在传入`use_responses_api`参数为`True`。
+该模型类也支持 OpenAI 最新的`responses_api`。但是目前仅有少量的提供商支持该风格的 API。如果你的模型提供商支持该 API 风格，则可以在传入`use_responses_api`参数为`True`。
 例如 vllm 支持`responses_api`，则可以这样使用：
 
 ```python
@@ -459,7 +446,6 @@ model = load_chat_model("vllm:qwen3-4b", use_responses_api=True)
 response = model.invoke([HumanMessage(content="你好")])
 print(response)
 ```
-
 :::
 
 ### 兼容官方提供商
@@ -473,10 +459,10 @@ model = load_chat_model("gpt-4o-mini", model_provider="openai")
 ```
 
 <BestPractice>
-    <p>对于本模块的使用，有如下建议：</p>
+    <p>对于本模块的使用，可以根据下面三种情况进行选择：</p>
     <ol>
-        <li>若所有模型均被官方 <code>init_chat_model</code> 支持，请直接使用该函数，以获得最佳兼容性和稳定性。</li>
-        <li>若部分模型不受官方支持，或需要集成官方未覆盖的提供商，可使用本模块的函数。</li>
-        <li>如果暂无适合的模型集成库，但提供商提供了 OpenAI 兼容的 API（如 vLLM、OpenRouter），则必须使用本模块函数。</li>
+        <li>若接入的所有模型提供商均被官方 <code>init_chat_model</code> 支持，请直接使用官方函数，以获得最佳兼容性和稳定性。</li>
+        <li>若接入的部分模型提供商为非官方支持，可使用本模块的功能，先利用<code>register_model_provider</code>注册模型提供商，然后使用<code>load_chat_model</code>加载模型。</li>
+        <li>若接入的模型提供商暂无适合的集成，但提供商提供了 OpenAI 兼容的 API（如 vLLM、OpenRouter），则推荐使用本模块的功能，先利用<code>register_model_provider</code>注册模型提供商（chat_model传入<code>openai-compatible</code>），然后使用<code>load_chat_model</code>加载模型。</li>
     </ol>
 </BestPractice>

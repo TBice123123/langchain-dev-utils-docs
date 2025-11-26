@@ -6,7 +6,7 @@
 >
 > **前置要求**：了解 langchain 的[中间件](https://docs.langchain.com/oss/python/langchain/middleware)。
 >
-> **预计阅读时间**：10 分钟
+> **预计阅读时间**：12 分钟
 
 ## 概述
 
@@ -25,7 +25,7 @@
 
 ### SummarizationMiddleware
 
-核心作用是压缩对话内容，功能与官方[SummarizationMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#summarization)完全一致。但是只允许字符串参数指定模型。
+核心作用是压缩对话内容，功能与官方**SummarizationMiddleware**对齐。但是只允许字符串参数指定模型。
 
 使用示例:
 
@@ -58,7 +58,7 @@ print(response)
 
 ### LLMToolSelectorMiddleware
 
-核心作用是用于大量工具的情况下，由 LLM 自己选择工具，功能与官方[LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-selector)完全一致。但是同样只允许字符串指定模型。
+核心作用是用于大量工具的情况下，由 LLM 自己选择工具，功能与官方**LLMToolSelectorMiddleware**对齐。但是同样只允许字符串指定模型。
 
 使用示例:
 
@@ -103,7 +103,7 @@ print(response)
 
 ### ModelFallbackMiddleware
 
-用于在调用模型失败时回退到备用模型的中间件。功能与官方[ModelFallbackMiddleware](https://docs.langchain.com/oss/python/langchain/middleware#model-fallback)完全一致。但是同样只允许字符串指定模型。
+用于在调用模型失败时回退到备用模型的中间件。功能与官方**ModelFallbackMiddleware**对齐。但是同样只允许字符串指定模型。
 
 使用示例:
 
@@ -128,7 +128,7 @@ print(response)
 
 ### LLMToolEmulator
 
-用于使用大模型来模拟工具调用的中间件。功能与官方[LLMToolEmulator](https://docs.langchain.com/oss/python/langchain/middleware#llm-tool-emulator)完全一致。但是同样只允许字符串指定模型。
+用于使用大模型来模拟工具调用的中间件。功能与官方**LLMToolEmulator**对齐。但是同样只允许字符串指定模型。
 
 使用示例:
 
@@ -161,7 +161,7 @@ print(response)
 任务规划是一种高效的上下文工程管理策略。在执行任务之前，大模型首先将整体任务拆解为多个有序的子任务，形成任务规划列表（在本库中称为 plan）。随后按顺序执行各子任务，并在每完成一个步骤后动态更新任务状态，直至所有子任务执行完毕。
 :::
 
-本中间件与 LangChain 官方提供的 [Plan 中间件](https://docs.langchain.com/oss/python/langchain/middleware#planning)功能定位相似，但在工具设计上存在差异。官方中间件仅提供 `write_todo` 工具，面向的是待办清单（todo list）结构；而本库则提供了 `write_plan` 、`finish_sub_plan`、`read_plan` 三个专用工具，专门用于对规划列表（plan list）进行写入、修改、查询等操作。
+本中间件与 LangChain 官方提供的 **To-do list 中间件**功能定位相似，但在工具设计上存在差异。官方中间件仅提供 `write_todo` 工具，面向的是待办清单（todo list）结构；而本库则提供了 `write_plan` 、`finish_sub_plan`、`read_plan` 三个专用工具，专门用于对规划列表（plan list）进行写入、修改、查询等操作。
 
 无论是`todo`还是`plan`其本质都是同一个，因此本中间件区别于官方的关键点在于提供的工具，官方的添加和修改是通过一个工具来完成的，而本库则提供了三个工具，其中`write_plan`可用于写入计划或者更新计划内容，`finish_sub_plan`则用于在完成某个子任务后更新其状态，`read_plan`用于查询计划内容。
 

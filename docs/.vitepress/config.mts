@@ -37,9 +37,9 @@ export default defineConfig({
                 text: "model-management",
                 collapsed: true,
                 items: [
-                  { text: "chat", link: "/en/model-management/chat" },
+                  { text: "chat model management", link: "/en/model-management/chat" },
                   {
-                    text: "embedding",
+                    text: "embedding model management",
                     link: "/en/model-management/embedding",
                   },
                 ],
@@ -67,7 +67,7 @@ export default defineConfig({
                     link: "/en/tool-calling/human-in-the-loop",
                   },
                   {
-                    text: "Tool calling process",
+                    text: "tool calling process",
                     link: "/en/tool-calling/tool",
                   },
                 ],
@@ -91,7 +91,7 @@ export default defineConfig({
                 collapsed: true,
                 items: [
                   {
-                    text: "pipeline",
+                    text: "state graph orchestration",
                     link: "/en/graph-orchestration/pipeline",
                   },
                 ],
@@ -202,7 +202,7 @@ export default defineConfig({
                 collapsed: true,
                 items: [
                   {
-                    text: "编排管道",
+                    text: "状态图编排",
                     link: "/zh/graph-orchestration/pipeline",
                   },
                 ],

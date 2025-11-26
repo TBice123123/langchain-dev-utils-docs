@@ -1,29 +1,29 @@
-# State Graph Orchestration Pipeline
+# State Graph Orchestration
 
 > [!NOTE]
 >
-> **Feature Overview**: Mainly used for implementing parallel and sequential combinations of multiple state graphs.
+> **Function Overview**: Mainly used for implementing parallel and serial combinations of multiple state graphs.
 >
-> **Prerequisites**: Understanding of LangChain's [subgraphs](https://docs.langchain.com/oss/python/langgraph/use-subgraphs), [Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send).
+> **Prerequisites**: Understanding of LangChain's [subgraphs](https://docs.langchain.com/oss/python/langgraph/use-subgraphs) and [Send](https://docs.langchain.com/oss/python/langgraph/graph-api#send).
 >
-> **Estimated Reading Time**: 5 minutes
+> **Estimated Reading Time**: 8 minutes
 
 ## Overview
 
-Provides utilities for convenient state graph orchestration. Mainly includes the following features:
+Provides utility tools for convenient state graph orchestration. Mainly includes the following features:
 
-- Orchestrate multiple state graphs in sequence to form a sequential execution flow.
-- Orchestrate multiple state graphs in parallel to form a parallel execution flow.
+- Combine multiple state graphs in sequential order to form a sequential workflow.
+- Combine multiple state graphs in parallel to form a parallel workflow.
 
 ## Sequential Orchestration
 
-Connect state graphs sequentially to form a sequential execution flow.
+Used for building intelligent agent sequential workflows (Sequential Pipeline). This is a work pattern that decomposes complex tasks into a series of continuous, ordered subtasks, and hands them over to different specialized agents for processing in sequence.
 
 Implemented through the following function:
 
-- `create_sequential_pipeline` - Combine multiple state graphs in a sequential manner
+- `create_sequential_pipeline` - Combines multiple state graphs in sequential order
 
-Its parameters are:
+Its parameters are as follows:
 <Params
 name="sub_graphs"
 type="list[StateGraph | CompiledStateGraph]"
@@ -92,10 +92,24 @@ description="LangGraph's Cache."
 :default="null"
 />
 
-Usage example:
+**Usage Example**:
+
+Developing a software project typically follows a strict linear process:
+1. Requirements Analysis: First, the product manager must clarify "what to do" and produce a detailed Product Requirements Document (PRD).
+2. Architecture Design: Then, the architect designs "how to do it" based on the PRD, planning the system blueprint and technology selection.
+3. Code Writing: Next, development engineers implement the blueprint into specific code according to the architecture design.
+4. Testing & Quality Assurance: Finally, test engineers verify the code to ensure its quality meets requirements.
+This process is interconnected and the order cannot be reversed.
+
+For the above four processes, each process has a specialized intelligent agent responsible:
+1. Product Manager Agent: Receives user's vague requirements and outputs a structured Product Requirements Document (PRD).
+2. Architect Agent: Receives the PRD and outputs system architecture diagrams and technical solutions.
+3. Development Engineer Agent: Receives the architecture solution and outputs executable source code.
+4. Test Engineer Agent: Receives the source code and outputs test reports and optimization suggestions.
+
+Through the `create_sequential_pipeline` function, these four agents are seamlessly connected to form a highly automated, clearly divided software development pipeline.
 
 ```python
-import datetime
 from langchain.agents import AgentState
 from langchain_core.messages import HumanMessage
 from langchain_dev_utils.agents import create_agent
@@ -110,49 +124,57 @@ register_model_provider(
 )
 
 @tool
-def get_current_time():
-    """Get current time"""
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-
-@tool
-def get_current_weather():
-    """Get current weather"""
-    return "Sunny"
-
+def analyze_requirements(user_request: str) -> str:
+    """Analyze user requirements and generate detailed product requirements document"""
+    return f"Based on user request '{user_request}', a detailed product requirements document has been generated, including feature list, user stories, and acceptance criteria."
 
 @tool
-def get_current_user():
-    """Get current user"""
-    return "John Doe"
+def design_architecture(requirements: str) -> str:
+    """Design system architecture based on requirements document"""
+    return f"Based on the requirements document, system architecture has been designed, including microservice division, data flow diagrams, and technology stack selection."
 
+@tool
+def generate_code(architecture: str) -> str:
+    """Generate core code based on architecture design"""
+    return f"Based on the architecture design, core business code has been generated, including API interfaces, data models, and business logic implementation."
 
-# Build sequential pipeline (all subgraphs execute in sequence)
+@tool
+def create_tests(code: str) -> str:
+    """Create test cases for the generated code"""
+    return f"Unit tests, integration tests, and end-to-end test cases have been created for the generated code."
+
+# Build automated software development sequential workflow (pipeline)
 graph = create_sequential_pipeline(
     sub_graphs=[
         create_agent(
             model="vllm:qwen3-4b",
-            tools=[get_current_time],
-            system_prompt="You are a time query assistant, can only answer current time. If the question is not related to time, please directly answer that you cannot answer",
-            name="time_agent",
+            tools=[analyze_requirements],
+            system_prompt="You are a product manager responsible for analyzing user requirements and generating detailed product requirements documents.",
+            name="requirements_agent",
         ),
         create_agent(
             model="vllm:qwen3-4b",
-            tools=[get_current_weather],
-            system_prompt="You are a weather query assistant, can only answer current weather. If the question is not related to weather, please directly answer that you cannot answer",
-            name="weather_agent",
+            tools=[design_architecture],
+            system_prompt="You are a system architect responsible for designing system architecture based on requirements documents.",
+            name="architecture_agent",
         ),
         create_agent(
             model="vllm:qwen3-4b",
-            tools=[get_current_user],
-            system_prompt="You are a user query assistant, can only answer current user. If the question is not related to user, please directly answer that you cannot answer",
-            name="user_agent",
+            tools=[generate_code],
+            system_prompt="You are a senior development engineer responsible for generating core code based on architecture design.",
+            name="coding_agent",
+        ),
+        create_agent(
+            model="vllm:qwen3-4b",
+            tools=[create_tests],
+            system_prompt="You are a test engineer responsible for creating comprehensive test cases for the generated code.",
+            name="testing_agent",
         ),
     ],
     state_schema=AgentState,
 )
 
-response = graph.invoke({"messages": [HumanMessage("Hello")]})
+response = graph.invoke({"messages": [HumanMessage("Develop an e-commerce website with user registration, product browsing, and shopping cart functionality")]})
 print(response)
 ```
 
@@ -160,7 +182,7 @@ The final generated graph structure is as follows:
 ![Sequential Pipeline Diagram](/img/sequential.png)
 
 ::: tip 📝
-For serially combined graphs, LangGraph's StateGraph provides the add_sequence method as a convenient syntax. This method is most suitable when nodes are functions (not subgraphs). If nodes are subgraphs, the code might look like:
+For serially combined graphs, LangGraph's StateGraph provides the add_sequence method as a convenient shorthand. This method is most suitable when nodes are functions (rather than subgraphs). If nodes are subgraphs, the code might look like:
 
 ```python
 graph = StateGraph(AgentState)
@@ -169,18 +191,18 @@ graph.add_edge("__start__", "graph1")
 graph = graph.compile()
 ```
 
-However, the above syntax is still somewhat cumbersome. Therefore, it's more recommended to use the `create_sequential_pipeline` function, which can quickly build a sequential execution graph with one line of code, making it more concise and efficient.
+However, the above approach is still somewhat cumbersome. Therefore, it is recommended to use the `create_sequential_pipeline` function, which can quickly build a serial execution graph with just one line of code, making it more concise and efficient.
 :::
 
 ## Parallel Orchestration
 
-Combine multiple state graphs in parallel, supporting flexible parallel execution strategies.
+Used for building intelligent agent parallel workflows (Parallel Pipeline). Its working principle is to combine multiple state graphs in parallel, executing tasks concurrently for each state graph, thereby improving task execution efficiency.
 
 Implemented through the following function:
 
-- `create_parallel_pipeline` - Combine multiple state graphs in a parallel manner
+- `create_parallel_pipeline` - Combines multiple state graphs in parallel
 
-Its parameters are:
+Its parameters are as follows:
 
 <Params
 name="sub_graphs"
@@ -199,7 +221,7 @@ description="State Schema of the final generated graph."
 <Params
 name="branches_fn"
 type="Callable[[Any], list[Send]]"
-description="Parallel branch function, receives state as input and returns a list of Send objects to control which subgraphs are executed in parallel."
+description="Parallel branching function that receives state as input and returns a list of Send objects to control which subgraphs are executed in parallel."
 :required="false"
 :default="null"
 />
@@ -256,87 +278,124 @@ description="LangGraph's Cache."
 :required="false"
 :default="null"
 />
-Usage example:
 
-### Basic Parallel Example
+**Usage Example**:
+
+In software development, once the system architecture design is completed, different functional modules can often be developed simultaneously by different teams or engineers because they are relatively independent of each other. This is a typical scenario for parallel work.
+
+Suppose we want to develop an e-commerce website, whose core functions can be divided into three independent modules:
+1. User Module (registration, login, personal center)
+2. Product Module (display, search, categorization)
+3. Order Module (placing orders, payment, status inquiry)
+
+If developed serially, the time required would be the sum of all three modules. But if developed in parallel, the total time would be approximately equal to the development time of the longest module, greatly improving efficiency.
+
+Through the `create_parallel_pipeline` function, assign a specialized module development agent to each module, allowing them to work in parallel.
 
 ```python
 from langchain_dev_utils.pipeline import create_parallel_pipeline
 
-# Build parallel pipeline (all subgraphs execute in parallel)
+@tool
+def develop_user_module():
+    """Develop user module functionality"""
+    return "User module development completed, including registration, login, and personal profile management functions."
+
+@tool
+def develop_product_module():
+    """Develop product module functionality"""
+    return "Product module development completed, including product display, search, and categorization functions."
+
+@tool
+def develop_order_module():
+    """Develop order module functionality"""
+    return "Order module development completed, including order placement, payment, and order inquiry functions."
+
+# Build parallel workflow (pipeline) for frontend module development
 graph = create_parallel_pipeline(
     sub_graphs=[
         create_agent(
             model="vllm:qwen3-4b",
-            tools=[get_current_time],
-            system_prompt="You are a time query assistant, can only answer current time. If the question is not related to time, please directly answer that you cannot answer",
-            name="time_agent",
+            tools=[develop_user_module],
+            system_prompt="You are a frontend development engineer responsible for developing user-related modules.",
+            name="user_module_agent",
         ),
         create_agent(
             model="vllm:qwen3-4b",
-            tools=[get_current_weather],
-            system_prompt="You are a weather query assistant, can only answer current weather. If the question is not related to weather, please directly answer that you cannot answer",
-            name="weather_agent",
+            tools=[develop_product_module],
+            system_prompt="You are a frontend development engineer responsible for developing product-related modules.",
+            name="product_module_agent",
         ),
         create_agent(
             model="vllm:qwen3-4b",
-            tools=[get_current_user],
-            system_prompt="You are a user query assistant, can only answer current user. If the question is not related to user, please directly answer that you cannot answer",
-            name="user_agent",
+            tools=[develop_order_module],
+            system_prompt="You are a frontend development engineer responsible for developing order-related modules.",
+            name="order_module_agent",
         ),
     ],
     state_schema=AgentState,
 )
-response = graph.invoke({"messages": [HumanMessage("Hello")]})
+response = graph.invoke({"messages": [HumanMessage("Develop three core modules of the e-commerce website in parallel")]})
 print(response)
 ```
 
 The final generated graph structure is as follows:
 ![Parallel Pipeline Diagram](/img/parallel.png)
 
-### Using Branch Function to Control Parallel Execution
+Sometimes it's necessary to specify which subgraphs to execute in parallel based on conditions. In this case, a branching function can be used.
+The branching function needs to return a list of `Send` objects.
 
-Sometimes you need to specify which subgraphs to execute in parallel based on conditions, in which case you can use a branch function.
-The branch function needs to return a list of `Send`.
+For example, in the above case, suppose the modules to be developed are specified by the user, then only the specified modules will be executed in parallel.
 
 ```python
-# Build parallel pipeline (all subgraphs execute in parallel)
+# Build parallel pipeline (select subgraphs to execute in parallel based on conditions)
 from langgraph.types import Send
+
+class DevAgentState(AgentState):
+    """Development agent state"""
+    selected_modules: list[tuple[str, str]]
+
+
+# Specify modules selected by the user
+select_modules = [("user_module", "Develop user module"), ("product_module", "Develop product module")]
 
 graph = create_parallel_pipeline(
     sub_graphs=[
         create_agent(
             model="vllm:qwen3-4b",
-            tools=[get_current_time],
-            system_prompt="You are a time query assistant, can only answer current time. If the question is not related to time, please directly answer that you cannot answer",
-            name="time_agent",
+            tools=[develop_user_module],
+            system_prompt="You are a frontend development engineer responsible for developing user-related modules.",
+            name="user_module_agent",
         ),
         create_agent(
             model="vllm:qwen3-4b",
-            tools=[get_current_weather],
-            system_prompt="You are a weather query assistant, can only answer current weather. If the question is not related to weather, please directly answer that you cannot answer",
-            name="weather_agent",
+            tools=[develop_product_module],
+            system_prompt="You are a frontend development engineer responsible for developing product-related modules.",
+            name="product_module_agent",
         ),
         create_agent(
             model="vllm:qwen3-4b",
-            tools=[get_current_user],
-            system_prompt="You are a user query assistant, can only answer current user. If the question is not related to user, please directly answer that you cannot answer",
-            name="user_agent",
+            tools=[develop_order_module],
+            system_prompt="You are a frontend development engineer responsible for developing order-related modules.",
+            name="order_module_agent",
         ),
     ],
-    state_schema=AgentState,
-    branches_fn=lambda e: [
-        Send("weather_agent", arg={"messages": [HumanMessage("Get current New York weather")]}),
-        Send("time_agent", arg={"messages": [HumanMessage("Get current time")]}),
+    state_schema=DevAgentState,
+    branches_fn=lambda state: [
+        Send(module_name + "_agent", {"messages": [HumanMessage(task_name)]})
+        for module_name, task_name in state["selected_modules"]
     ],
 )
 
-
-response = graph.invoke({"messages": [HumanMessage("Hello")]})
+response = graph.invoke(
+    {
+        "messages": [HumanMessage("Develop some modules of the e-commerce website")],
+        "selected_modules": select_modules,
+    }
+)
 print(response)
 ```
 
 **Important Notes**
 
-- When the `branches_fn` parameter is not passed, all subgraphs will execute in parallel.
-- When the `branches_fn` parameter is passed, which subgraphs to execute is determined by the return value of this function.
+- When the `branches_fn` parameter is not provided, all subgraphs will be executed in parallel.
+- When the `branches_fn` parameter is provided, which subgraphs are executed is determined by the return value of this function.
