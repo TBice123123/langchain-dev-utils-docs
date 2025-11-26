@@ -1,20 +1,16 @@
-# Format List Content
+# Formatting List Content
 
 > [!NOTE]
 >
-> **Feature Overview**: Provides the functionality to format commonly used list content into a single string.
+> **Function Overview**: Provides functionality to format common list content into a single string.
 >
-> **Prerequisites**: Familiarity with Langchain's [Message](https://docs.langchain.com/oss/python/langchain/messages).
+> **Prerequisites**: Understanding of langchain's [Message](https://docs.langchain.com/oss/python/langchain/messages).
 >
 > **Estimated Reading Time**: 2 minutes
 
-Formats a list composed of Documents, Messages, or strings into a single text string.
+## Overview
 
-## Core Function
-
-- `format_sequence`: Formats messages
-
-Its parameters are as follows:  
+Used to format a list consisting of Document, Message, or string objects into a single text string. The specific function is `format_sequence`.
 Its parameters are as follows:
 
 <Params
@@ -27,17 +23,19 @@ description="A list containing any of the following types: Message, Document, st
 <Params
 name="separator"
 type="string"
-description="String used to join the contents; defaults to '-'"
+description="String used to connect content, default is -"
 :required="false"
 :default="null"
 />
 <Params
 name="with_num"
 type="bool"
-description="If True, adds a numerical prefix to each item; defaults to False"
+description="If True, adds a numeric prefix to each item, default is False"
 :required="false"
 :default="null"
 />
+
+## Usage Examples
 
 Usage examples are as follows:
 
@@ -58,7 +56,7 @@ formated1 = format_sequence(
 print(formated1)
 ```
 
-Output:
+Output result:
 
 ```
 -Hello1
@@ -81,7 +79,7 @@ print(format2)
 
 ```
 
-Output:
+Output result:
 
 ```
 >content1
@@ -104,7 +102,7 @@ format3 = format_sequence(
 print(format3)
 ```
 
-Output:
+Output result:
 
 ```
 >1. str1

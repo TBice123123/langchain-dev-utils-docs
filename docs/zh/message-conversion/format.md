@@ -8,13 +8,9 @@
 >
 > **预计阅读时间**：2 分钟
 
-将由 Document、Message 或字符串组成的列表格式化为单个文本字符串。
+## 概述
 
-## 核心函数
-
-- `format_sequence`：格式化消息
-
-其参数如下:
+用于将由 Document、Message 或字符串组成的列表格式化为单个文本字符串。具体函数为`format_sequence`。
 其参数如下:
 
 <Params
@@ -38,6 +34,8 @@ description="如果为 True，为每个项目添加数字前缀，默认为 Fals
 :required="false"
 :default="null"
 />
+
+## 使用示例
 
 使用示例如下：
 

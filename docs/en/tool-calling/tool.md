@@ -1,30 +1,34 @@
-# Tool Call Processing
+# Tool Call Handling
 
 > [!NOTE]
 >
-> **Feature Overview**: Provides utility tools for parsing tool call parameters.
+> **Feature Overview**: Provides utilities for parsing tool call arguments.
 >
-> **Prerequisites**: Understand LangChain's [Tool](https://docs.langchain.com/oss/python/langchain/tools), [Message](https://docs.langchain.com/oss/python/langchain/messages).
+> **Prerequisites**: Understanding of LangChain's [Tool](https://docs.langchain.com/oss/python/langchain/tools) and [Message](https://docs.langchain.com/oss/python/langchain/messages).
 >
 > **Estimated Reading Time**: 3 minutes
 
+## Overview
+
+Provides utilities to detect and parse tool call arguments.
+
 ## Detecting Tool Calls
 
-Detect whether a message contains tool calls.
+Detects if a message contains a tool call.
 The core function is:
 
-- `has_tool_calling`: Check if a message contains tool calls
+- `has_tool_calling`: Checks if the message contains a tool call
 
 Its parameters are as follows:
 <Params
 name="message"
 type="AIMessage"
-description="AIMessage object to be checked"
+description="The AIMessage object to be checked"
 :required="true"
 :default="null"
 />
 
-Usage Example:
+Usage example:
 
 ```python
 import datetime
@@ -33,27 +37,27 @@ from langchain_dev_utils.tool_calling import has_tool_calling
 
 @tool
 def get_current_time() -> str:
-    """Get the current timestamp"""
+    """Get current timestamp"""
     return str(datetime.datetime.now().timestamp())
 
 response = model.bind_tools([get_current_time]).invoke("What time is it now?")
 print(has_tool_calling(response))
 ```
 
-## Parsing Tool Call Parameters
+## Parsing Tool Call Arguments
 
-Provides a utility function to parse tool call parameters and extract parameter information from messages.
+Provides a utility function to parse tool call arguments, extracting parameter information from a message.
 
 The core function is:
 
-- `parse_tool_calling`: Parse tool call parameters
+- `parse_tool_calling`: Parses tool call arguments
 
 Its parameters are as follows:
 
 <Params
 name="message"
 type="AIMessage"
-description="AIMessage object containing tool call information"
+description="The AIMessage object containing tool call information"
 :required="true"
 :default="null"
 />
@@ -65,7 +69,7 @@ description="Whether to parse only the first tool call. If True, returns a singl
 :default="null"
 />
 
-Usage Example:
+Usage example:
 
 ```python
 import datetime
@@ -74,7 +78,7 @@ from langchain_dev_utils.tool_calling import has_tool_calling, parse_tool_callin
 
 @tool
 def get_current_time() -> str:
-    """Get the current timestamp"""
+    """Get current timestamp"""
     return str(datetime.datetime.now().timestamp())
 
 response = model.bind_tools([get_current_time]).invoke("What time is it now?")
