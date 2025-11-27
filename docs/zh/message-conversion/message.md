@@ -36,9 +36,9 @@ description="模型返回的 AI 消息响应"
 <Params
 name="think_tag"
 type="tuple[string, string]"
-description="包含推理内容起始和结束标签的元组（默认为(`<think>`, `</think>`））"
+description="包含推理内容起始和结束标签的元组"
 :required="false"
-:default="null"
+default="('<think>', '</think>')"
 />
 
 使用示例:

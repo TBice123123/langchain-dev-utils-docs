@@ -25,14 +25,14 @@ name="separator"
 type="string"
 description="String used to connect content, default is -"
 :required="false"
-:default="null"
+default="'-'"
 />
 <Params
 name="with_num"
 type="bool"
 description="If True, adds a numeric prefix to each item, default is False"
 :required="false"
-:default="null"
+:default="false"
 />
 
 ## Usage Examples

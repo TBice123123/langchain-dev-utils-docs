@@ -66,7 +66,7 @@ name="first_tool_call_only"
 type="bool"
 description="Whether to parse only the first tool call. If True, returns a single tuple; if False, returns a list of tuples."
 :required="false"
-:default="null"
+:default="false"
 />
 
 Usage example:

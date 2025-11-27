@@ -66,7 +66,7 @@ name="first_tool_call_only"
 type="bool"
 description="是否仅解析第一个工具调用。如果为 True，返回单个元组；如果为 False，返回元组列表。"
 :required="false"
-:default="null"
+:default="false"
 />
 
 使用示例:

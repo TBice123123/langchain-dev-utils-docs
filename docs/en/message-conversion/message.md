@@ -36,9 +36,9 @@ description="AI message response returned by the model"
 <Params
 name="think_tag"
 type="tuple[string, string]"
-description="Tuple containing start and end tags for reasoning content (default is (`<think>`, `</think>`))"
+description="Tuple containing start and end tags for reasoning content"
 :required="false"
-:default="null"
+default="('<think>', '</think>')"
 />
 
 Usage example:

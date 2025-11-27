@@ -25,14 +25,14 @@ name="separator"
 type="string"
 description="用于连接内容的字符串，默认为-"
 :required="false"
-:default="null"
+default="'-'"
 />
 <Params
 name="with_num"
 type="bool"
 description="如果为 True，为每个项目添加数字前缀，默认为 False"
 :required="false"
-:default="null"
+:default="false"
 />
 
 ## 使用示例
