@@ -70,7 +70,7 @@ description="嵌入模型提供商名称"
 
 <StepItem step="1" title="设置 provider_name"></StepItem>
 
-传入自定义提供商名称（如 `"fake_provider"`），**不要包含冒号 `:`**。
+传入自定义提供商名称，**不要包含冒号 `:`**。
 
 <StepItem step="2" title="设置 embeddings_model"></StepItem>
 
@@ -103,7 +103,7 @@ register_embeddings_provider(
 
 <StepItem step="1" title="设置 provider_name"></StepItem>
 
-传入自定义名称（如 `"vllm"`），**不要包含冒号 `:`**。
+传入自定义名称，**不要包含冒号 `:`**。
 
 <StepItem step="2" title="设置 embeddings_model"></StepItem>
 

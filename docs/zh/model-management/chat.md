@@ -36,6 +36,13 @@ description="对话模型基础 URL"
 :default="null"  
 />  
 <Params  
+name="provider_profile"  
+type="dict"  
+description="对话模型提供商所支持的模型的profile，格式为 `{model_name: model_profile}`"  
+:required="false"  
+:default="null"  
+/>
+<Params  
 name="provider_config"  
 type="dict"  
 description="对话模型提供商相关配置"  
@@ -101,6 +108,33 @@ register_model_provider(
 - **仅当你需要覆盖默认地址时**才传入 `base_url`；
 - 覆盖机制仅对模型类中字段名为 `api_base` 或 `base_url`（含别名）的属性生效。
 
+<StepItem step="4" title="设置 provider_profile（可选）"></StepItem>
+
+如果你的 LangChain 集成对话模型类已全面支持 `profile` 参数（即可以通过 `model.profile` 直接访问模型的相关属性，例如 `max_input_tokens`、`tool_calling` 等），则无需额外设置 `provider_profile`。
+
+如果通过 `model.profile` 访问时返回的是一个空字典 `{}`，说明该 LangChain 对话模型类可能暂时未支持 `profile` 参数，此时可以手动提供 `provider_profile`。
+
+`provider_profile` 是一个字典，其每一个键为模型名称，值为对应模型的 profile 配置:
+
+```python
+{
+    "model_name_1": {
+        "max_input_tokens": 100_000,
+        "tool_calling": True,
+        "structured_output": True,
+        # ... 其他可选字段
+    },
+    "model_name_2": {
+        "max_input_tokens": 32768,
+        "image_inputs": True,
+        "tool_calling": False,
+        # ... 其他可选字段
+    },
+    # 可以有任意多个模型配置
+}
+```
+
+**提示**：推荐使用 `langchain-model-profiles` 库来获取你所用模型提供商的profiles。
 
 ### 情况二：未有 LangChain 对话模型类，但模型提供商支持 OpenAI 兼容 API
 
@@ -114,7 +148,7 @@ register_model_provider(
 
 <StepItem step="1" title="设置 provider_name"></StepItem>
 
-传入自定义提供商名称（如 `"vllm"` 或 `"openrouter"`），**不要包含冒号 `:`**。
+传入自定义提供商名称，**不要包含冒号 `:`**。
 
 <StepItem step="2" title="设置 chat_model"></StepItem>
 
@@ -158,8 +192,11 @@ vllm serve Qwen/Qwen3-4B \
 ```
 服务地址为 `http://localhost:8000/v1`。  
 :::
+<StepItem step="4" title="设置 provider_profile（可选）"></StepItem>
 
-<StepItem step="4" title="设置 provider_config（可选）"></StepItem>
+这种情况下，若未手动设置 `provider_profile`，则 `model.profile` 将返回一个空字典 `{}`。因此，若需通过 `model.profile` 获取指定模型的配置信息，必须先显式设置 `provider_profile`。
+
+<StepItem step="5" title="设置 provider_config（可选）"></StepItem>
 仅在此情况下有效，用于声明提供商对于某些参数的支持情况。支持以下配置项：
 
 - `supported_tool_choice`：支持的 `tool_choice` 策略列表；
@@ -303,6 +340,7 @@ export VLLM_API_KEY=vllm
 - 支持传递`BaseChatOpenAI`的参数，例如`temperature`、`top_p`、`max_tokens`等。
 - 支持传递多模态数据
 - 支持OpenAI最新的`responses api`
+- 支持`model.profile`参数，获取模型的profile。
 
 :::details 普通调用
 
@@ -448,6 +486,33 @@ print(response)
 ```
 :::
 
+::: details 获取模型profile
+以OpenRouter为例，首先需要安装`langchain-model-profiles`库：
+```bash
+pip install langchain-model-profiles
+```
+然后你可以使用下面的方式获取OpenRouter支持的模型profile：
+
+```bash
+langchain-profiles refresh --provider openrouter --data-dir ./data/openrouter
+```
+这将在项目根目录的 `./data/openrouter` 文件夹中生成 `_profiles.py` 文件，其中包含一个名为 `_PROFILES` 的字典变量。
+
+接下来，使用代码可以参考下面的示例：
+
+```python
+from dotenv import load_dotenv
+from langchain_dev_utils.chat_models import load_chat_model, register_model_provider
+
+from data.openrouter._profiles import _PROFILES
+
+load_dotenv()
+register_model_provider("openrouter", "openai-compatible", provider_profile=_PROFILES)
+
+model = load_chat_model("openrouter:openai/gpt-5-mini")
+print(model.profile)
+```
+:::
 ### 兼容官方提供商
 
 对于 LangChain 官方已支持的提供商（如 `openai`），可直接使用 `load_chat_model` 无需注册：

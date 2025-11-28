@@ -68,7 +68,7 @@ If the embedding model provider already has a suitable LangChain integration (se
 
 <StepItem step="1" title="Set provider_name"></StepItem>
 
-Pass a custom provider name (e.g., `"fake_provider"`), **do not include a colon `:`**.
+Pass a custom provider name,**do not include a colon `:`**.
 
 <StepItem step="2" title="Set embeddings_model"></StepItem>
 
@@ -100,7 +100,7 @@ The system will use `OpenAIEmbeddings` (from `langchain-openai`) to build the em
 
 <StepItem step="1" title="Set provider_name"></StepItem>
 
-Pass a custom name (e.g., `"vllm"`), **do not include a colon `:`**.
+Pass a custom name,**do not include a colon `:`**.
 
 <StepItem step="2" title="Set embeddings_model"></StepItem>
 

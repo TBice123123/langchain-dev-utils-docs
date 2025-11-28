@@ -9,8 +9,9 @@ def register_model_provider(
     provider_name: str,
     chat_model: ChatModelType,
     base_url: Optional[str] = None,
+    provider_profile: Optional[dict[str, dict[str, Any]]] = None,
     provider_config: Optional[ProviderConfig] = None,
-) -> None:
+)->None:
 ```
 
 **参数说明：**
@@ -18,6 +19,7 @@ def register_model_provider(
 - `provider_name`：字符串类型，必填，自定义提供商名称
 - `chat_model`：ChatModel 类或支持的提供者字符串类型，必填
 - `base_url`：可选字符串类型，提供商的 BaseURL
+- `provider_profile`：可选字典类型，提供商所支持的模型的profile，格式为 `{model_name: model_profile}`。
 - `provider_config`：可选 ProviderConfig 类型，提供商配置。
 
 **示例：**
@@ -111,6 +113,7 @@ class ChatModelProvider(TypedDict):
     provider_name: str
     chat_model: ChatModelType
     base_url: NotRequired[str]
+    provider_profile: NotRequired[dict[str, dict[str, Any]]]
     provider_config: NotRequired[ProviderConfig]
 ```
 
@@ -119,6 +122,7 @@ class ChatModelProvider(TypedDict):
 - `provider_name`：字符串类型，必填，提供者名称
 - `chat_model`：BaseChatModel 类型或字符串类型，必填，支持传入对话模型类或字符串（目前只支持`openai-compatible`）。
 - `base_url`：非必需字符串类型，基础 URL
+- `provider_profile`：非必需字典类型，提供商所支持的模型的profile，格式为 `{model_name: model_profile}`。
 - `provider_config`：非必需 ProviderConfig 类型，代表模型提供商配置。
 
 ## ToolChoiceType
