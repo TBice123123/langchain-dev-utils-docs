@@ -9,9 +9,9 @@ def register_model_provider(
     provider_name: str,
     chat_model: ChatModelType,
     base_url: Optional[str] = None,
-    provider_profile: Optional[dict[str, dict[str, Any]]] = None,
-    provider_config: Optional[ProviderConfig] = None,
-)->None:
+    model_profiles: Optional[dict[str, dict[str, Any]]] = None,
+    compatibility_options: Optional[CompatibilityOptions] = None,
+) -> None:
 ```
 
 **参数说明：**
@@ -19,8 +19,8 @@ def register_model_provider(
 - `provider_name`：字符串类型，必填，自定义提供商名称
 - `chat_model`：ChatModel 类或支持的提供者字符串类型，必填
 - `base_url`：可选字符串类型，提供商的 BaseURL
-- `provider_profile`：可选字典类型，提供商所支持的模型的profile，格式为 `{model_name: model_profile}`。
-- `provider_config`：可选 ProviderConfig 类型，提供商配置。
+- `model_profiles`：可选字典类型，提供商所支持的模型的profile，格式为 `{model_name: model_profile}`。
+- `compatibility_options`：可选 CompatibilityOptions 类型，兼容性选项。
 
 **示例：**
 
@@ -87,15 +87,16 @@ model = load_chat_model("vllm:qwen3-4b")
 ChatModelType = Union[type[BaseChatModel], Literal["openai-compatible"]]
 ```
 
-## ProviderConfig
+## CompatibilityOptions
 
-模型提供商的相关配置。
+模型提供商的兼容性选项。
 
 ```python
-class ProviderConfig(TypedDict):
+class CompatibilityOptions(TypedDict):
     supported_tool_choice: NotRequired[ToolChoiceType]
     keep_reasoning_content: NotRequired[bool]
     support_json_mode: NotRequired[bool]
+    include_usage: NotRequired[bool]
 ```
 
 **字段说明：**
@@ -103,6 +104,8 @@ class ProviderConfig(TypedDict):
 - `supported_tool_choice`：非必需列表类型,代表模型提供商支持的`tool_choice`参数
 - `keep_reasoning_content`：非必需布尔类型,是否在后续的 messages 中保留推理内容(`reasoning_content`)。
 - `support_json_mode`：非必需布尔类型,是否支持`json_mode`的结构化输出方式。
+- `include_usage`：非必需布尔类型,是否在模型流式输出中包含使用信息(`usage`)。
+
 
 ## ChatModelProvider
 
@@ -113,8 +116,8 @@ class ChatModelProvider(TypedDict):
     provider_name: str
     chat_model: ChatModelType
     base_url: NotRequired[str]
-    provider_profile: NotRequired[dict[str, dict[str, Any]]]
-    provider_config: NotRequired[ProviderConfig]
+    model_profiles: NotRequired[dict[str, dict[str, Any]]]
+    compatibility_options: NotRequired[CompatibilityOptions]
 ```
 
 **字段说明：**
@@ -122,8 +125,8 @@ class ChatModelProvider(TypedDict):
 - `provider_name`：字符串类型，必填，提供者名称
 - `chat_model`：BaseChatModel 类型或字符串类型，必填，支持传入对话模型类或字符串（目前只支持`openai-compatible`）。
 - `base_url`：非必需字符串类型，基础 URL
-- `provider_profile`：非必需字典类型，提供商所支持的模型的profile，格式为 `{model_name: model_profile}`。
-- `provider_config`：非必需 ProviderConfig 类型，代表模型提供商配置。
+- `model_profiles`：非必需字典类型，提供商所支持的模型的profile，格式为 `{model_name: model_profile}`。
+- `compatibility_options`：非必需 CompatibilityOptions 类型，代表模型提供商兼容性选项。
 
 ## ToolChoiceType
 

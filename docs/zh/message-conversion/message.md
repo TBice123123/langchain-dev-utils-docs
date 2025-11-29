@@ -73,7 +73,7 @@ for chunk in convert_reasoning_content_for_chunk_iterator(
 <Params
 name="chunks"
 type="list[AIMessageChunk]"
-description="AI 消息块列表"
+description="AIMessageChunk 列表"
 :required="true"
 :default="null"
 />

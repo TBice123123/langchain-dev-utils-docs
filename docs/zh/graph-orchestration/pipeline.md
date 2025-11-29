@@ -27,7 +27,7 @@
 <Params
 name="sub_graphs"
 type="list[StateGraph | CompiledStateGraph]"
-description="要组合的状态图列表（必须是 StateGraph 或者 CompiledStateGraph 实例）。"
+description="要组合的状态图列表（必须是 StateGraph 或者 CompiledStateGraph 实例）"
 :required="true"
 :default="null"
 />

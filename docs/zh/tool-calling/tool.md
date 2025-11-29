@@ -57,14 +57,14 @@ print(has_tool_calling(response))
 <Params
 name="message"
 type="AIMessage"
-description="包含工具调用信息的 AIMessage 对象"
+description="AIMessage 对象"
 :required="true"
 :default="null"
 />
 <Params
 name="first_tool_call_only"
 type="bool"
-description="是否仅解析第一个工具调用。如果为 True，返回单个元组；如果为 False，返回元组列表。"
+description="是否仅解析第一个工具调用"
 :required="false"
 :default="false"
 />

@@ -16,21 +16,21 @@
 <Params
 name="inputs"
 type="list[Message | Document | string]"
-description="包含以下任意类型的列表：Message、Document、str"
+description="包含以下任意类型的列表：langchain_core.messages、langchain_core.documents.Document、str"
 :required="true"
 :default="null"
 />
 <Params
 name="separator"
 type="string"
-description="用于连接内容的字符串，默认为-"
+description="用于连接内容的字符串"
 :required="false"
 default="'-'"
 />
 <Params
 name="with_num"
 type="bool"
-description="如果为 True，为每个项目添加数字前缀，默认为 False"
+description="如果为 True，为每个项目添加数字前缀（例如 '1. 你好'）"
 :required="false"
 :default="false"
 />

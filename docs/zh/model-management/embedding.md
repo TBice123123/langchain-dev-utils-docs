@@ -18,21 +18,21 @@ LangChain 的 `init_embeddings` 函数仅支持有限的嵌入模型提供商。
 <Params  
 name="provider_name"  
 type="string"  
-description="嵌入模型提供商名称"  
+description="嵌入模型提供商名称，作为后续模型加载的标识"  
 :required="true"  
 :default="null"  
 />  
 <Params  
 name="embeddings_model"  
 type="Embeddings | string"  
-description="嵌入模型类或标识符"  
+description="嵌入模型，可以是 Embeddings 或字符串（目前支持 'openai-compatible'）"  
 :required="true"  
 :default="null"  
 />  
 <Params  
 name="base_url"  
 type="string"  
-description="嵌入模型基础 URL"  
+description="嵌入模型提供商的 API 地址（可选，对于`embeddings_model`的两种类型情况都有效，但是主要用于`embeddings_model`为字符串且是'openai-compatible'的情况）"  
 :required="false"  
 :default="null"  
 />

@@ -2,7 +2,7 @@
 
 > [!NOTE]
 >
-> **Function Overview**: Provides functionality to format common list content into a single string.
+> **Feature Overview**: Provides functionality to format common list content into a single string.
 >
 > **Prerequisites**: Understanding of langchain's [Message](https://docs.langchain.com/oss/python/langchain/messages).
 >
@@ -10,27 +10,27 @@
 
 ## Overview
 
-Used to format a list consisting of Document, Message, or string objects into a single text string. The specific function is `format_sequence`.
+Used to format a list composed of Document, Message, or string into a single text string. The specific function is `format_sequence`.
 Its parameters are as follows:
 
 <Params
 name="inputs"
 type="list[Message | Document | string]"
-description="A list containing any of the following types: Message, Document, str"
+description="A list containing any of the following types: langchain_core.messages, langchain_core.documents.Document, str"
 :required="true"
 :default="null"
 />
 <Params
 name="separator"
 type="string"
-description="String used to connect content, default is -"
+description="String used to connect content"
 :required="false"
 default="'-'"
 />
 <Params
 name="with_num"
 type="bool"
-description="If True, adds a numeric prefix to each item, default is False"
+description="If True, add a numeric prefix to each item (e.g., '1. Hello')"
 :required="false"
 :default="false"
 />

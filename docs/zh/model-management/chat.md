@@ -17,35 +17,35 @@ LangChain 的 `init_chat_model` 函数仅支持有限的模型提供商。本库
 <Params  
 name="provider_name"  
 type="string"  
-description="对话模型提供商名称"  
+description="模型提供商名称，作为后续模型加载的标识"  
 :required="true"  
 :default="null"  
 />  
 <Params  
 name="chat_model"  
 type="BaseChatModel | string"  
-description="对话模型"  
+description="对话模型，可以是 ChatModel 或字符串（目前支持 'openai-compatible'）"  
 :required="true"  
 :default="null"  
 />  
 <Params  
 name="base_url"  
 type="string"  
-description="对话模型基础 URL"  
+description="模型提供商的 API 地址（可选，对于 chat_model 的两种类型情况都有效，但是主要用于 chat_model 为字符串且是 'openai-compatible' 的情况）"  
 :required="false"  
 :default="null"  
 />  
 <Params  
-name="provider_profile"  
+name="model_profiles"  
 type="dict"  
-description="对话模型提供商所支持的模型的profile，格式为 `{model_name: model_profile}`"  
+description="声明该模型提供商提供的各模型支持的特性与相关参数（可选，适用于 chat_model 的两种类型）。最终会依据 model_name 读取对应配置并写入 model.profile（例如包含 max_input_tokens、tool_calling等字段）。"  
 :required="false"  
 :default="null"  
 />
 <Params  
-name="provider_config"  
+name="compatibility_options"  
 type="dict"  
-description="对话模型提供商相关配置"  
+description="模型提供商兼容性选项（可选，当 chat_model 为字符串且值为 'openai-compatible' 时有效），用于声明该提供商对 OpenAI 兼容特性（如 tool_choice 策略、JSON Mode等）的支持情况，以确保功能正确适配。"  
 :required="false"  
 :default="null"  
 />
@@ -108,13 +108,13 @@ register_model_provider(
 - **仅当你需要覆盖默认地址时**才传入 `base_url`；
 - 覆盖机制仅对模型类中字段名为 `api_base` 或 `base_url`（含别名）的属性生效。
 
-<StepItem step="4" title="设置 provider_profile（可选）"></StepItem>
+<StepItem step="4" title="设置 model_profiles（可选）"></StepItem>
 
-如果你的 LangChain 集成对话模型类已全面支持 `profile` 参数（即可以通过 `model.profile` 直接访问模型的相关属性，例如 `max_input_tokens`、`tool_calling` 等），则无需额外设置 `provider_profile`。
+如果你的 LangChain 集成对话模型类已全面支持 `profile` 参数（即可以通过 `model.profile` 直接访问模型的相关属性，例如 `max_input_tokens`、`tool_calling` 等），则无需额外设置 `model_profiles`。
 
-如果通过 `model.profile` 访问时返回的是一个空字典 `{}`，说明该 LangChain 对话模型类可能暂时未支持 `profile` 参数，此时可以手动提供 `provider_profile`。
+如果通过 `model.profile` 访问时返回的是一个空字典 `{}`，说明该 LangChain 对话模型类可能暂时未支持 `profile` 参数，此时可以手动提供 `model_profiles`。
 
-`provider_profile` 是一个字典，其每一个键为模型名称，值为对应模型的 profile 配置:
+`model_profiles` 是一个字典，其每一个键为模型名称，值为对应模型的 profile 配置:
 
 ```python
 {
@@ -144,7 +144,7 @@ register_model_provider(
 
 1. **支持更多 `reasoning_content` 格式**：可解析非 OpenAI 提供商的推理内容（`reasoning_content`）输出；
 2. **结构化输出默认使用 `function_calling`**：比 `json_schema` 兼容性更广；
-3. **通过 `provider_config` 精细适配差异**：解决 `tool_choice`、`response_format` 等参数的支持差异。
+3. **通过 `compatibility_options` 精细适配差异**：解决 `tool_choice`、`response_format` 等参数的支持差异。
 
 <StepItem step="1" title="设置 provider_name"></StepItem>
 
@@ -192,18 +192,20 @@ vllm serve Qwen/Qwen3-4B \
 ```
 服务地址为 `http://localhost:8000/v1`。  
 :::
-<StepItem step="4" title="设置 provider_profile（可选）"></StepItem>
+<StepItem step="4" title="设置 model_profiles（可选）"></StepItem>
 
-这种情况下，若未手动设置 `provider_profile`，则 `model.profile` 将返回一个空字典 `{}`。因此，若需通过 `model.profile` 获取指定模型的配置信息，必须先显式设置 `provider_profile`。
+这种情况下，若未手动设置 `model_profiles`，则 `model.profile` 将返回一个空字典 `{}`。因此，若需通过 `model.profile` 获取指定模型的配置信息，必须先显式设置 `model_profiles`。
 
-<StepItem step="5" title="设置 provider_config（可选）"></StepItem>
-仅在此情况下有效，用于声明提供商对于某些参数的支持情况。支持以下配置项：
+<StepItem step="5" title="设置 compatibility_options（可选）"></StepItem>
+
+仅在此情况下有效。用于声明该提供商对**OpenAI API**的部分特性的支持情况，以提高兼容性和稳定性。
 
 - `supported_tool_choice`：支持的 `tool_choice` 策略列表；
 - `support_json_mode`：是否支持 `response_format={"type": "json_object"}`；
 - `keep_reasoning_content`：是否在历史消息中保留 `reasoning_content`。
+- `include_usage`：是否在最后一条流式返回结果中包含 `usage` 信息。
 
-**1. supported_tool_choice**
+::: details supported_tool_choice
 
 `tool_choice` 常见取值：
 - `"auto"`：模型自主决定是否调用工具；
@@ -222,18 +224,20 @@ vllm serve Qwen/Qwen3-4B \
 register_model_provider(
     provider_name="vllm",
     chat_model="openai-compatible",
-    provider_config={"supported_tool_choice": ["auto", "none", "required", "specific"]},
+    compatibility_options={"supported_tool_choice": ["auto", "none", "required", "specific"]},
 )
 ```
 ::: info 提示
 在利用`function calling`方法实现结构化输出场景中，模型可能因自身问题从而导致未调用相应结构化工具，导致输出结果为 `None`。因此，如果您的模型提供商支持通过 `tool_choice` 参数指定调用特定的工具，那么可以在注册时显式设置该参数，以确保结构化输出的稳定性和可靠性。
 :::
 
-**2. support_json_mode**
+::: details support_json_mode
 
 若提供商支持 `json_mode`（在OpenAI兼容API中，具体为 `response_format={"type": "json_object"}`），可以设置为 `True`，并在`with_structured_output`方法中需显式指定 `method="json_mode"`。
 
-**3. keep_reasoning_content**
+:::
+
+::: details keep_reasoning_content
 
 默认 `False`（在历史消息中不保留推理内容）。设为 `True` 时，历史消息将包含 `reasoning_content` 字段。
 
@@ -258,16 +262,24 @@ register_model_provider(
 ]
 ```
 **注意**：除非提供商文档明确推荐，否则不要设置此参数为 `True`。部分提供商（如 DeepSeek）禁止传入推理内容，且会增加 token 消耗。
+:::
+
+::: details include_usage
+
+`include_usage` 是 OpenAI 兼容 API 中的一个参数，用于控制是否在流式响应的末尾附加一条包含 token 使用情况（如 `prompt_tokens` 和 `completion_tokens`）的消息。由于标准流式响应默认不返回用量信息，启用该选项后，客户端可直接获取完整的 token 消耗数据，便于计费、监控或日志记录。
+
+通常通过 `stream_options={"include_usage": true}` 启用。考虑到有些模型提供商不支持该参数，因此本库将其设为兼容性选项，默认值为 `True`，因为绝大多数模型提供商均支持该参数，如果不支持，则可以显式设为 `False`。
+:::
 
 :::info 注意  
-同一模型提供商的不同模型在 `tool_choice` 、 `json_mode` 等参数上也有支持上的差异，本库将上述的三个参数（`supported_tool_choice`、`support_json_mode`、`keep_reasoning_content`）作为对话模型类的实例属性。开发者在注册模型提供商时，可预先传入这三个参数作为**默认值**，代表该提供商大多数模型的支持情况。随后，在加载具体模型实例时，如遇特殊支持情况，可通过显式传参**覆盖默认值**。
+同一模型提供商的不同模型在 `tool_choice`、`json_mode` 等参数的支持上也可能存在差异。为此，本库将 `supported_tool_choice`、`support_json_mode`、`keep_reasoning_content`、`include_usage` 四个**兼容性选项**作为对话模型类的实例属性。注册模型提供商时，可直接传入这些参数作为**全局默认值**，概括该提供商所提供的大多数模型的支持情况；后续加载具体模型时，若某模型支持情况与默认值不符，只需在 `load_chat_model` 中显式传入对应参数，即可**动态覆盖**全局配置，实现精细化适配。
 
-例如：假设某模型提供商的大多数模型均支持 `["auto", "none", "required"]` 三种 `tool_choice` 策略，但其中某个特定模型仅支持 `["auto"]`。此时，可在注册提供商时设置默认值：
+示例：某提供商的多数模型支持 `["auto", "none", "required"]` 三种 `tool_choice` 策略，但个别模型仅支持 `["auto"]`。注册时设置全局默认值：
 
 ```python
 register_model_provider(
     ...,
-    provider_config={"supported_tool_choice": ["auto", "none", "required"]},
+    compatibility_options={"supported_tool_choice": ["auto", "none", "required"]},
 )
 ```
 
@@ -501,13 +513,11 @@ langchain-profiles refresh --provider openrouter --data-dir ./data/openrouter
 接下来，使用代码可以参考下面的示例：
 
 ```python
-from dotenv import load_dotenv
 from langchain_dev_utils.chat_models import load_chat_model, register_model_provider
 
 from data.openrouter._profiles import _PROFILES
 
-load_dotenv()
-register_model_provider("openrouter", "openai-compatible", provider_profile=_PROFILES)
+register_model_provider("openrouter", "openai-compatible", model_profiles=_PROFILES)
 
 model = load_chat_model("openrouter:openai/gpt-5-mini")
 print(model.profile)

@@ -1,23 +1,23 @@
-# Tool Call Handling
+# Tool Calling Processing
 
 > [!NOTE]
 >
 > **Feature Overview**: Provides utilities for parsing tool call arguments.
 >
-> **Prerequisites**: Understanding of LangChain's [Tool](https://docs.langchain.com/oss/python/langchain/tools) and [Message](https://docs.langchain.com/oss/python/langchain/messages).
+> **Prerequisites**: Understanding of Langchain's [Tool](https://docs.langchain.com/oss/python/langchain/tools) and [Message](https://docs.langchain.com/oss/python/langchain/messages).
 >
 > **Estimated Reading Time**: 3 minutes
 
 ## Overview
 
-Provides utilities to detect and parse tool call arguments.
+Provides utilities for detecting and parsing tool call arguments.
 
 ## Detecting Tool Calls
 
-Detects if a message contains a tool call.
+Detects whether a message contains a tool call.
 The core function is:
 
-- `has_tool_calling`: Checks if the message contains a tool call
+- `has_tool_calling`: Checks if a message contains a tool call
 
 Its parameters are as follows:
 <Params
@@ -37,7 +37,7 @@ from langchain_dev_utils.tool_calling import has_tool_calling
 
 @tool
 def get_current_time() -> str:
-    """Get current timestamp"""
+    """Get the current timestamp"""
     return str(datetime.datetime.now().timestamp())
 
 response = model.bind_tools([get_current_time]).invoke("What time is it now?")
@@ -53,18 +53,17 @@ The core function is:
 - `parse_tool_calling`: Parses tool call arguments
 
 Its parameters are as follows:
-
 <Params
 name="message"
 type="AIMessage"
-description="The AIMessage object containing tool call information"
+description="The AIMessage object"
 :required="true"
 :default="null"
 />
 <Params
 name="first_tool_call_only"
 type="bool"
-description="Whether to parse only the first tool call. If True, returns a single tuple; if False, returns a list of tuples."
+description="Whether to parse only the first tool call"
 :required="false"
 :default="false"
 />
@@ -78,7 +77,7 @@ from langchain_dev_utils.tool_calling import has_tool_calling, parse_tool_callin
 
 @tool
 def get_current_time() -> str:
-    """Get current timestamp"""
+    """Get the current timestamp"""
     return str(datetime.datetime.now().timestamp())
 
 response = model.bind_tools([get_current_time]).invoke("What time is it now?")
