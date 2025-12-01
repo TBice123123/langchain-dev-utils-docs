@@ -166,22 +166,24 @@ register_model_provider(
     )
     ```
   - **通过环境变量**（推荐用于配置管理）：
-    `bash
-export VLLM_API_BASE=http://localhost:8000/v1
-`
+    ```bash
+    export VLLM_API_BASE=http://localhost:8000/v1
+    ```
     代码中可省略 `base_url`：
-    `python
-register_model_provider(
-    provider_name="vllm",
-    chat_model="openai-compatible"
-    # 自动读取 VLLM_API_BASE
-)
-`
+    ```python
+    register_model_provider(
+        provider_name="vllm",
+        chat_model="openai-compatible"
+        # 自动读取 VLLM_API_BASE
+    )
+    ```
     ::: info 提示
     此情况下，模型提供商的 API 端点的环境变量的命名规则是`${PROVIDER_NAME}_API_BASE`（全大写，下划线分隔）。对应的 API_KEY 环境变量的命名规则是`${PROVIDER_NAME}_API_KEY`（全大写，下划线分隔）。
     :::
-    ::: tip 补充  
-     vLLM 是常用的大模型推理框架，其可以将大模型部署为 OpenAI 兼容的 API，例如本例子中的 Qwen3-4B：
+
+::: tip 补充
+
+vLLM 是常用的大模型推理框架，其可以将大模型部署为 OpenAI 兼容的 API，例如本例子中的 Qwen3-4B：
 
 ```bash
 vllm serve Qwen/Qwen3-4B \
@@ -193,6 +195,7 @@ vllm serve Qwen/Qwen3-4B \
 
 服务地址为 `http://localhost:8000/v1`。  
 :::
+
 <StepItem step="4" title="设置 model_profiles（可选）"></StepItem>
 
 这种情况下，若未手动设置 `model_profiles`，则 `model.profile` 将返回一个空字典 `{}`。因此，若需通过 `model.profile` 获取指定模型的配置信息，必须先显式设置 `model_profiles`。

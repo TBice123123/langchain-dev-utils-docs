@@ -166,22 +166,23 @@ You must pass the string `"openai-compatible"`. This is the only supported strin
     )
     ```
   - **Via environment variables** (recommended for configuration management):
-    `bash
-export VLLM_API_BASE=http://localhost:8000/v1
-`
+    ```bash
+    export VLLM_API_BASE=http://localhost:8000/v1
+    ```
     You can then omit `base_url` in the code:
-    `python
-register_model_provider(
-    provider_name="vllm",
-    chat_model="openai-compatible"
-    # Automatically reads VLLM_API_BASE
-)
-`
+    ```python
+    register_model_provider(
+        provider_name="vllm",
+        chat_model="openai-compatible"
+        # Automatically reads VLLM_API_BASE
+    )
+    ```
     ::: info Tip
     In this case, the naming convention for the environment variable of the provider's API endpoint is `${PROVIDER_NAME}_API_BASE` (all caps, underscore-separated). The corresponding API_KEY environment variable follows the convention `${PROVIDER_NAME}_API_KEY` (all caps, underscore-separated).
     :::
-    ::: tip Additional Info  
-    vLLM is a popular large model inference framework that can deploy large models with an OpenAI-compatible API. For example, deploying Qwen3-4B:
+
+::: tip Additional Info  
+ vLLM is a popular large model inference framework that can deploy large models with an OpenAI-compatible API. For example, deploying Qwen3-4B:
 
 ```bash
 vllm serve Qwen/Qwen3-4B \
