@@ -50,7 +50,6 @@ description="Compatibility options for the model provider (optional, effective o
 :default="null"  
 />
 
-
 2.  **Load a Chat Model**
 
 Use the `load_chat_model` function to instantiate a specific model. Its parameters are defined as follows:
@@ -71,8 +70,6 @@ description="The name of the chat model provider."
 />
 
 **Note**: The `load_chat_model` function can also accept any number of keyword arguments, which can be used to pass additional parameters such as `temperature`, `max_tokens`, `extra_body`, etc.
-
-
 
 ## Registering a Model Provider
 
@@ -99,6 +96,7 @@ register_model_provider(
     chat_model=FakeChatModel,
 )
 ```
+
 **Note**: `FakeChatModel` is for testing only. In actual use, you must pass a functional `ChatModel` class.
 
 <StepItem step="3" title="Set base_url (Optional)"></StepItem>
@@ -145,6 +143,8 @@ This library will use the built-in `BaseChatOpenAICompatible` class to construct
 2.  **Structured output defaults to `function_calling`**: This has broader compatibility than `json_schema`.
 3.  **Fine-tune differences with `compatibility_options`**: Resolves support differences for parameters like `tool_choice` and `response_format`.
 
+**Note**: When using this case, you must install the standard version of the `langchain-dev-utils` library. For details, please refer to [Installation](../installation.md).
+
 <StepItem step="1" title="Set provider_name"></StepItem>
 
 Provide a custom provider name, **which must not contain a colon `:`**.
@@ -166,22 +166,23 @@ You must pass the string `"openai-compatible"`. This is the only supported strin
     )
     ```
   - **Via environment variables** (recommended for configuration management):
-    ```bash
-    export VLLM_API_BASE=http://localhost:8000/v1
-    ```
+    `bash
+export VLLM_API_BASE=http://localhost:8000/v1
+`
     You can then omit `base_url` in the code:
-    ```python
-    register_model_provider(
-        provider_name="vllm",
-        chat_model="openai-compatible"
-        # Automatically reads VLLM_API_BASE
-    )
-    ```
-::: info Tip
-In this case, the naming convention for the environment variable of the provider's API endpoint is `${PROVIDER_NAME}_API_BASE` (all caps, underscore-separated). The corresponding API_KEY environment variable follows the convention `${PROVIDER_NAME}_API_KEY` (all caps, underscore-separated).
-:::
-::: tip Additional Info  
-vLLM is a popular large model inference framework that can deploy large models with an OpenAI-compatible API. For example, deploying Qwen3-4B:
+    `python
+register_model_provider(
+    provider_name="vllm",
+    chat_model="openai-compatible"
+    # Automatically reads VLLM_API_BASE
+)
+`
+    ::: info Tip
+    In this case, the naming convention for the environment variable of the provider's API endpoint is `${PROVIDER_NAME}_API_BASE` (all caps, underscore-separated). The corresponding API_KEY environment variable follows the convention `${PROVIDER_NAME}_API_KEY` (all caps, underscore-separated).
+    :::
+    ::: tip Additional Info  
+    vLLM is a popular large model inference framework that can deploy large models with an OpenAI-compatible API. For example, deploying Qwen3-4B:
+
 ```bash
 vllm serve Qwen/Qwen3-4B \
 --reasoning-parser qwen3 \
@@ -189,6 +190,7 @@ vllm serve Qwen/Qwen3-4B \
 --host 0.0.0.0 --port 8000 \
 --served-model-name qwen3-4b
 ```
+
 The service address is `http://localhost:8000/v1`.  
 :::
 <StepItem step="4" title="Set model_profiles (Optional)"></StepItem>
@@ -207,6 +209,7 @@ This is only effective in this case. It is used to declare the provider's suppor
 ::: details supported_tool_choice
 
 Common `tool_choice` values:
+
 - `"auto"`: The model autonomously decides whether to call a tool.
 - `"none"`: Prohibits tool calling.
 - `"required"`: Forces the calling of at least one tool.
@@ -215,10 +218,12 @@ Common `tool_choice` values:
 Different providers support different ranges. To avoid errors, this library defaults `supported_tool_choice` to `["auto"]`. With this strategy, you can only pass `tool_choice` as `auto`; other strategies will be filtered out.
 
 To enable other strategies, you must explicitly declare the supported items. The configuration value is a list of strings, with optional values:
+
 - `"auto"`, `"none"`, `"required"`: Correspond to standard strategies.
 - `"specific"`: A special identifier for this library, indicating support for specifying a particular tool.
 
 For example, vLLM supports all strategies:
+
 ```python
 register_model_provider(
     provider_name="vllm",
@@ -226,6 +231,7 @@ register_model_provider(
     compatibility_options={"supported_tool_choice": ["auto", "none", "required", "specific"]},
 )
 ```
+
 ::: info Tip
 In scenarios where structured output is implemented using the `function calling` method, the model might fail to call the corresponding structured tool due to its own issues, resulting in an output of `None`. Therefore, if your model provider supports specifying a specific tool to be called via the `tool_choice` parameter, you can explicitly set this parameter during registration to ensure the stability and reliability of structured output.
 :::
@@ -243,13 +249,16 @@ Defaults to `False` (reasoning content is not retained in message history). When
 For example:
 
 - When set to `False`, the final messages passed to the model are:
+
 ```json
 [
   { "role": "user", "content": "你好" },
   { "role": "assistant", "content": "你好！有什么我可以帮你的吗？" }
 ]
 ```
+
 - When set to `True`, the final messages passed to the model are:
+
 ```json
 [
   { "role": "user", "content": "你好" },
@@ -260,6 +269,7 @@ For example:
   }
 ]
 ```
+
 **Note**: Do not set this parameter to `True` unless explicitly recommended by the provider's documentation. Some providers (like DeepSeek) prohibit passing reasoning content, and it will also increase token consumption.
 :::
 
@@ -329,6 +339,7 @@ Use the `load_chat_model` function to load a chat model (i.e., initialize a chat
 - If `model_provider` is passed, `model` must be just the `model_name`.
 
 **Example**:
+
 ```python
 # Method 1
 model = load_chat_model("vllm:qwen3-4b")
@@ -338,13 +349,16 @@ model = load_chat_model("qwen3-4b", model_provider="vllm")
 ```
 
 Although `vLLM` does not strictly require an API Key, LangChain still mandates one. You can set it in an environment variable:
+
 ```bash
 export VLLM_API_KEY=vllm
 ```
 
 ### Model Methods and Parameters
+
 For **Case 1**, all its methods and parameters are consistent with the corresponding chat model class.  
 For **Case 2**, the model's methods and parameters are as follows:
+
 - Supports methods like `invoke`, `ainvoke`, `stream`, `astream`, etc.
 - Supports the `bind_tools` method for tool calling.
 - Supports the `with_structured_output` method for structured output.
@@ -356,6 +370,7 @@ For **Case 2**, the model's methods and parameters are as follows:
 :::details Basic Invocation
 
 Supports `invoke` for simple calls:
+
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -364,7 +379,9 @@ model = load_chat_model("vllm:qwen3-4b")
 response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
+
 Also supports `ainvoke` for asynchronous calls:
+
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -373,11 +390,13 @@ model = load_chat_model("vllm:qwen3-4b")
 response = await model.ainvoke([HumanMessage("Hello")])
 print(response)
 ```
+
 :::
 
 :::details Streaming Output
 
 Supports `stream` for streaming output:
+
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -386,7 +405,9 @@ model = load_chat_model("vllm:qwen3-4b")
 for chunk in model.stream([HumanMessage("Hello")]):
     print(chunk)
 ```
+
 And `astream` for asynchronous streaming:
+
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -395,11 +416,13 @@ model = load_chat_model("vllm:qwen3-4b")
 async for chunk in model.astream([HumanMessage("Hello")]):
     print(chunk)
 ```
+
 :::
 
 :::details Tool Calling
 
 If the model itself supports tool calling, you can directly use the `bind_tools` method:
+
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -415,11 +438,13 @@ model = load_chat_model("vllm:qwen3-4b").bind_tools([get_current_time])
 response = model.invoke([HumanMessage("Get the current timestamp")])
 print(response)
 ```
+
 :::
 
 :::details Structured Output
 
 Supports structured output, defaulting to the `function_calling` method, which requires the model to support tool calling:
+
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -433,12 +458,14 @@ model = load_chat_model("vllm:qwen3-4b").with_structured_output(User)
 response = model.invoke([HumanMessage("Hello, my name is Zhang San and I am 25 years old")])
 print(response)
 ```
+
 Additionally, if your model provider supports `json_mode`, you can set `support_json_mode` to `True` in the `compatibility_options` when registering the provider. Then, when calling `with_structured_output`, specify the `method` parameter as `"json_mode"` to enable this mode. Finally, be sure to explicitly guide the model in the prompt to output structured data according to the specified JSON Schema.
 :::
 
 :::details Passing Model Parameters
 
 Furthermore, since this class inherits from `BaseChatOpenAI`, it supports passing model parameters from it, such as `temperature`, `extra_body`, etc.:
+
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
 from langchain_core.messages import HumanMessage
@@ -447,11 +474,13 @@ model = load_chat_model("vllm:qwen3-4b", extra_body={"chat_template_kwargs": {"e
 response = model.invoke([HumanMessage("Hello")])
 print(response)
 ```
+
 :::
 
 :::details Passing Multimodal Data
 
 Supports passing multimodal data. You can use the OpenAI-compatible multimodal data format or directly use `content_block` from `langchain`. For example:
+
 ```python
 from langchain_dev_utils.chat_models import register_model_provider, load_chat_model
 from langchain_core.messages import HumanMessage
@@ -479,6 +508,7 @@ model = load_chat_model("openrouter:qwen/qwen3-vl-8b-thinking")
 response = model.invoke(messages)
 print(response)
 ```
+
 :::
 
 :::details OpenAI's Latest `responses_api`
@@ -494,18 +524,22 @@ model = load_chat_model("vllm:qwen3-4b", use_responses_api=True)
 response = model.invoke([HumanMessage(content="Hello")])
 print(response)
 ```
+
 :::
 
 :::details Getting Model Profile
 Taking OpenRouter as an example, first you need to install the `langchain-model-profiles` library:
+
 ```bash
 pip install langchain-model-profiles
 ```
+
 Then you can use the following command to get the model profiles supported by OpenRouter:
 
 ```bash
 langchain-profiles refresh --provider openrouter --data-dir ./data/openrouter
 ```
+
 This will generate a `_profiles.py` file in the `./data/openrouter` folder in your project's root directory. This file contains a dictionary variable named `_PROFILES`.
 
 Next, you can refer to the following example for the code:
@@ -520,7 +554,9 @@ register_model_provider("openrouter", "openai-compatible", model_profiles=_PROFI
 model = load_chat_model("openrouter:openai/gpt-5-mini")
 print(model.profile)
 ```
+
 :::
+
 ### Compatibility with Official Providers
 
 For providers already officially supported by LangChain (like `openai`), you can use `load_chat_model` directly without registration:

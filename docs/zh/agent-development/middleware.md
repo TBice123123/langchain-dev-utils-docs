@@ -161,54 +161,7 @@ print(response)
 任务规划是一种高效的上下文工程管理策略。在执行任务之前，大模型首先将整体任务拆解为多个有序的子任务，形成任务规划列表（在本库中称为 plan）。随后按顺序执行各子任务，并在每完成一个步骤后动态更新任务状态，直至所有子任务执行完毕。
 :::
 
-本中间件与 LangChain 官方提供的 **To-do list 中间件**功能定位相似，但在工具设计上存在差异。官方中间件仅提供 `write_todo` 工具，面向的是待办清单（todo list）结构；而本库则提供了 `write_plan` 、`finish_sub_plan`、`read_plan` 三个专用工具，专门用于对规划列表（plan list）进行写入、修改、查询等操作。
-
-无论是`todo`还是`plan`其本质都是同一个，因此本中间件区别于官方的关键点在于提供的工具，官方的添加和修改是通过一个工具来完成的，而本库则提供了三个工具，其中`write_plan`可用于写入计划或者更新计划内容，`finish_sub_plan`则用于在完成某个子任务后更新其状态，`read_plan`用于查询计划内容。
-
-具体表现为如下的三个函数:
-
-- `create_write_plan_tool`：创建一个用于写计划的工具的函数
-- `create_finish_sub_plan_tool`：创建一个用于完成子任务的工具的函数
-- `create_read_plan_tool`：创建一个用于查询计划的工具的函数
-
-这三个函数接收的参数如下:
-
-<Params
-name="description"
-type="string"
-description="工具描述,如果不传则采用默认的工具描述。"
-:required="false"
-:default="null"
-/>
-<Params
-name="message_key"
-type="string"
-description="用于更新 messages 的键，若不传入则使用默认的 messages（read_plan 工具无此参数）。"
-:required="false"
-:default="null"
-/>
-
-使用示例如下:
-
-```python
-from langchain_dev_utils.agents.middleware.plan import (
-    create_write_plan_tool,
-    create_finish_sub_plan_tool,
-    create_read_plan_tool,
-    PlanState,
-)
-
-agent = create_agent(
-    model="vllm:qwen3-4b",
-    state_schema=PlanState,
-    tools=[create_write_plan_tool(), create_finish_sub_plan_tool(), create_read_plan_tool()],
-)
-```
-
-需要注意的是,要使用这三个工具,你必须要保证状态 Schema 中包含 plan 这个键,否则会报错,对此你可以使用本库提供的`PlanState`来继承状态 Schema。
-
-但是上述的使用方式在本库是不推荐的，最佳的做法应该是使用 PlanMiddleware。
-PlanMiddleware 的参数说明如下:
+`PlanMiddleware` 的参数说明如下:
 
 <Params
 name="system_prompt"
@@ -245,13 +198,8 @@ description="可选布尔类型，是否使用读计划工具。"
 :required="false"
 :default="true"
 />
-<Params 
-name="message_key"
-type="string"
-description="用于更新 messages 的键，若不传入则使用默认的 messages。"
-:required="false"
-:default="null"
-/>
+
+**使用示例**：
 
 ```python
 from langchain_dev_utils.agents.middleware import PlanMiddleware
@@ -273,8 +221,67 @@ print(response)
 
 `PlanMiddleware` 要求必须使用 `write_plan` 和 `finish_sub_plan` 两个工具，而 `read_plan` 工具默认启用；若不需要使用，可将 `use_read_plan_tool` 参数设为 `False`。
 
+本中间件与 LangChain 官方提供的 **To-do list 中间件**功能定位相似，但在工具设计上存在差异。官方中间件仅提供 `write_todo` 工具，面向的是待办清单（todo list）结构；而本库则提供了 `write_plan` 、`finish_sub_plan`、`read_plan` 三个专用工具，专门用于对规划列表（plan list）进行写入、修改、查询等操作。
+
+无论是`todo`还是`plan`其本质都是同一个，因此本中间件区别于官方的关键点在于提供的工具，官方的添加和修改是通过一个工具来完成的，而本库则提供了三个工具，其中`write_plan`可用于写入计划或者更新计划内容，`finish_sub_plan`则用于在完成某个子任务后更新其状态，`read_plan`用于查询计划内容。
+
+同时，本库还提供了三个函数来创建上述这三个工具:
+
+- `create_write_plan_tool`：创建一个用于写计划的工具的函数
+- `create_finish_sub_plan_tool`：创建一个用于完成子任务的工具的函数
+- `create_read_plan_tool`：创建一个用于查询计划的工具的函数
+
+这三个函数接收的参数如下:
+
+<Params
+name="description"
+type="string"
+description="工具描述,如果不传则采用默认的工具描述。"
+:required="false"
+:default="null"
+/>
+<Params
+name="message_key"
+type="string"
+description="用于更新 messages 的键，若不传入则使用默认的 messages（read_plan 工具无此参数）。"
+:required="false"
+:default="null"
+/>
+
+**使用示例**：
+
+```python
+from langchain_dev_utils.agents.middleware.plan import (
+    create_write_plan_tool,
+    create_finish_sub_plan_tool,
+    create_read_plan_tool,
+    PlanState,
+)
+
+agent = create_agent(
+    model="vllm:qwen3-4b",
+    state_schema=PlanState,
+    tools=[create_write_plan_tool(), create_finish_sub_plan_tool(), create_read_plan_tool()],
+)
+```
+
+需要注意的是,要使用这三个工具,你必须要保证状态 Schema 中包含 plan 这个键,否则会报错,对此你可以使用本库提供的`PlanState`来继承状态 Schema。
+
 <BestPractice>
-在大多数情况下，推荐直接使用 PlanMiddleware 来实现任务分解与执行，而不是手动调用底层的三个工具（write_plan、finish_sub_plan、read_plan）。中间件已自动处理提示词构造和智能体状态管理，显著降低使用复杂度。
+
+一、使用 <code>create_agent</code> 时：
+
+推荐直接使用 <code>PlanMiddleware</code>，而不是手动传入 <code>write_plan</code>、<code>finish_sub_plan</code>、<code>read_plan</code> 这三个工具。
+
+原因：中间件已自动处理提示词构造和智能体状态管理，能显著降低使用复杂度。
+
+注意：由于 <code>create_agent</code> 的模型输出固定更新到 <code>messages</code> 键，因此 <code>PlanMiddleware</code> 没有 <code>message_key</code> 参数。
+
+二、使用 <code>langgraph</code> 时：
+
+推荐直接使用这三个工具 (<code>write_plan</code>, <code>finish_sub_plan</code>, <code>read_plan</code>)。
+
+原因：这种方式能更好地融入 <code>langgraph</code> 的自定义节点和状态管理。
 </BestPractice>
 
 ### ModelRouterMiddleware
@@ -364,4 +371,30 @@ print(response)
 - **定义为空列表 []**：模型被显式禁用所有工具。
 - **定义为非空列表 [tool1, tool2, ...]**：此列表充当“工具白名单”，模型被严格限制仅能调用名单内的工具。所有在此指定的工具，必须已预先载入至 `create_agent `参数`tools`中。
 
+:::
+
+### ToolCallRepairMiddleware
+
+`ToolCallRepairMiddleware` 是一个**自动修复大模型生成的无效工具调用（`invalid_tool_calls`）**的中间件。一般而言大模型生成的无效工具调用往往是因为其输出了错误的 JSON 格式，导致 LangChain 最终解析失败。该中间件会在模型输出后，检查其`invalid_tool_calls`字段是否存在错误的工具调用内容，如果有，则会尝试使用`json-repair`工具修复。
+
+**注意**：使用此情况时，必须安装 standard 版本的 `langchain-dev-utils` 库。具体可以参考[安装](../installation.md)。
+
+本中间件初始化时无需传入任何参数可以直接使用。
+
+**使用示例：**
+
+```python
+from langchain_dev_utils.agents.middleware import ToolCallRepairMiddleware
+
+agent = create_agent(
+    model="vllm:qwen3-4b",
+    tools=[run_python_code, get_current_time],
+    middleware=[
+        ToolCallRepairMiddleware()
+    ],
+)
+```
+
+::: warning 注意
+本中间件无法保证 100% 修复所有无效工具调用，实际效果取决于 `json-repair` 的修复能力；此外，它仅作用于 `invalid_tool_calls` 字段中的无效工具调用内容。
 :::

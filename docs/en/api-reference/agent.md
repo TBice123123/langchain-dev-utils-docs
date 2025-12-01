@@ -2,7 +2,7 @@
 
 ## create_agent
 
-Prebuilt agent function that provides identical functionality to the official LangChain `create_agent`, but extends model specification via strings.
+Pre-built agent function that provides the same functionality as LangChain's official `create_agent`, but extends it to support model specification via strings.
 
 ```python
 def create_agent(  # noqa: PLR0915
@@ -24,26 +24,26 @@ def create_agent(  # noqa: PLR0915
 ) -> CompiledStateGraph:
 ```
 
-**Parameters:**
+**Parameter Descriptions:**
 
-- `model`: str, required. Model identifier string loadable by `load_chat_model`. Can be specified in "provider:model-name" format
-- `tools`: Sequence of BaseTool, Callable, or dict, or ToolNode type, required. List of tools available to the agent
-- `system_prompt`: Optional str, custom system prompt for the agent
-- `middleware`: Optional AgentMiddleware type, agent middleware
-- `response_format`: Optional ResponseFormat type, agent response format
-- `state_schema`: Optional StateSchemaType type, agent state schema
-- `context_schema`: Optional any type, agent context schema
+- `model`: String type, required, a model identifier string that can be loaded by `load_chat_model`. Can be specified in "provider:model-name" format
+- `tools`: Sequence of BaseTool, Callable, or dictionaries, or ToolNode type, required, list of tools available to the agent
+- `system_prompt`: Optional string type, custom system prompt for the agent
+- `middleware`: Optional AgentMiddleware type, middleware for the agent
+- `response_format`: Optional ResponseFormat type, response format for the agent
+- `state_schema`: Optional StateSchemaType type, state schema for the agent
+- `context_schema`: Optional any type, context schema for the agent
 - `checkpointer`: Optional Checkpointer type, checkpoint for state persistence
 - `store`: Optional BaseStore type, storage for data persistence
-- `interrupt_before`: Optional list of str, nodes to interrupt before execution
-- `interrupt_after`: Optional list of str, nodes to interrupt after execution
-- `debug`: bool, optional, enable debug mode, defaults to False
-- `name`: Optional str, agent name
+- `interrupt_before`: Optional list of strings, nodes to interrupt before execution
+- `interrupt_after`: Optional list of strings, nodes to interrupt after execution
+- `debug`: Boolean type, optional, enable debug mode, default is False
+- `name`: Optional string type, agent name
 - `cache`: Optional BaseCache type, cache
 
-**Returns:** CompiledStateGraph type
+**Return Value:** CompiledStateGraph type
 
-**Note:** This function provides identical functionality to the official LangChain `create_agent` but extends model selection. The main difference is that the `model` parameter must be a string loadable by the `load_chat_model` function, allowing more flexible model selection using registered model providers.
+**Note:** This function provides the same functionality as LangChain's official `create_agent`, but extends model selection. The main difference is that the `model` parameter must be a string that can be loaded by the `load_chat_model` function, allowing for more flexible model selection using registered model providers.
 
 **Example:**
 
@@ -75,15 +75,15 @@ def wrap_agent_as_tool(
 ) -> BaseTool:
 ```
 
-**Parameters:**
+**Parameter Descriptions:**
 
 - `agent`: CompiledStateGraph type, required, the agent
-- `tool_name`: Optional str, tool name
-- `tool_description`: Optional str, tool description
-- `pre_input_hooks`: Optional tuple or function type, agent input preprocessing function
-- `post_output_hooks`: Optional tuple or function type, agent output post-processing function
+- `tool_name`: Optional string type, tool name
+- `tool_description`: Optional string type, tool description
+- `pre_input_hooks`: Optional tuple type or function type, Agent input preprocessing functions
+- `post_output_hooks`: Optional tuple type or function type, Agent output post-processing functions
 
-**Returns:** BaseTool type, tool instance
+**Return Value:** BaseTool type, tool instance
 
 **Example:**
 
@@ -93,7 +93,7 @@ tool = wrap_agent_as_tool(agent)
 
 ## create_write_plan_tool
 
-Creates a tool for writing or updating plans.
+Create a tool for writing or updating plans.
 
 ```python
 def create_write_plan_tool(
@@ -102,12 +102,12 @@ def create_write_plan_tool(
 ) -> BaseTool:
 ```
 
-**Parameters:**
+**Parameter Descriptions:**
 
-- `description`: Optional str, tool description
-- `message_key`: Optional str, key for updating messages, defaults to "messages"
+- `description`: Optional string type, tool description
+- `message_key`: Optional string type, key for updating messages, default "messages"
 
-**Returns:** BaseTool type, tool instance
+**Return Value:** BaseTool type, tool instance
 
 **Example:**
 
@@ -117,7 +117,7 @@ write_plan_tool = create_write_plan_tool()
 
 ## create_finish_sub_plan_tool
 
-Creates a tool for updating execution status after completing subtasks.
+Create a tool for updating execution status after completing subtasks.
 
 ```python
 def create_finish_sub_plan_tool(
@@ -126,12 +126,12 @@ def create_finish_sub_plan_tool(
 ) -> BaseTool:
 ```
 
-**Parameters:**
+**Parameter Descriptions:**
 
-- `description`: Optional str, tool description
-- `message_key`: Optional str, key for updating messages, defaults to "messages"
+- `description`: Optional string type, tool description
+- `message_key`: Optional string type, key for updating messages, default "messages"
 
-**Returns:** BaseTool type, tool instance
+**Return Value:** BaseTool type, tool instance
 
 **Example:**
 
@@ -141,7 +141,7 @@ finish_sub_plan_tool = create_finish_sub_plan_tool()
 
 ## create_read_plan_tool
 
-Creates a tool for reading execution status.
+Create a tool for reading execution status.
 
 ```python
 def create_read_plan_tool(
@@ -149,20 +149,21 @@ def create_read_plan_tool(
 ) -> BaseTool:
 ```
 
-**Parameters:**
+**Parameter Descriptions:**
 
-- `description`: Optional str, tool description
+- `description`: Optional string type, tool description
 
-**Returns:** BaseTool type, tool instance
+**Return Value:** BaseTool type, tool instance
 
 **Example:**
 
 ```python
 read_plan_tool = create_read_plan_tool()
 ```
+
 ## SummarizationMiddleware
 
-Middleware for intelligent agent context summarization.
+Middleware for agent context summarization.
 
 ```python
 class SummarizationMiddleware(_SummarizationMiddleware):
@@ -179,21 +180,20 @@ class SummarizationMiddleware(_SummarizationMiddleware):
     ) -> None:
 ```
 
-**Parameters:**
+**Parameter Descriptions:**
 
-- `model`：str, required. Model identifier string loadable by `load_chat_model`. Can be specified in "provider:model-name" format
-- `trigger`：Optional ContextSize type or list of ContextSize type, trigger context size for summarization
-- `keep`：Optional ContextSize type, keep context size
-- `token_counter`：Optional TokenCounter type, token counter function
-- `summary_prompt`：Optional str, summary prompt
-- `trim_tokens_to_summarize`：Optional int, token limit for summarization
+- `model`: String type, required, a model identifier string that can be loaded by `load_chat_model`. Can be specified in "provider:model-name" format
+- `trigger`: Optional ContextSize type or list type, context size that triggers summarization
+- `keep`: Optional ContextSize type, context size to keep
+- `token_counter`: Optional TokenCounter type, token counter
+- `summary_prompt`: Optional string type, summarization prompt
+- `trim_tokens_to_summarize`: Optional integer type, number of tokens to trim before summarization
 
 **Example:**
 
 ```python
 summarization_middleware = SummarizationMiddleware(model="vllm:qwen3-4b")
 ```
-
 
 ## LLMToolSelectorMiddleware
 
@@ -211,12 +211,12 @@ class LLMToolSelectorMiddleware(_LLMToolSelectorMiddleware):
     ) -> None:
 ```
 
-**Parameters:**
+**Parameter Descriptions:**
 
-- `model`: str, required. Model identifier string loadable by `load_chat_model`. Can be specified in "provider:model-name" format
-- `system_prompt`: Optional str, system prompt
-- `max_tools`: Optional int, maximum number of tools
-- `always_include`: Optional list of str, tools to always include
+- `model`: String type, required, a model identifier string that can be loaded by `load_chat_model`. Can be specified in "provider:model-name" format
+- `system_prompt`: Optional string type, system prompt
+- `max_tools`: Optional integer type, maximum number of tools
+- `always_include`: Optional list of strings, tools to always include
 
 **Example:**
 
@@ -238,19 +238,17 @@ class PlanMiddleware(AgentMiddleware):
         write_plan_tool_description: Optional[str] = None,
         finish_sub_plan_tool_description: Optional[str] = None,
         read_plan_tool_description: Optional[str] = None,
-        use_read_plan_tool: bool = True,
-        message_key: Optional[str] = None,
+        use_read_plan_tool: bool = True
     ) -> None:
 ```
 
-**Parameters:**
+**Parameter Descriptions:**
 
-- `system_prompt`: Optional str, system prompt
-- `write_plan_tool_description`: Optional str, description for the write_plan tool
-- `finish_sub_plan_tool_description`: Optional str, description for the finish_sub_plan tool
-- `read_plan_tool_description`: Optional str, description for the read_plan tool
-- `use_read_plan_tool`: Optional bool, whether to use the read_plan tool
-- `message_key`: Optional str, key for updating messages, defaults to "messages"
+- `system_prompt`: Optional string type, system prompt
+- `write_plan_tool_description`: Optional string type, description of the write plan tool
+- `finish_sub_plan_tool_description`: Optional string type, description of the finish sub-plan tool
+- `read_plan_tool_description`: Optional string type, description of the read plan tool
+- `use_read_plan_tool`: Optional boolean type, whether to use the read plan tool
 
 **Example:**
 
@@ -271,10 +269,10 @@ class ModelFallbackMiddleware(_ModelFallbackMiddleware):
     ) -> None:
 ```
 
-**Parameters:**
+**Parameter Descriptions:**
 
-- `first_model`: str, required. Model identifier string loadable by `load_chat_model`. Can be specified in "provider:model-name" format
-- `additional_models`: Optional list of str, list of fallback models
+- `first_model`: String type, required, a model identifier string that can be loaded by `load_chat_model`. Can be specified in "provider:model-name" format
+- `additional_models`: Optional list of strings, backup model list
 
 **Example:**
 
@@ -287,7 +285,7 @@ model_fallback_middleware = ModelFallbackMiddleware(
 
 ## LLMToolEmulator
 
-Middleware for using large language models to emulate tool calls.
+Middleware for using large models to simulate tool calls.
 
 ```python
 class LLMToolEmulator(_LLMToolEmulator):
@@ -299,10 +297,10 @@ class LLMToolEmulator(_LLMToolEmulator):
     ) -> None:
 ```
 
-**Parameters:**
+**Parameter Descriptions:**
 
-- `model`: str, required. Model identifier string loadable by `load_chat_model`. Can be specified in "provider:model-name" format
-- `tools`: Optional list of BaseTool, list of tools
+- `model`: String type, required, a model identifier string that can be loaded by `load_chat_model`. Can be specified in "provider:model-name" format
+- `tools`: Optional list of BaseTool type, tool list
 
 **Example:**
 
@@ -325,11 +323,11 @@ class ModelRouterMiddleware(AgentMiddleware):
     ) -> None:
 ```
 
-**Parameters:**
+**Parameter Descriptions:**
 
 - `router_model`: Model for routing, accepts string type (loaded using `load_chat_model`) or directly pass a ChatModel
-- `model_list`: List of models, each model needs to contain `model_name` and `model_description` keys, and can optionally include `tools`, `model_kwargs`, `model_system_prompt` keys, representing the tools available to the model (defaults to all tools if not provided), additional parameters passed to the model (e.g., temperature, top_p, etc.), and the model's system prompt respectively.
-- `router_prompt`: Prompt for the routing model, uses default prompt if None
+- `model_list`: List of models, each model needs to include `model_name` and `model_description` keys, and can optionally include `tools`, `model_kwargs`, and `model_system_prompt` keys, representing available tools for the model (defaults to all tools if not passed), additional parameters passed to the model (e.g., temperature, top_p, etc.), and the system prompt for that model, respectively.
+- `router_prompt`: Prompt for the routing model, if None, the default prompt is used
 
 **Example:**
 
@@ -339,19 +337,33 @@ model_router_middleware = ModelRouterMiddleware(
     model_list=[
         {
             "model_name": "vllm:qwen3-4b",
-            "model_description": "Suitable for general tasks like dialogue, text generation, etc."
+            "model_description": "Suitable for ordinary tasks, such as dialogue, text generation, etc."
         },
         {
             "model_name": "vllm:qwen3-8b",
-            "model_description": "Suitable for complex tasks like code generation, data analysis, etc.",
+            "model_description": "Suitable for complex tasks, such as code generation, data analysis, etc.",
         },
     ]
 )
 ```
 
+## ToolCallRepairMiddleware
+
+Middleware for repairing invalid tool calls.
+
+```python
+class ToolCallRepairMiddleware(AgentMiddleware):
+```
+
+**Example:**
+
+```python
+tool_call_repair_middleware = ToolCallRepairMiddleware()
+```
+
 ## PlanState
 
-State schema for Plan.
+State Schema for Plan.
 
 ```python
 class Plan(TypedDict):
@@ -365,7 +377,7 @@ class PlanState(AgentState):
 
 - `plan`: Optional list type, list of plans
 - `plan.content`: Plan content
-- `plan.status`: Plan status, values are `pending`, `in_progress`, `done`
+- `plan.status`: Plan status, values are "pending", "in_progress", "done"
 
 ## ModelDict
 
