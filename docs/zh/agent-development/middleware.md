@@ -377,7 +377,7 @@ print(response)
 
 `ToolCallRepairMiddleware` 是一个**自动修复大模型生成的无效工具调用（`invalid_tool_calls`）**的中间件。一般而言大模型生成的无效工具调用往往是因为其输出了错误的 JSON 格式，导致 LangChain 最终解析失败。该中间件会在模型输出后，检查其`invalid_tool_calls`字段是否存在错误的工具调用内容，如果有，则会尝试使用`json-repair`工具修复。
 
-**注意**：使用此情况时，必须安装 standard 版本的 `langchain-dev-utils` 库。具体可以参考[安装](../installation.md)。
+**注意**：使用此功能时，必须安装 standard 版本的 `langchain-dev-utils` 库。具体可以参考[安装](../installation.md)。
 
 本中间件初始化时无需传入任何参数可以直接使用。
 

@@ -1,16 +1,16 @@
 # Installation
 
-`langchain-dev-utils` can be installed using various package managers. Choose the tool that best fits your workflow.
+`langchain-dev-utils` can be installed using various package managers. Choose the one that best fits your workflow.
 
 ## Prerequisites
 
 - Python 3.11 or higher
-- A Python package manager (`uv` is recommended)
-- An `API Key` from any LLM provider
+- A Python package manager (we recommend `uv`)
+- An API key from any large language model provider
 
 ## Installation Methods
 
-`langchain-dev-utils` supports installation via package managers such as `pip`, `poetry`, and `uv`.
+`langchain-dev-utils` supports installation via multiple package managers, including `pip`, `poetry`, and `uv`.
 
 ::: code-group
 
@@ -28,7 +28,7 @@ uv add langchain-dev-utils
 
 :::
 
-The commands above will install `langchain-dev-utils` and its core dependencies. If you want to use its full functionality, execute the following commands:
+The commands above install `langchain-dev-utils` along with its core dependencies. To enable all features, install the full-featured version using the following commands:
 
 ::: code-group
 
@@ -51,15 +51,16 @@ uv add langchain-dev-utils[standard]
 The package automatically installs the following dependencies:
 
 - `langchain`
-- `langgraph` (installed alongside `langchain`)
+- `langgraph` (installed automatically alongside `langchain`)
 
-For the standard version, the following dependencies are also installed:
+The `standard` extra additionally installs:
 
-- `langchain-openai`
+- `langchain-openai` (used for model management)
+- `json-repair` (used by middleware to fix malformed tool calls)
 
 ## Verification
 
-After installation, verify that the package was installed correctly:
+After installation, verify that the package is correctly installed:
 
 ```python
 import langchain_dev_utils
@@ -68,16 +69,16 @@ print(langchain_dev_utils.__version__)
 
 ## Running Tests
 
-If you wish to contribute to the project or run the tests:
+If you'd like to contribute to the project or run the test suite:
 
 ```bash
 git clone https://github.com/TBice123123/langchain-dev-utils.git
 cd langchain-dev-utils
-uv sync --group test
+uv sync --group tests
 uv run pytest .
 ```
 
 **Note:**
 
-- You need to create a new `.env` file and include the relevant `API_KEY` and `API_BASE` values.
-- All test cases have currently passed verification. If individual model-related failures occur during execution, they might be due to model instability; please try running the tests again.
+- You need to create a `.env` file and include your relevant `API_KEY` and `API_BASE` configurations.
+- All test cases currently pass. If you encounter occasional model-related failures, they may be due to model instability—please try re-running the tests.

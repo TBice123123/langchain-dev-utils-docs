@@ -55,7 +55,8 @@ uv add langchain-dev-utils[standard]
 
 如果是 standard 版本，还会安装以下依赖项：
 
-- `langchain-openai`
+- `langchain-openai`（用于模型管理）
+- `json-repair`(用于中间件的工具调用错误修复)
 
 ## 验证
 
@@ -73,7 +74,7 @@ print(langchain_dev_utils.__version__)
 ```bash
 git clone https://github.com/TBice123123/langchain-dev-utils.git
 cd langchain-dev-utils
-uv sync --group test
+uv sync --group tests
 uv run pytest .
 ```
 

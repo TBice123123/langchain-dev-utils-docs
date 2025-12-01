@@ -135,9 +135,9 @@ If `model.profile` returns an empty dictionary `{}`, it indicates that the LangC
 
 ### Case 2: No LangChain Chat Model Class, but the Provider Supports an OpenAI-Compatible API
 
-Many model providers support services with an **OpenAI-compatible API**, such as [vLLM](https://github.com/vllm-project/vllm), [OpenRouter](https://openrouter.ai/), [Together AI](https://www.together.ai/), etc. When the model provider you are integrating with does not have a suitable LangChain chat model class but does offer an OpenAI-compatible API, you can consider this case.
+Many model providers offer services with **OpenAI-compatible APIs**, such as [vLLM](https://github.com/vllm-project/vllm), [OpenRouter](https://openrouter.ai/), and [Together AI](https://www.together.ai/). When the model provider you're integrating with doesn't have a suitable LangChain chat model class available—but does support an OpenAI-compatible API—you can leverage this capability.
 
-This library will use the built-in `BaseChatOpenAICompatible` class to construct the corresponding chat model class for a specific provider. This class inherits from `langchain-openai`'s `BaseChatOpenAI` and enhances the following capabilities:
+This library dynamically constructs a provider-specific chat model class based on user-provided configuration, using the built-in `BaseChatOpenAICompatible` class. This class inherits from `BaseChatOpenAI` in `langchain-openai` and enhances it with the following capabilities:
 
 1.  **Support for more `reasoning_content` formats**: Can parse reasoning content (`reasoning_content`) output from non-OpenAI providers.
 2.  **Structured output defaults to `function_calling`**: This has broader compatibility than `json_schema`.

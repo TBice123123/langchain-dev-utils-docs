@@ -137,7 +137,7 @@ register_model_provider(
 
 很多模型提供商都支持 **OpenAI 兼容 API** 的服务，例如：[vLLM](https://github.com/vllm-project/vllm)、[OpenRouter](https://openrouter.ai/)、[Together AI](https://www.together.ai/)等。当你接入的模型提供商未有合适的 LangChain 对话模型类时，但提供商支持 OpenAI 兼容 API 时，可以考虑使用此情况。
 
-本库将使用内置 `BaseChatOpenAICompatible` 类构建对应于特定提供商的对话模型类。该类继承自 `langchain-openai` 的 `BaseChatOpenAI`，并增强以下能力：
+本库会根据用户的相关输入，使用内置 `BaseChatOpenAICompatible` 类构建对应于特定提供商的对话模型类。该类继承自 `langchain-openai` 的 `BaseChatOpenAI`，并增强以下能力：
 
 1. **支持更多 `reasoning_content` 格式**：可解析非 OpenAI 提供商的推理内容（`reasoning_content`）输出；
 2. **结构化输出默认使用 `function_calling`**：比 `json_schema` 兼容性更广；
