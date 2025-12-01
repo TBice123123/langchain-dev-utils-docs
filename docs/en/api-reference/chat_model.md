@@ -94,17 +94,17 @@ Compatibility options for model providers.
 ```python
 class CompatibilityOptions(TypedDict):
     supported_tool_choice: NotRequired[ToolChoiceType]
-    keep_reasoning_content: NotRequired[bool]
+    reasoning_content_keep_type: NotRequired[Literal["discard", "keep"]]
     support_json_mode: NotRequired[bool]
     include_usage: NotRequired[bool]
 ```
 
 **Field Description:**
 
-- `supported_tool_choice`: Not required list type, represents the `tool_choice` parameters supported by the model provider
-- `keep_reasoning_content`: Not required boolean type, whether to retain reasoning content (`reasoning_content`) in subsequent messages
-- `support_json_mode`: Not required boolean type, whether to support the `json_mode` structured output method
-- `include_usage`: Not required boolean type, whether to include usage information (`usage`) in model streaming output
+- `supported_tool_choice`: List of supported `tool_choice` strategies;
+- `support_json_mode`: Whether to support `response_format={"type": "json_object"}`;
+- `reasoning_content_keep_type`: How to keep the `reasoning_content` field in the historical messages passed to the model. Optional values are `discard`, `temp`, `retain`.
+- `include_usage`: Whether to include `usage` information in the last streaming response.
 
 ## ChatModelProvider
 

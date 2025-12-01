@@ -94,18 +94,17 @@ ChatModelType = Union[type[BaseChatModel], Literal["openai-compatible"]]
 ```python
 class CompatibilityOptions(TypedDict):
     supported_tool_choice: NotRequired[ToolChoiceType]
-    keep_reasoning_content: NotRequired[bool]
+    reasoning_content_keep_type: NotRequired[Literal["discard", "temp", "retain"]]
     support_json_mode: NotRequired[bool]
     include_usage: NotRequired[bool]
 ```
 
 **字段说明：**
 
-- `supported_tool_choice`：非必需列表类型,代表模型提供商支持的`tool_choice`参数
-- `keep_reasoning_content`：非必需布尔类型,是否在后续的 messages 中保留推理内容(`reasoning_content`)。
-- `support_json_mode`：非必需布尔类型,是否支持`json_mode`的结构化输出方式。
-- `include_usage`：非必需布尔类型,是否在模型流式输出中包含使用信息(`usage`)。
-
+- `supported_tool_choice`：支持的 `tool_choice` 策略列表；
+- `support_json_mode`：是否支持 `response_format={"type": "json_object"}`；
+- `reasoning_content_keep_type`：传给模型的历史消息（messages）中 `reasoning_content` 字段的保留方式。可选值有`discard`、`temp`、`retain`。
+- `include_usage`：是否在最后一条流式返回结果中包含 `usage` 信息。
 
 ## ChatModelProvider
 

@@ -204,10 +204,10 @@ vllm serve Qwen/Qwen3-4B \
 
 仅在此情况下有效。用于声明该提供商对**OpenAI API**的部分特性的支持情况，以提高兼容性和稳定性。
 
-- `supported_tool_choice`：支持的 `tool_choice` 策略列表；
-- `support_json_mode`：是否支持 `response_format={"type": "json_object"}`；
-- `keep_reasoning_content`：是否在历史消息中保留 `reasoning_content`。
-- `include_usage`：是否在最后一条流式返回结果中包含 `usage` 信息。
+- `supported_tool_choice`：支持的 `tool_choice` 策略列表，默认为`["auto"]`；
+- `support_json_mode`：是否支持 `response_format={"type": "json_object"}`，默认为 `False`；
+- `reasoning_content_keep_type`：传给模型的历史消息（messages）中 `reasoning_content` 字段的保留方式。可选值有`discard`、`temp`、`retain`。默认为`discard`。
+- `include_usage`：是否在最后一条流式返回结果中包含 `usage` 信息，默认为 `True`。
 
 ::: details supported_tool_choice
 
@@ -245,35 +245,91 @@ register_model_provider(
 
 :::
 
-::: details keep_reasoning_content
+::: details reasoning_content_keep_type
 
-默认 `False`（在历史消息中不保留推理内容）。设为 `True` 时，历史消息将包含 `reasoning_content` 字段。
+支持以下取值：
+- `discard`：在历史消息中不保留推理内容（默认）；
+- `temp`：仅保留当前对话中的 `reasoning_content` 字段；
+- `retain`：保留所有对话中的 `reasoning_content` 字段。
 
 例如：
+假设用户先问“纽约今天天气”，再问“伦敦今天天气”；当前已进行到第二条提问，即将发起最后一次模型调用。
 
-- 设为`False`时，最终传递给模型的 messages 值为：
+- 取值为`discard`时
 
-```json
-[
-  { "role": "user", "content": "你好" },
-  { "role": "assistant", "content": "你好！有什么我可以帮你的吗？" }
+当取值为`discard`时，则最终传递给模型的 messages 中不会有任何的 `reasoning_content` 字段。最终模型收到的 messages 为：
+
+```python
+messages = [
+    {"content": "查纽约今天天气", "role": "user"},
+    {"content": "", "role": "assistant", "tool_calls": [...]},
+    {"content": "2025-12-01", "role": "tool", "tool_call_id": "..."},
+    {"content": "", "role": "assistant", "tool_calls": [...]},
+    {"content": "多云 7~13°C", "role": "tool", "tool_call_id": "..."},
+    {"content": "2025-12-01，纽约多云，7~13°C。", "role": "assistant"},
+    {"content": "查伦敦今天天气", "role": "user"},
+    {"content": "", "role": "assistant", "tool_calls": [...]},
+    {"content": "多云 7~13°C", "role": "tool", "tool_call_id": "..."},
+]
+```
+- 取值为`temp`时
+
+当取值为`temp`时，仅保留当前对话中的 `reasoning_content` 字段。最终模型收到的 messages 为：
+```python
+messages = [
+    {"content": "查纽约今天天气", "role": "user"},
+    {"content": "", "role": "assistant", "tool_calls": [...]},
+    {"content": "2025-12-01", "role": "tool", "tool_call_id": "..."},
+    {"content": "", "role": "assistant", "tool_calls": [...]},
+    {"content": "多云 7~13°C", "role": "tool", "tool_call_id": "..."},
+    {"content": "2025-12-01，纽约多云，7~13°C。", "role": "assistant"},
+    {"content": "查伦敦今天天气", "role": "user"},
+    {
+        "content": "",
+        "reasoning_content": "查伦敦天气。先获取日期，根据历史上下文已知日期，直接调用天气工具。",  # 仅保留本轮对话的 reasoning_content
+        "role": "assistant",
+        "tool_calls": [...],
+    },
+    {"content": "多云 7~13°C", "role": "tool", "tool_call_id": "..."},
+]
+```
+- 取值为`retain`时
+
+当取值为`retain`时，保留所有对话中的 `reasoning_content` 字段。最终模型收到的 messages 为：
+```python
+messages = [
+    {"content": "查纽约今天天气", "role": "user"},
+    {
+        "content": "",
+        "reasoning_content": "需先获取日期，再查纽约天气。",  # 保留 reasoning_content
+        "role": "assistant",
+        "tool_calls": [...],
+    },
+    {"content": "2025-12-01", "role": "tool", "tool_call_id": "..."},
+    {
+        "content": "",
+        "reasoning_content": "已获取日期，查纽约天气。",  # 保留 reasoning_content
+        "role": "assistant",
+        "tool_calls": [...],
+    },
+    {"content": "多云 7~13°C", "role": "tool", "tool_call_id": "..."},
+    {
+        "content": "2025-12-01，纽约多云，7~13°C。",
+        "reasoning_content": "返回纽约天气结果。",  # 保留 reasoning_content
+        "role": "assistant",
+    },
+    {"content": "查伦敦今天天气", "role": "user"},
+    {
+        "content": "",
+        "reasoning_content": "查伦敦天气。先获取日期，根据历史上下文已知日期，直接调用天气工具。",  # 保留 reasoning_content
+        "role": "assistant",
+        "tool_calls": [...],
+    },
+    {"content": "多云 7~13°C", "role": "tool", "tool_call_id": "..."},
 ]
 ```
 
-- 设为`True`时，最终传递给模型的 messages 值为：
-
-```json
-[
-  { "role": "user", "content": "你好" },
-  {
-    "role": "assistant",
-    "content": "你好！有什么我可以帮你的吗？",
-    "reasoning_content": "用户说了‘你好’，这是打招呼，我应该礼貌回应并主动询问需求。"
-  }
-]
-```
-
-**注意**：除非提供商文档明确推荐，否则不要设置此参数为 `True`。部分提供商（如 DeepSeek）禁止传入推理内容，且会增加 token 消耗。
+**注意**：如果本轮对话不涉及工具调用，则`temp`效果和`discard`效果相同。
 :::
 
 ::: details include_usage
@@ -284,7 +340,7 @@ register_model_provider(
 :::
 
 :::info 注意  
-同一模型提供商的不同模型在 `tool_choice`、`json_mode` 等参数的支持上也可能存在差异。为此，本库将 `supported_tool_choice`、`support_json_mode`、`keep_reasoning_content`、`include_usage` 四个**兼容性选项**作为对话模型类的实例属性。注册模型提供商时，可直接传入这些参数作为**全局默认值**，概括该提供商所提供的大多数模型的支持情况；后续加载具体模型时，若某模型支持情况与默认值不符，只需在 `load_chat_model` 中显式传入对应参数，即可**动态覆盖**全局配置，实现精细化适配。
+同一模型提供商的不同模型在 `tool_choice`、`json_mode` 等参数的支持上也可能存在差异。为此，本库将 `supported_tool_choice`、`support_json_mode`、`reasoning_content_keep_type`、`include_usage` 四个**兼容性选项**作为对话模型类的实例属性。注册模型提供商时，可直接传入这些参数作为**全局默认值**，概括该提供商所提供的大多数模型的支持情况；后续加载具体模型时，若某模型支持情况与默认值不符，只需在 `load_chat_model` 中显式传入对应参数，即可**动态覆盖**全局配置，实现精细化适配。
 
 示例：某提供商的多数模型支持 `["auto", "none", "required"]` 三种 `tool_choice` 策略，但个别模型仅支持 `["auto"]`。注册时设置全局默认值：
 
