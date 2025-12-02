@@ -19,13 +19,13 @@ def register_model_provider(
 - `provider_name`: String type, required, custom provider name
 - `chat_model`: ChatModel class or supported provider string type, required
 - `base_url`: Optional string type, provider's BaseURL
-- `model_profiles`: Optional dictionary type, profiles of models supported by the provider, format is `{model_name: model_profile}`
+- `model_profiles`: Optional dictionary type, profiles of models supported by the provider, in format `{model_name: model_profile}`
 - `compatibility_options`: Optional CompatibilityOptions type, compatibility options
 
 **Example:**
 
 ```python
-register_model_provider("fakechat", FakeChatModel)
+register_model_provider("fakechat",FakeChatModel)
 register_model_provider("vllm", "openai-compatible", base_url="http://localhost:8000/v1")
 ```
 
@@ -67,7 +67,7 @@ def load_chat_model(
 
 **Parameter Description:**
 
-- `model`: String type, required, model name, format is `model_name` or `provider_name:model_name`
+- `model`: String type, required, model name, in format `model_name` or `provider_name:model_name`
 - `model_provider`: Optional string type, model provider name
 - `**kwargs`: Any type, optional, additional model parameters
 
@@ -81,10 +81,33 @@ model = load_chat_model("vllm:qwen3-4b")
 
 ## ChatModelType
 
-Supported types for the `chat_model` parameter when registering a model provider.
+Types supported for the `chat_model` parameter when registering a model provider.
 
 ```python
 ChatModelType = Union[type[BaseChatModel], Literal["openai-compatible"]]
+```
+
+## ToolChoiceType
+
+Types supported for the `tool_choice` parameter.
+
+```python
+ToolChoiceType = list[Literal["auto", "none", "required", "specific"]]
+```
+
+## ResponseFormatType
+
+Types supported for `response_format`.
+```python
+ResponseFormatType = list[Literal["json_schema", "json_mode"]]
+```
+
+## ReasoningContentKeepType
+
+Retention type for the reasoning_content field in the messages list.
+
+```python
+ReasoningContentKeepType = Literal["discard", "temp", "retain"]
 ```
 
 ## CompatibilityOptions
@@ -94,17 +117,17 @@ Compatibility options for model providers.
 ```python
 class CompatibilityOptions(TypedDict):
     supported_tool_choice: NotRequired[ToolChoiceType]
-    reasoning_content_keep_type: NotRequired[Literal["discard", "keep"]]
-    support_json_mode: NotRequired[bool]
+    supported_response_format: NotRequired[ResponseFormatType]
+    reasoning_content_keep_type: NotRequired[ReasoningContentKeepType]
     include_usage: NotRequired[bool]
 ```
 
 **Field Description:**
 
-- `supported_tool_choice`: List of supported `tool_choice` strategies;
-- `support_json_mode`: Whether to support `response_format={"type": "json_object"}`;
-- `reasoning_content_keep_type`: How to keep the `reasoning_content` field in the historical messages passed to the model. Optional values are `discard`, `temp`, `retain`.
-- `include_usage`: Whether to include `usage` information in the last streaming response.
+- `supported_tool_choice`: List of supported `tool_choice` strategies
+- `supported_response_format`: List of supported `response_format` methods
+- `reasoning_content_keep_type`: Retention method for the `reasoning_content` field in historical messages (messages) passed to the model. Optional values are `discard`, `temp`, `retain`
+- `include_usage`: Whether to include `usage` information in the last streaming response result
 
 ## ChatModelProvider
 
@@ -123,14 +146,6 @@ class ChatModelProvider(TypedDict):
 
 - `provider_name`: String type, required, provider name
 - `chat_model`: BaseChatModel type or string type, required, supports passing a chat model class or string (currently only supports `openai-compatible`)
-- `base_url`: Not required string type, base URL
-- `model_profiles`: Not required dictionary type, profiles of models supported by the provider, format is `{model_name: model_profile}`
-- `compatibility_options`: Not required CompatibilityOptions type, represents model provider compatibility options
-
-## ToolChoiceType
-
-Supported types for the `tool_choice` parameter.
-
-```python
-ToolChoiceType = list[Literal["auto", "none", "required", "specific"]]
-```
+- `base_url`: Optional string type, base URL
+- `model_profiles`: Optional dictionary type, profiles of models supported by the provider, in format `{model_name: model_profile}`
+- `compatibility_options`: Optional CompatibilityOptions type, representing model provider compatibility options

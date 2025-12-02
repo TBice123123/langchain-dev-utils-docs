@@ -87,6 +87,29 @@ model = load_chat_model("vllm:qwen3-4b")
 ChatModelType = Union[type[BaseChatModel], Literal["openai-compatible"]]
 ```
 
+## ToolChoiceType
+
+`tool_choice`参数支持的类型。
+
+```python
+ToolChoiceType = list[Literal["auto", "none", "required", "specific"]]
+```
+
+## ResponseFormatType
+
+`response_format`支持的类型。
+```python
+ResponseFormatType = list[Literal["json_schema", "json_mode"]]
+```
+
+## ReasoningContentKeepType
+
+messages列表中reasoning_content字段的保留类型。
+
+```python
+ReasoningContentKeepType = Literal["discard", "temp", "retain"]
+```
+
 ## CompatibilityOptions
 
 模型提供商的兼容性选项。
@@ -94,15 +117,15 @@ ChatModelType = Union[type[BaseChatModel], Literal["openai-compatible"]]
 ```python
 class CompatibilityOptions(TypedDict):
     supported_tool_choice: NotRequired[ToolChoiceType]
-    reasoning_content_keep_type: NotRequired[Literal["discard", "temp", "retain"]]
-    support_json_mode: NotRequired[bool]
+    supported_response_format: NotRequired[ResponseFormatType]
+    reasoning_content_keep_type: NotRequired[ReasoningContentKeepType]
     include_usage: NotRequired[bool]
 ```
 
 **字段说明：**
 
 - `supported_tool_choice`：支持的 `tool_choice` 策略列表；
-- `support_json_mode`：是否支持 `response_format={"type": "json_object"}`；
+- `supported_response_format`：支持的 `response_format` 方法列表；
 - `reasoning_content_keep_type`：传给模型的历史消息（messages）中 `reasoning_content` 字段的保留方式。可选值有`discard`、`temp`、`retain`。
 - `include_usage`：是否在最后一条流式返回结果中包含 `usage` 信息。
 
@@ -126,11 +149,3 @@ class ChatModelProvider(TypedDict):
 - `base_url`：非必需字符串类型，基础 URL
 - `model_profiles`：非必需字典类型，提供商所支持的模型的profile，格式为 `{model_name: model_profile}`。
 - `compatibility_options`：非必需 CompatibilityOptions 类型，代表模型提供商兼容性选项。
-
-## ToolChoiceType
-
-`tool_choice`参数支持的类型。
-
-```python
-ToolChoiceType = list[Literal["auto", "none", "required", "specific"]]
-```

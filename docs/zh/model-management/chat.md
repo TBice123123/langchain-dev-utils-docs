@@ -139,9 +139,9 @@ register_model_provider(
 
 本库会根据用户的相关输入，使用内置 `BaseChatOpenAICompatible` 类构建对应于特定提供商的对话模型类。该类继承自 `langchain-openai` 的 `BaseChatOpenAI`，并增强以下能力：
 
-1. **支持更多 `reasoning_content` 格式**：可解析非 OpenAI 提供商的推理内容（`reasoning_content`）输出；
-2. **结构化输出默认使用 `function_calling`**：比 `json_schema` 兼容性更广；
-3. **通过 `compatibility_options` 精细适配差异**：解决 `tool_choice`、`response_format` 等参数的支持差异。
+- **支持更多 reasoning_content 格式**：可解析非 OpenAI 提供商的推理内容输出。  
+- **动态适配并选择最合适的结构化输出方法**：默认情况下，能够根据模型提供商的实际支持情况，自动选择最优的结构化输出方法（`function_calling` 或 `json_schema`）。  
+- **通过 compatibility_options 精细适配差异**： 通过配置提供商兼容性选项，解决`tool_choice`、`response_format` 等参数的支持差异。
 
 **注意**：使用此情况时，必须安装 standard 版本的 `langchain-dev-utils` 库。具体可以参考[安装](../installation.md)。
 
@@ -205,7 +205,7 @@ vllm serve Qwen/Qwen3-4B \
 仅在此情况下有效。用于声明该提供商对**OpenAI API**的部分特性的支持情况，以提高兼容性和稳定性。
 
 - `supported_tool_choice`：支持的 `tool_choice` 策略列表，默认为`["auto"]`；
-- `support_json_mode`：是否支持 `response_format={"type": "json_object"}`，默认为 `False`；
+- `supported_response_format`：支持的 `response_format` 格式列表(`json_schema`、`json_object`)，默认为 `[]`；
 - `reasoning_content_keep_type`：传给模型的历史消息（messages）中 `reasoning_content` 字段的保留方式。可选值有`discard`、`temp`、`retain`。默认为`discard`。
 - `include_usage`：是否在最后一条流式返回结果中包含 `usage` 信息，默认为 `True`。
 
@@ -236,12 +236,20 @@ register_model_provider(
 ```
 
 ::: info 提示
-在利用`function calling`方法实现结构化输出场景中，模型可能因自身问题从而导致未调用相应结构化工具，导致输出结果为 `None`。因此，如果您的模型提供商支持通过 `tool_choice` 参数指定调用特定的工具，那么可以在注册时显式设置该参数，以确保结构化输出的稳定性和可靠性。
+在利用`function calling`方法实现结构化输出场景中，模型可能因自身问题从而导致未调用相应结构化工具，导致输出结果为 `None`。因此，如果您的模型提供商支持通过 `tool_choice` 参数指定调用特定的工具，那么可以在注册时显式设置该参数（即 `compatibility_options={"supported_tool_choice": [...,"specific"]}`），以确保结构化输出的稳定性和可靠性。
 :::
 
-::: details support_json_mode
+::: details supported_response_format
 
-若提供商支持 `json_mode`（在 OpenAI 兼容 API 中，具体为 `response_format={"type": "json_object"}`），可以设置为 `True`，并在`with_structured_output`方法中需显式指定 `method="json_mode"`。
+目前常见的结构化输出方法有三种。
+
+- `function_calling`：通过调用一个符合指定 schema 的工具来生成结构化输出。
+- `json_schema`：由模型提供商提供的专门用于生成结构化输出的功能，在OpenAI兼容API中，具体为`response_format={"type": "json_schema", "json_schema": {...}}`。
+- `json_mode`：是某些提供商在推出`json_schema`之前提供的一种功能，它能生成有效的 JSON，但 schema 必须在提示（prompt）中进行描述。在 OpenAI 兼容 API 中，具体为 `response_format={"type": "json_object"}`）。
+
+其中，`json_schema` 仅少数 OpenAI 兼容 API 提供商支持（如 `OpenRouter`、`TogetherAI`）；`json_mode` 支持度更高，多数提供商已兼容；而 `function_calling` 最为通用，只要模型支持工具调用即可使用。
+
+本参数用于声明模型提供商对于`response_format`的支持情况。默认情况下为`[]`，代表模型提供商既不支持`json_mode`也不支持`json_schema`。此时结构化输出实现方法将会被默认设置为`function_calling`。若模型提供商支持上述的`json_mode`或`json_schema`（尤其是`json_schema`），则可以在注册时显式设置该参数（即 `compatibility_options={"supported_response_format": ["json_mode", "json_schema"]}`），以启用对应的结构化输出方法。
 
 :::
 
@@ -340,7 +348,7 @@ messages = [
 :::
 
 :::info 注意  
-同一模型提供商的不同模型在 `tool_choice`、`json_mode` 等参数的支持上也可能存在差异。为此，本库将 `supported_tool_choice`、`support_json_mode`、`reasoning_content_keep_type`、`include_usage` 四个**兼容性选项**作为对话模型类的实例属性。注册模型提供商时，可直接传入这些参数作为**全局默认值**，概括该提供商所提供的大多数模型的支持情况；后续加载具体模型时，若某模型支持情况与默认值不符，只需在 `load_chat_model` 中显式传入对应参数，即可**动态覆盖**全局配置，实现精细化适配。
+同一模型提供商的不同模型在 `tool_choice`、`response_format` 等参数的支持上也可能存在差异。为此，本库将 `supported_tool_choice`、`supported_response_format`、`reasoning_content_keep_type`、`include_usage` 四个**兼容性选项**作为对话模型类的实例属性。注册模型提供商时，可直接传入这些参数作为**全局默认值**，概括该提供商所提供的大多数模型的支持情况；后续加载具体模型时，若某模型支持情况与默认值不符，只需在 `load_chat_model` 中显式传入对应参数，即可**动态覆盖**全局配置，实现精细化适配。
 
 示例：某提供商的多数模型支持 `["auto", "none", "required"]` 三种 `tool_choice` 策略，但个别模型仅支持 `["auto"]`。注册时设置全局默认值：
 
@@ -502,7 +510,7 @@ print(response)
 
 ::: details 结构化输出
 
-支持结构化输出，默认采用`function_calling`方法，因此模型需要支持工具调用：
+支持结构化输出，默认的`method`取值为`auto`，此时将会根据模型提供商的`supported_response_format`参数自动选择合适的结构化输出方法。具体为如果其中取值包含`json_schema`，则会选择`json_schema`方法；否则，则会选择`function_calling`方法。
 
 ```python
 from langchain_dev_utils.chat_models import load_chat_model
@@ -518,8 +526,8 @@ model = load_chat_model("vllm:qwen3-4b").with_structured_output(User)
 response = model.invoke([HumanMessage("你好，我叫张三，今年25岁")])
 print(response)
 ```
-
-同时，如果你的模型提供商支持`json_mode`，则可在注册模型提供商时，将`provider_config`参数中的`support_json_mode`设置为`True`，并在调用`with_structured_output`时将`method`参数指定为`"json_mode"`以启用该模式。最后请在提示词中明确引导模型按照指定的 JSON Schema 格式输出结构化数据。
+相较于工具调用，`json_schema`能100%保证输出符合JSON Schema规范，避免工具调用可能产生的参数误差。故如果模型提供商支持`json_schema`，则默认会采用此方法。当模型提供商不支持时，才会回退到`function_calling`方法。
+对于`json_mode`，虽然支持度较高，但是由于其必须在提示词中引导模型输出指定Schema的JSON字符串，因此使用起来比较麻烦，故默认不采用此方法。如想要采用，则可以显示提供`method="json_mode"`（前提是注册或者实例化的时候保证`supported_response_format`取值中包含`json_mode`)。
 :::
 
 ::: details 传递模型参数
