@@ -202,25 +202,28 @@ vllm serve Qwen/Qwen3-4B \
 
 <StepItem step="5" title="设置 compatibility_options（可选）"></StepItem>
 
-仅在此情况下有效。用于声明该提供商对**OpenAI API**的部分特性的支持情况，以提高兼容性和稳定性。
+仅在此情况下有效。用于**声明**该提供商对**OpenAI API**的部分特性的支持情况，以提高兼容性和稳定性。
+目前支持以下配置项：
 
 - `supported_tool_choice`：支持的 `tool_choice` 策略列表，默认为`["auto"]`；
 - `supported_response_format`：支持的 `response_format` 格式列表(`json_schema`、`json_object`)，默认为 `[]`；
 - `reasoning_content_keep_type`：传给模型的历史消息（messages）中 `reasoning_content` 字段的保留方式。可选值有`discard`、`temp`、`retain`。默认为`discard`。
 - `include_usage`：是否在最后一条流式返回结果中包含 `usage` 信息，默认为 `True`。
 
+**注意**：同一模型提供商的不同模型在 `tool_choice`、`response_format` 等参数的支持上也可能存在差异。为此，本库将上述四个**兼容性选项**作为对话模型类的实例属性。注册模型提供商时，可直接传入这些参数作为**全局默认值**，概括该提供商所提供的大多数模型的支持情况；后续加载具体模型时，若某模型支持情况与默认值不符，只需在 `load_chat_model` 中显式传入对应参数，即可**动态覆盖**全局配置，实现精细化适配。
+
 ::: details supported_tool_choice
 
-`tool_choice` 常见取值：
+`tool_choice` 用于控制大模型在响应时是否以及调用哪个外部工具，以提升准确性、可靠性和可控性。常见的取值有：
 
-- `"auto"`：模型自主决定是否调用工具；
+- `"auto"`：模型自主决定是否调用工具(默认行为)；
 - `"none"`：禁止调用工具；
 - `"required"`：强制调用至少一个工具；
 - 指定具体工具（在 OpenAI 兼容 API 中，具体为 `{"type": "function", "function": {"name": "xxx"}}`）。
 
-不同提供商支持范围不同。为避免错误，本库默认的`supported_tool_choice`为`["auto"]`，这种策略下，只能传递`tool_choice`为`auto`，其它策略均会被过滤。
+不同提供商支持范围不同。为避免错误，本库默认的`supported_tool_choice`为`["auto"]`，则在`bind_tools`时，`tool_choice`参数只能传递`auto`，如果传递其它取值均会被过滤。
 
-若需启用，必须显式声明支持项。配置值为字符串列表，可选值：
+若需支持传递其它`tool_choice`取值，必须配置支持项。配置值为字符串列表，每个字符串的可选值：
 
 - `"auto"`, `"none"`, `"required"`：对应标准策略；
 - `"specific"`：本库特有标识，表示支持指定具体工具。
@@ -236,8 +239,13 @@ register_model_provider(
 ```
 
 ::: info 提示
-在利用`function calling`方法实现结构化输出场景中，模型可能因自身问题从而导致未调用相应结构化工具，导致输出结果为 `None`。因此，如果您的模型提供商支持通过 `tool_choice` 参数指定调用特定的工具，那么可以在注册时显式设置该参数（即 `compatibility_options={"supported_tool_choice": [...,"specific"]}`），以确保结构化输出的稳定性和可靠性。
+如无特殊需求，可保持默认（即`["auto"]`）。若业务场景要求模型**必须调用特定工具**或从**给定列表中任选其一**，且模型提供商支持对应策略，再按需开启：
+1. 要求**至少调用一个**工具，如果模型提供商支持`required`，则可以设为 `["required"]`  
+2. 要求**必须调用指定**工具，如果模型提供商支持指定某个工具调用，则可以设为 `["specific"]`（在 `function_calling`结构化输出中这个非常有用，可以确保模型调用指定的结构化输出工具，以保证结构化输出的稳定性）
+
+该参数既可在 `register_model_provider` 中统一设置，也可在 `load_chat_model` 时针对单模型动态覆盖；推荐在 `register_model_provider` 中一次性声明该提供商的大多数模型的`tool_choice`支持情况，而对于部分支持情况不同的模型，则在 `load_chat_model` 中单独指定。
 :::
+
 
 ::: details supported_response_format
 
@@ -249,11 +257,28 @@ register_model_provider(
 
 其中，`json_schema` 仅少数 OpenAI 兼容 API 提供商支持（如 `OpenRouter`、`TogetherAI`）；`json_mode` 支持度更高，多数提供商已兼容；而 `function_calling` 最为通用，只要模型支持工具调用即可使用。
 
-本参数用于声明模型提供商对于`response_format`的支持情况。默认情况下为`[]`，代表模型提供商既不支持`json_mode`也不支持`json_schema`。此时结构化输出实现方法将会被默认设置为`function_calling`。若模型提供商支持上述的`json_mode`或`json_schema`（尤其是`json_schema`），则可以在注册时显式设置该参数（即 `compatibility_options={"supported_response_format": ["json_mode", "json_schema"]}`），以启用对应的结构化输出方法。
+本参数用于声明模型提供商对于`response_format`的支持情况。默认情况下为`[]`，代表模型提供商既不支持`json_mode`也不支持`json_schema`。此时`with_structured_output`方法中的`method`参数只能传递`function_calling`(或者是`auto`,此时`auto`将被推断为`function_calling`），如果传递了`json_mode`或`json_schema`，则会自动被转化为`function_calling`。如果想要启用`json_mode`或者`json_schema`的结构化输出实现方式，则需要显示设置该参数。
+
+例如OpenRouter大多数模型同时支持`json_mode`和`json_schema`的`response_format`，则可以注册的时候进行声明：
+
+```python
+register_model_provider(
+    provider_name="openrouter",
+    chat_model="openai-compatible",
+    compatibility_options={"supported_response_format": ["json_mode", "json_schema"]},
+)
+``` 
+
+::: info 提示
+通常一般情况下也无需配置。仅在需要使用`with_structured_output`方法时需要考虑进行配置，此时，如果模型提供商支持`json_schema`，则可以考虑配置本参数。以保证结构化输出的稳定性。对于`json_mode`，因为其只能保证输出JSON，因此一般没有必要设置。仅当模型不支持工具调用且仅支持设置`response_format={"type":"json_object"}`时，才需要配置本参数包含`json_mode`。
+
+同样，该参数既可在 `register_model_provider` 中统一设置，也可在 `load_chat_model` 时针对单模型动态覆盖；推荐在 `register_model_provider` 中一次性声明该提供商的大多数模型的`response_format`支持情况，而对于部分支持情况不同的模型，则在 `load_chat_model` 中单独指定。
 
 :::
 
 ::: details reasoning_content_keep_type
+
+用于控制历史消息（messages）中`reasoning_content` 字段的保留方式。
 
 支持以下取值：
 - `discard`：在历史消息中不保留推理内容（默认）；
@@ -338,6 +363,13 @@ messages = [
 ```
 
 **注意**：如果本轮对话不涉及工具调用，则`temp`效果和`discard`效果相同。
+::: info 提示
+根据模型提供商对 `reasoning_content` 的保留要求灵活配置：
+- 若提供商要求**全程保留**推理内容，设为 `retain`；  
+- 若仅要求在**本轮工具调用**中保留，设为 `temp`；  
+- 若无特殊要求，保持默认 `discard` 即可。  
+
+同样，该参数既可在 `register_model_provider` 中统一设置，也可在 `load_chat_model` 时针对单模型动态覆盖；若需要保留`reasoning_content`的情况的模型较少，推荐在 `load_chat_model` 中单独指定，此时`register_model_provider`无需设置。
 :::
 
 ::: details include_usage
@@ -345,31 +377,11 @@ messages = [
 `include_usage` 是 OpenAI 兼容 API 中的一个参数，用于控制是否在流式响应的末尾附加一条包含 token 使用情况（如 `prompt_tokens` 和 `completion_tokens`）的消息。由于标准流式响应默认不返回用量信息，启用该选项后，客户端可直接获取完整的 token 消耗数据，便于计费、监控或日志记录。
 
 通常通过 `stream_options={"include_usage": true}` 启用。考虑到有些模型提供商不支持该参数，因此本库将其设为兼容性选项，默认值为 `True`，因为绝大多数模型提供商均支持该参数，如果不支持，则可以显式设为 `False`。
+
+::: info 提示
+此参数一般无需设置，保持默认值即可。只有在模型提供商不支持时，才需要设置为 `False`。
 :::
 
-:::info 注意  
-同一模型提供商的不同模型在 `tool_choice`、`response_format` 等参数的支持上也可能存在差异。为此，本库将 `supported_tool_choice`、`supported_response_format`、`reasoning_content_keep_type`、`include_usage` 四个**兼容性选项**作为对话模型类的实例属性。注册模型提供商时，可直接传入这些参数作为**全局默认值**，概括该提供商所提供的大多数模型的支持情况；后续加载具体模型时，若某模型支持情况与默认值不符，只需在 `load_chat_model` 中显式传入对应参数，即可**动态覆盖**全局配置，实现精细化适配。
-
-示例：某提供商的多数模型支持 `["auto", "none", "required"]` 三种 `tool_choice` 策略，但个别模型仅支持 `["auto"]`。注册时设置全局默认值：
-
-```python
-register_model_provider(
-    ...,
-    compatibility_options={"supported_tool_choice": ["auto", "none", "required"]},
-)
-```
-
-而在加载该特殊模型时，显式覆盖配置：
-
-```python
-model = load_chat_model(
-    "...",  # 模型提供商和模型名称
-    supported_tool_choice=["auto"]  # 覆盖默认值
-)
-```
-
-这种方式便于开发者根据不同模型的实际支持情况进行灵活配置。
-:::
 
 ## 批量注册
 
