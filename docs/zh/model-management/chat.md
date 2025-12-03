@@ -45,7 +45,7 @@ description="声明该模型提供商提供的各模型支持的特性与相关�
 <Params  
 name="compatibility_options"  
 type="dict"  
-description="模型提供商兼容性选项（可选，当 chat_model 为字符串且值为 'openai-compatible' 时有效），用于声明该提供商对 OpenAI 兼容特性（如 tool_choice 策略、JSON Mode等）的支持情况，以确保功能正确适配。"  
+description="模型提供商兼容性选项（可选，当 chat_model 为字符串且值为 'openai-compatible' 时有效），用于声明该提供商对 OpenAI 兼容特性（如 tool_choice 策略、response_format格式等）的支持情况，以确保功能正确适配。"  
 :required="false"  
 :default="null"  
 />
@@ -240,8 +240,8 @@ register_model_provider(
 
 ::: info 提示
 如无特殊需求，可保持默认（即`["auto"]`）。若业务场景要求模型**必须调用特定工具**或从**给定列表中任选其一**，且模型提供商支持对应策略，再按需开启：
-1. 要求**至少调用一个**工具，如果模型提供商支持`required`，则可以设为 `["required"]`  
-2. 要求**必须调用指定**工具，如果模型提供商支持指定某个工具调用，则可以设为 `["specific"]`（在 `function_calling`结构化输出中这个非常有用，可以确保模型调用指定的结构化输出工具，以保证结构化输出的稳定性）
+1. 如果要求**至少调用一个**工具，且模型提供商支持`required`，则可以设为 `["required"]`  （同时在调用`bind_tools`时，需要显示传递`tool_choice="required"`）
+2. 如果要求**调用指定**工具，且模型提供商支持指定某个具体的工具调用，则可以设为 `["specific"]`（在 `function_calling` 结构化输出中，此配置非常有用，可以确保模型调用指定的结构化输出工具，以保证结构化输出的稳定性。因为在 `with_structured_output` 方法中，其内部实现会在调用`bind_tools` 时传入**能够强制调用指定工具的 `tool_choice` 取值**，但如果 `supported_tool_choice` 中没有 `"specific"`，该参数将会被过滤。故如果想要保证能够正常传入 `tool_choice`，必须在 `supported_tool_choice` 中添加 `"specific"`。）
 
 该参数既可在 `register_model_provider` 中统一设置，也可在 `load_chat_model` 时针对单模型动态覆盖；推荐在 `register_model_provider` 中一次性声明该提供商的大多数模型的`tool_choice`支持情况，而对于部分支持情况不同的模型，则在 `load_chat_model` 中单独指定。
 :::

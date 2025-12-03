@@ -45,7 +45,7 @@ description="Declares the features and related parameters supported by each mode
 <Params  
 name="compatibility_options"  
 type="dict"  
-description="Model provider compatibility options (optional, effective when chat_model is a string with value 'openai-compatible'), used to declare the provider's support for OpenAI-compatible features (such as tool_choice strategies, JSON Mode, etc.) to ensure correct feature adaptation."  
+description="Model provider compatibility options (optional, effective when chat_model is a string and its value is 'openai-compatible'), used to declare the provider's support for OpenAI-compatible features (such as tool_choice strategies, response_format formats, etc.) to ensure proper feature adaptation."
 :required="false"  
 :default="null"  
 />
@@ -239,11 +239,14 @@ register_model_provider(
 ```
 
 ::: info Tip
-If there are no special requirements, you can keep the default (i.e., `["auto"]`). If your business scenario requires the model to **must call a specific tool** or **choose one from a given list**, and the model provider supports the corresponding strategy, then enable it as needed:
-1. To require **at least one** tool to be called, if the provider supports `required`, you can set it to `["required"]`
-2. To require **a specific tool** to be called, if the provider supports specifying a particular tool call, you can set it to `["specific"]` (this is very useful in `function_calling` structured output to ensure the model calls the specified structured output tool, guaranteeing stability of structured output)
+If there are no special requirements, you can keep the default value (i.e., `["auto"]`).  
+If your business scenario requires the model to **call a specific tool** or **select one from a given list**, and the provider supports the corresponding strategy, enable it as needed:
 
-This parameter can be set uniformly in `register_model_provider` or dynamically overridden for individual models in `load_chat_model`; it is recommended to declare the `tool_choice` support status of most models from the provider in `register_model_provider` once, and for models with different support statuses, specify them separately in `load_chat_model`.
+1. If you need the model to **invoke at least one tool**, and the provider supports `required`, set it to `["required"]` (and explicitly pass `tool_choice="required"` when calling `bind_tools`).  
+2. If you need the model to **invoke a designated tool**, and the provider supports specifying a concrete tool call, set it to `["specific"]` (this is very useful in `function_calling` structured output, ensuring the model calls the designated structured-output tool to guarantee stability. Internally, `with_structured_output` passes a `tool_choice` value that forces the specified tool; if `"specific"` is absent from `supported_tool_choice`, that value is filtered out. Therefore, to guarantee the parameter is accepted, you must include `"specific"` in `supported_tool_choice`).
+
+This parameter can be set globally in `register_model_provider` or overridden per model in `load_chat_model`.  
+It is recommended to declare the `tool_choice` support status for most models of the provider once in `register_model_provider`, and specify exceptions individually in `load_chat_model`.
 :::
 
 
