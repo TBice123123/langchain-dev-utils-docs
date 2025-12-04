@@ -21,7 +21,7 @@
 - **[模型管理](./model-management/chat.md)** - 提供统一的注册管理方式，方便开发者使用 chat 和 embeddings 模型。
 - **[消息转换](./message-conversion/message.md)** - 提供与 Message 类相关的工具函数包括思维链拼接、chunk 合并、列表字符串格式化等。
 - **[工具调用](./tool-calling/tool.md)** - 提供与工具调用相关的工具函数，包括工具调用检测与参数解析、在工具调用中添加人工审核等。
-- **[Agent 开发](./agent-development/prebuilt.md)** - 提供方便进行 Agent 开发的工具函数，包括官方 Agent 创建函数的进一步封装、常用中间件等。
+- **[Agent 开发](./agent-development/multi-agent.md)** - 提供方便进行 Agent 开发的工具函数，包括官方 Agent 创建函数的进一步封装、常用中间件等。
 - **[状态图编排管道](./graph-orchestration/pipeline.md)** - 提供管道工具函数，将多个状态子图(StateGraph)以并行或者串行的方式组合在一起。
 
 ## 主要特性
