@@ -77,8 +77,8 @@ export default defineConfig({
                 collapsed: true,
                 items: [
                   {
-                    text: "prebuilt agent functions",
-                    link: "/en/agent-development/prebuilt",
+                    text: "multi-agent building",
+                    link: "/en/agent-development/multi-agent",
                   },
                   {
                     text: "middleware",
@@ -188,8 +188,8 @@ export default defineConfig({
                 collapsed: true,
                 items: [
                   {
-                    text: "预构建智能体函数",
-                    link: "/zh/agent-development/prebuilt",
+                    text: "多智能体构建",
+                    link: "/zh/agent-development/multi-agent",
                   },
                   {
                     text: "中间件",

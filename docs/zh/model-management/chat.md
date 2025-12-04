@@ -75,18 +75,11 @@ description="对话模型提供商名称"
 
 注册对话模型提供商需调用 `register_model_provider`。对于不同的情况，注册步骤略有不同。
 
-### 情况一：已有 LangChain 对话模型类
+<CaseItem :step="1" content="已有 LangChain 对话模型类"></CaseItem>
 
 若模型提供商已有现成且合适的 LangChain 集成（详见[对话模型类集成](https://docs.langchain.com/oss/python/integrations/chat)），请将相应的集成对话模型类作为 chat_model 参数传入。
 
-<StepItem step="1" title="设置 provider_name"></StepItem>
-
-传入 `provider_name`，用于后续在 `load_chat_model` 中引用。名称可自定义，但**不要包含冒号**。
-
-<StepItem step="2" title="设置 chat_model"></StepItem>
-
-传入一个 **`BaseChatModel` 的子类**。
-
+具体代码可参考如下：
 ```python
 from langchain_core.language_models.fake_chat_models import FakeChatModel
 from langchain_dev_utils.chat_models import register_model_provider
@@ -96,16 +89,18 @@ register_model_provider(
     chat_model=FakeChatModel,
 )
 ```
+对于上述代码有以下几点补充：
 
-**注意**：`FakeChatModel` 仅用于测试。实际使用中必须传入具备真实功能的 `ChatModel` 类。
+- **`FakeChatModel` 仅用于测试**。实际使用中必须传入具备真实功能的 `ChatModel` 类。
+- **`provider_name` 代表模型提供商的名称**，用于后续在 `load_chat_model` 中引用。名称可自定义，但不要包含":"、"-"等特殊字符。
 
-<StepItem step="3" title="设置 base_url（可选）"></StepItem>
+除此之外，本情况下，该函数还接收以下参数：
 
-- **此参数通常无需设置**，因为模型类内部已定义 API 地址（如 `api_base` 或 `base_url` 字段）；
-- **仅当你需要覆盖默认地址时**才传入 `base_url`；
-- 覆盖机制仅对模型类中字段名为 `api_base` 或 `base_url`（含别名）的属性生效。
+- **base_url**
 
-<StepItem step="4" title="设置 model_profiles（可选）"></StepItem>
+**此参数通常无需设置（因为模型类内部一般已定义默认的API 地址）**，仅当需要覆盖模型类默认地址时才传入 `base_url`，且仅对字段名为 `api_base` 或 `base_url`（含别名）的属性生效。
+
+- **model_profiles**
 
 如果你的 LangChain 集成对话模型类已全面支持 `profile` 参数（即可以通过 `model.profile` 直接访问模型的相关属性，例如 `max_input_tokens`、`tool_calling` 等），则无需额外设置 `model_profiles`。
 
@@ -133,30 +128,23 @@ register_model_provider(
 
 **提示**：推荐使用 `langchain-model-profiles` 库来获取你所用模型提供商的 profiles。
 
-### 情况二：未有 LangChain 对话模型类，但模型提供商支持 OpenAI 兼容 API
+
+<CaseItem :step="2" content="未有 LangChain 对话模型类，但模型提供商支持 OpenAI 兼容 API"></CaseItem>
 
 很多模型提供商都支持 **OpenAI 兼容 API** 的服务，例如：[vLLM](https://github.com/vllm-project/vllm)、[OpenRouter](https://openrouter.ai/)、[Together AI](https://www.together.ai/)等。当你接入的模型提供商未有合适的 LangChain 对话模型类时，但提供商支持 OpenAI 兼容 API 时，可以考虑使用此情况。
 
 本库会根据用户的相关输入，使用内置 `BaseChatOpenAICompatible` 类构建对应于特定提供商的对话模型类。该类继承自 `langchain-openai` 的 `BaseChatOpenAI`，并增强以下能力：
 
-- **支持更多 reasoning_content 格式**：可解析非 OpenAI 提供商的推理内容输出。  
+- **支持更多格式的推理内容**： 相较于`ChatOpenAI` 只能输出官方的推理内容，本类还支持输出更多格式的推理内容（例如`vLLM`）。
 - **动态适配并选择最合适的结构化输出方法**：默认情况下，能够根据模型提供商的实际支持情况，自动选择最优的结构化输出方法（`function_calling` 或 `json_schema`）。  
 - **通过 compatibility_options 精细适配差异**： 通过配置提供商兼容性选项，解决`tool_choice`、`response_format` 等参数的支持差异。
 
 **注意**：使用此情况时，必须安装 standard 版本的 `langchain-dev-utils` 库。具体可以参考[安装](../installation.md)。
 
-<StepItem step="1" title="设置 provider_name"></StepItem>
+此情况下，除了要传入 `provider_name`以及`chat_model`（取值必须为`"openai-compatible"`）参数外，还需传入 `base_url` 参数。
 
-传入自定义提供商名称，**不要包含冒号 `:`**。
+对于`base_url`参数，可通过以下任一方式提供：
 
-<StepItem step="2" title="设置 chat_model"></StepItem>
-
-必须传入字符串 `"openai-compatible"`。这是当前唯一支持的字符串值。
-
-<StepItem step="3" title="设置 base_url（必需）"></StepItem>
-
-- **必须提供 API 地址**，否则无法初始化对话模型类；
-- 可通过以下任一方式提供：
   - **显式传参**：
     ```python
     register_model_provider(
@@ -196,21 +184,26 @@ vllm serve Qwen/Qwen3-4B \
 服务地址为 `http://localhost:8000/v1`。  
 :::
 
-<StepItem step="4" title="设置 model_profiles（可选）"></StepItem>
+同时，本情况下，还可以设置以下两个可选参数：
+
+- **model_profiles**
 
 这种情况下，若未手动设置 `model_profiles`，则 `model.profile` 将返回一个空字典 `{}`。因此，若需通过 `model.profile` 获取指定模型的配置信息，必须先显式设置 `model_profiles`。
 
-<StepItem step="5" title="设置 compatibility_options（可选）"></StepItem>
+
+- **compatibility_options**
 
 仅在此情况下有效。用于**声明**该提供商对**OpenAI API**的部分特性的支持情况，以提高兼容性和稳定性。
 目前支持以下配置项：
 
 - `supported_tool_choice`：支持的 `tool_choice` 策略列表，默认为`["auto"]`；
 - `supported_response_format`：支持的 `response_format` 格式列表(`json_schema`、`json_object`)，默认为 `[]`；
-- `reasoning_content_keep_type`：传给模型的历史消息（messages）中 `reasoning_content` 字段的保留方式。可选值有`discard`、`temp`、`retain`。默认为`discard`。
+- `reasoning_keep_policy`：传给模型的历史消息（messages）中 `reasoning_content` 字段的保留策略。可选值有`never`、`current`、`all`。默认为`never`。
 - `include_usage`：是否在最后一条流式返回结果中包含 `usage` 信息，默认为 `True`。
 
-**注意**：同一模型提供商的不同模型在 `tool_choice`、`response_format` 等参数的支持上也可能存在差异。为此，本库将上述四个**兼容性选项**作为对话模型类的实例属性。注册模型提供商时，可直接传入这些参数作为**全局默认值**，概括该提供商所提供的大多数模型的支持情况；后续加载具体模型时，若某模型支持情况与默认值不符，只需在 `load_chat_model` 中显式传入对应参数，即可**动态覆盖**全局配置，实现精细化适配。
+::: info 注意
+因为同一模型提供商的不同模型对于`tool_choice`、`response_format`等参数的支持情况有所差异。故该四个兼容性选项最终会作为该类的**实例属性**。注册时可传值作为全局默认值（代表该提供商的大部分模型支持的配置），加载时如需微调，在 `load_chat_model` 中覆盖同名参数即可。
+:::
 
 ::: details supported_tool_choice
 
@@ -273,101 +266,91 @@ register_model_provider(
 通常一般情况下也无需配置。仅在需要使用`with_structured_output`方法时需要考虑进行配置，此时，如果模型提供商支持`json_schema`，则可以考虑配置本参数。以保证结构化输出的稳定性。对于`json_mode`，因为其只能保证输出JSON，因此一般没有必要设置。仅当模型不支持工具调用且仅支持设置`response_format={"type":"json_object"}`时，才需要配置本参数包含`json_mode`。
 
 同样，该参数既可在 `register_model_provider` 中统一设置，也可在 `load_chat_model` 时针对单模型动态覆盖；推荐在 `register_model_provider` 中一次性声明该提供商的大多数模型的`response_format`支持情况，而对于部分支持情况不同的模型，则在 `load_chat_model` 中单独指定。
-
+::: warning 注意
+本参数目前仅影响`model.with_structured_output`方法。对于`create_agent`中的结构化输出，若需要使用`json_schema`的实现方式，你需要确保对应模型的`profile`中包含`structured_output`字段，且值为`True`。
 :::
 
-::: details reasoning_content_keep_type
+::: details reasoning_keep_policy
 
-用于控制历史消息（messages）中`reasoning_content` 字段的保留方式。
+用于控制历史消息（messages）中`reasoning_content` 字段的保留策略。
 
 支持以下取值：
-- `discard`：在历史消息中不保留推理内容（默认）；
-- `temp`：仅保留当前对话中的 `reasoning_content` 字段；
-- `retain`：保留所有对话中的 `reasoning_content` 字段。
+- `never`：在历史消息中**不保留任何**推理内容（默认）；
+- `current`：仅保留**当前对话**中的 `reasoning_content` 字段；
+- `all`：保留**所有对话**中的 `reasoning_content` 字段。
 
 例如：
-假设用户先问“纽约今天天气”，再问“伦敦今天天气”；当前已进行到第二条提问，即将发起最后一次模型调用。
+例如，用户先提问“纽约天气如何？”，随后追问“伦敦天气如何？”，当前正要进行第二轮对话，且即将进行最后一次模型调用。
 
-- 取值为`discard`时
+- 取值为`never`时
 
-当取值为`discard`时，则最终传递给模型的 messages 中不会有任何的 `reasoning_content` 字段。最终模型收到的 messages 为：
+当取值为`never`时，则最终传递给模型的 messages 中**不会有任何**的 `reasoning_content` 字段。最终模型收到的 messages 为：
 
 ```python
 messages = [
-    {"content": "查纽约今天天气", "role": "user"},
-    {"content": "", "role": "assistant", "tool_calls": [...]},
-    {"content": "2025-12-01", "role": "tool", "tool_call_id": "..."},
+    {"content": "查纽约天气如何？", "role": "user"},
     {"content": "", "role": "assistant", "tool_calls": [...]},
     {"content": "多云 7~13°C", "role": "tool", "tool_call_id": "..."},
-    {"content": "2025-12-01，纽约多云，7~13°C。", "role": "assistant"},
-    {"content": "查伦敦今天天气", "role": "user"},
+    {"content": "纽约今天天气为多云，7~13°C。", "role": "assistant"},
+    {"content": "查伦敦天气如何？", "role": "user"},
     {"content": "", "role": "assistant", "tool_calls": [...]},
-    {"content": "多云 7~13°C", "role": "tool", "tool_call_id": "..."},
+    {"content": "雨天，14~20°C", "role": "tool", "tool_call_id": "..."},
 ]
 ```
-- 取值为`temp`时
+- 取值为`current`时
 
-当取值为`temp`时，仅保留当前对话中的 `reasoning_content` 字段。最终模型收到的 messages 为：
+当取值为`current`时，仅保留**当前对话**中的 `reasoning_content` 字段。最终模型收到的 messages 为：
 ```python
 messages = [
-    {"content": "查纽约今天天气", "role": "user"},
-    {"content": "", "role": "assistant", "tool_calls": [...]},
-    {"content": "2025-12-01", "role": "tool", "tool_call_id": "..."},
+    {"content": "查纽约天气如何？", "role": "user"},
     {"content": "", "role": "assistant", "tool_calls": [...]},
     {"content": "多云 7~13°C", "role": "tool", "tool_call_id": "..."},
-    {"content": "2025-12-01，纽约多云，7~13°C。", "role": "assistant"},
-    {"content": "查伦敦今天天气", "role": "user"},
+    {"content": "纽约今天天气为多云，7~13°C。", "role": "assistant"},
+    {"content": "查伦敦天气如何？", "role": "user"},
     {
         "content": "",
-        "reasoning_content": "查伦敦天气。先获取日期，根据历史上下文已知日期，直接调用天气工具。",  # 仅保留本轮对话的 reasoning_content
+        "reasoning_content": "查伦敦天气，需要直接调用天气工具。",  # 仅保留本轮对话的 reasoning_content
         "role": "assistant",
         "tool_calls": [...],
     },
-    {"content": "多云 7~13°C", "role": "tool", "tool_call_id": "..."},
+    {"content": "雨天，14~20°C", "role": "tool", "tool_call_id": "..."},
 ]
 ```
-- 取值为`retain`时
+- 取值为`all`时
 
-当取值为`retain`时，保留所有对话中的 `reasoning_content` 字段。最终模型收到的 messages 为：
+当取值为`all`时，保留**所有**对话中的 `reasoning_content` 字段。最终模型收到的 messages 为：
 ```python
 messages = [
-    {"content": "查纽约今天天气", "role": "user"},
+    {"content": "查纽约天气如何？", "role": "user"},
     {
         "content": "",
-        "reasoning_content": "需先获取日期，再查纽约天气。",  # 保留 reasoning_content
-        "role": "assistant",
-        "tool_calls": [...],
-    },
-    {"content": "2025-12-01", "role": "tool", "tool_call_id": "..."},
-    {
-        "content": "",
-        "reasoning_content": "已获取日期，查纽约天气。",  # 保留 reasoning_content
+        "reasoning_content": "查纽约天气，需要直接调用天气工具。",  # 保留 reasoning_content
         "role": "assistant",
         "tool_calls": [...],
     },
     {"content": "多云 7~13°C", "role": "tool", "tool_call_id": "..."},
     {
-        "content": "2025-12-01，纽约多云，7~13°C。",
-        "reasoning_content": "返回纽约天气结果。",  # 保留 reasoning_content
+        "content": "纽约今天天气为多云，7~13°C。",
+        "reasoning_content": "直接返回纽约天气结果。",  # 保留 reasoning_content
         "role": "assistant",
     },
-    {"content": "查伦敦今天天气", "role": "user"},
+    {"content": "查伦敦天气如何？", "role": "user"},
     {
         "content": "",
-        "reasoning_content": "查伦敦天气。先获取日期，根据历史上下文已知日期，直接调用天气工具。",  # 保留 reasoning_content
+        "reasoning_content": "查伦敦天气，需要直接调用天气工具。",  # 保留 reasoning_content
         "role": "assistant",
         "tool_calls": [...],
     },
-    {"content": "多云 7~13°C", "role": "tool", "tool_call_id": "..."},
+    {"content": "雨天，14~20°C", "role": "tool", "tool_call_id": "..."},
 ]
 ```
 
-**注意**：如果本轮对话不涉及工具调用，则`temp`效果和`discard`效果相同。
+**注意**：如果本轮对话不涉及工具调用，则`current`效果和`never`效果相同。
 ::: info 提示
 根据模型提供商对 `reasoning_content` 的保留要求灵活配置：
-- 若提供商要求**全程保留**推理内容，设为 `retain`；  
-- 若仅要求在**本轮工具调用**中保留，设为 `temp`；  
-- 若无特殊要求，保持默认 `discard` 即可。  
+- 若提供商要求**全程保留**推理内容，设为 `all`；  
+- 若仅要求在**本轮工具调用**中保留，设为 `current`；  
+- 若无特殊要求，保持默认 `never` 即可。  
 
 同样，该参数既可在 `register_model_provider` 中统一设置，也可在 `load_chat_model` 时针对单模型动态覆盖；若需要保留`reasoning_content`的情况的模型较少，推荐在 `load_chat_model` 中单独指定，此时`register_model_provider`无需设置。
 :::
@@ -382,6 +365,9 @@ messages = [
 此参数一般无需设置，保持默认值即可。只有在模型提供商不支持时，才需要设置为 `False`。
 :::
 
+::: warning 注意
+尽管已提供上述兼容性配置，本库仍无法保证 100% 适配所有 OpenAI 兼容接口。若模型提供商已有官方或社区集成类，请优先采用该集成类。如遇到任何兼容性问题，欢迎在本库 GitHub 仓库提交 issue。
+:::
 
 ## 批量注册
 

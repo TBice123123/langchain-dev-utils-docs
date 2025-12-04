@@ -102,12 +102,12 @@ Types supported for `response_format`.
 ResponseFormatType = list[Literal["json_schema", "json_mode"]]
 ```
 
-## ReasoningContentKeepType
+## ReasoningKeepPolicy
 
-Retention type for the reasoning_content field in the messages list.
+Retention policy for the reasoning_content field in the messages list.
 
 ```python
-ReasoningContentKeepType = Literal["discard", "temp", "retain"]
+ReasoningKeepPolicy = Literal["never", "current", "all"]
 ```
 
 ## CompatibilityOptions
@@ -118,7 +118,7 @@ Compatibility options for model providers.
 class CompatibilityOptions(TypedDict):
     supported_tool_choice: NotRequired[ToolChoiceType]
     supported_response_format: NotRequired[ResponseFormatType]
-    reasoning_content_keep_type: NotRequired[ReasoningContentKeepType]
+    reasoning_keep_policy: NotRequired[ReasoningKeepPolicy]
     include_usage: NotRequired[bool]
 ```
 
@@ -126,7 +126,7 @@ class CompatibilityOptions(TypedDict):
 
 - `supported_tool_choice`: List of supported `tool_choice` strategies
 - `supported_response_format`: List of supported `response_format` methods
-- `reasoning_content_keep_type`: Retention method for the `reasoning_content` field in historical messages (messages) passed to the model. Optional values are `discard`, `temp`, `retain`
+- `reasoning_keep_policy`: Retention policy for the `reasoning_content` field in historical messages (messages) passed to the model. Optional values are `never`, `current`, `all`
 - `include_usage`: Whether to include `usage` information in the last streaming response result
 
 ## ChatModelProvider

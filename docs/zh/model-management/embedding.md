@@ -62,17 +62,11 @@ description="嵌入模型提供商名称"
 
 注册嵌入模型提供商需调用 `register_embeddings_provider`。根据 `embeddings_model` 类型不同，注册方式略有差异。
 
-### 情况一：已有 LangChain 嵌入模型类
+<CaseItem :step="1" content="已有 LangChain 嵌入模型类"></CaseItem>
 
 若嵌入模型提供商已有现成且合适的 LangChain 集成（详见 [嵌入模型集成列表](https://docs.langchain.com/oss/python/integrations/text_embedding)），请将相应的嵌入模型类直接传入 `embeddings_model` 参数。
 
-<StepItem step="1" title="设置 provider_name"></StepItem>
-
-传入自定义提供商名称，**不要包含冒号 `:`**。
-
-<StepItem step="2" title="设置 embeddings_model"></StepItem>
-
-传入一个 **`Embeddings` 的子类**。
+具体代码可以参考如下：
 
 ```python
 from langchain_core.embeddings.fake import FakeEmbeddings
@@ -84,34 +78,25 @@ register_embeddings_provider(
 )
 ```
 
-**注意**：`FakeEmbeddings` 仅用于测试。实际使用中必须传入具备真实功能的 `Embeddings` 类。
+对于上述代码有以下几点补充：
 
-<StepItem step="3" title="设置 base_url（可选）"></StepItem>
+- **`FakeEmbeddings` 仅用于测试**。实际使用中必须传入具备真实功能的 `Embeddings` 类。。
+- **`provider_name` 代表模型提供商的名称**，用于后续在 `load_chat_model` 中引用。名称可自定义，但不要包含":"、"-"等特殊字符。
 
-- **通常无需设置**，因为模型类内部已定义 API 地址（如 `api_base` 或 `base_url` 字段）；
-- **仅当你需要覆盖默认地址时**才传入 `base_url`；
-- 覆盖机制仅对模型类中字段名为 `api_base` 或 `base_url`（含别名）的属性生效。
+同时，本情况下该函数还支持传入`base_url`参数，只是**通常无需手动设置 `base_url`**（因为嵌入模型类内部已定义 API 地址）。仅当需要覆盖默认地址时，才显式传入 `base_url`；覆盖范围仅限模型类中字段名为 `api_base` 或 `base_url`（含别名）的属性。
 
-### 情况二：未有 LangChain 嵌入模型类，但提供商支持 OpenAI 兼容 API
+<CaseItem :step="2" content="未有 LangChain 嵌入模型类，但提供商支持 OpenAI 兼容 API"></CaseItem>
 
 类似于对话模型，很多嵌入模型提供商也提供 **OpenAI 兼容 API**。当无现成 LangChain 集成但支持该协议时，可使用此模式。
 
-系统将使用 `OpenAIEmbeddings`（来自 `langchain-openai`）构建嵌入模型实例，并自动禁用上下文长度检查（设置 `check_embedding_ctx_length=False`）以提升兼容性。
+本库将使用 `OpenAIEmbeddings`（来自 `langchain-openai`）构建嵌入模型实例，并自动禁用上下文长度检查（设置 `check_embedding_ctx_length=False`）以提升兼容性。
 
-<StepItem step="1" title="设置 provider_name"></StepItem>
 
-传入自定义名称，**不要包含冒号 `:`**。
+此情况下，除了要传入 `provider_name`以及`chat_model`（取值必须为`"openai-compatible"`）参数外，还需传入 `base_url` 参数。
 
-<StepItem step="2" title="设置 embeddings_model"></StepItem>
+对于`base_url`参数，可通过以下任一方式提供：
 
-必须传入字符串 `"openai-compatible"`。这是当前唯一支持的字符串值。
-
-<StepItem step="3" title="设置 base_url（必需）"></StepItem>
-
-- **必须提供 API 地址**，否则无法初始化；
-- 可通过以下任一方式提供：
-
-  **显式传参**：
+  - **显式传参**：
 
   ```python
   register_embeddings_provider(
@@ -121,7 +106,7 @@ register_embeddings_provider(
   )
   ```
 
-  **环境变量（推荐）**：
+  - **环境变量（推荐）**：
 
   ```bash
   export VLLM_API_BASE=http://localhost:8000/v1

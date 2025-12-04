@@ -11,149 +11,8 @@
 ## 概述
 
 中间件是专门针对`langchain`预构建的 Agent 而构建的组件。官方提供了一些内置的中间件。本库则根据实际情况和本库的使用场景，提供了更多的中间件。
-大致可以分为官方中间件的进一步封装、以及本库自定义的中间件。
 
-## 封装官方中间件
-
-官方中间件的进一步封装，具体类似于本库的`create_agent`函数，支持通过字符串指定`load_chat_model`支持的模型（需要进行提取注册）。
-具体有以下四个中间件：
-
-- SummarizationMiddleware
-- LLMToolSelectorMiddleware
-- ModelFallbackMiddleware
-- LLMToolEmulator
-
-### SummarizationMiddleware
-
-核心作用是压缩对话内容，功能与官方**SummarizationMiddleware**对齐。但是只允许字符串参数指定模型。
-
-使用示例:
-
-```python
-from langchain_core.messages import AIMessage
-from langchain_dev_utils.agents.middleware import SummarizationMiddleware
-
-agent = create_agent(
-    model="vllm:qwen3-4b",
-    middleware=[
-        SummarizationMiddleware(
-            model="vllm:qwen3-4b",
-            trigger=("tokens", 50),
-            keep=("messages", 1),
-        )
-    ],
-    system_prompt="你是一个智能的AI助手，可以解决用户的问题",
-)
-# big_text 是一个包含大量内容的文本，这里省略
-big_messages = [
-    HumanMessage(content="你好，你是谁"),
-    AIMessage(content="我是你的AI助手"),
-    HumanMessage(content="写一段优美的长文本"),
-    AIMessage(content=f"好的，我会写一段优美的长文本，内容是：{big_text}"),
-    HumanMessage(content="你为啥要写这段长文本呢？"),
-]
-response = agent.invoke({"messages": big_messages})
-print(response)
-```
-
-### LLMToolSelectorMiddleware
-
-核心作用是用于大量工具的情况下，由 LLM 自己选择工具，功能与官方**LLMToolSelectorMiddleware**对齐。但是同样只允许字符串指定模型。
-
-使用示例:
-
-```python
-from langchain_dev_utils.agents.middleware import (
-    LLMToolSelectorMiddleware,
-)
-
-@tool
-def get_current_time() -> str:
-    """获取当前时间"""
-    return "14:00"
-
-@tool
-def get_current_weather() -> str:
-    """获取当前天气"""
-    return "今天天气晴朗"
-
-@tool
-def search() -> str:
-    """搜索"""
-    return "搜索结果"
-
-@tool
-def run_python() -> str:
-    """运行Python代码"""
-    return "运行Python代码"
-
-
-agent = create_agent(
-    "vllm:qwen3-4b",
-    tools=[get_current_time, get_current_weather, search, run_python],
-    name="agent",
-    middleware=[
-        LLMToolSelectorMiddleware(model="vllm:qwen3-4b", max_tools=2),
-    ],
-)
-
-response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")]})
-print(response)
-```
-
-### ModelFallbackMiddleware
-
-用于在调用模型失败时回退到备用模型的中间件。功能与官方**ModelFallbackMiddleware**对齐。但是同样只允许字符串指定模型。
-
-使用示例:
-
-```python
-from langchain_dev_utils.agents.middleware import (
-    ModelFallbackMiddleware,
-)
-
-agent = create_agent(
-    model="vllm:qwen3-4b",
-    middleware=[
-        ModelFallbackMiddleware(
-           "vllm:qwen3-8b",
-           "openrouter:meta-llama/llama-3.3-8b-instruct:free",
-        )
-    ],
-)
-
-response = agent.invoke({"messages": [HumanMessage(content="你好。")]})
-print(response)
-```
-
-### LLMToolEmulator
-
-用于使用大模型来模拟工具调用的中间件。功能与官方**LLMToolEmulator**对齐。但是同样只允许字符串指定模型。
-
-使用示例:
-
-```python
-from langchain_dev_utils.agents.middleware import (
-    LLMToolEmulator,
-)
-
-agent = create_agent(
-    model="vllm:qwen3-4b",
-    tools=[get_current_time],
-    middleware=[
-        LLMToolEmulator(
-            model="vllm:qwen3-4b"
-        )
-    ],
-)
-
-response = agent.invoke({"messages": [HumanMessage(content="现在几点了？")]}),
-print(response)
-```
-
-## 本库自定义中间件
-
-### PlanMiddleware
+## 任务规划
 
 任务规划的中间件，用于在执行复杂任务前进行结构化分解与过程管理。
 
@@ -161,7 +20,7 @@ print(response)
 任务规划是一种高效的上下文工程管理策略。在执行任务之前，大模型首先将整体任务拆解为多个有序的子任务，形成任务规划列表（在本库中称为 plan）。随后按顺序执行各子任务，并在每完成一个步骤后动态更新任务状态，直至所有子任务执行完毕。
 :::
 
-`PlanMiddleware` 的参数说明如下:
+实现任务规划的中间件为`PlanMiddleware` ，其参数说明如下:
 
 <Params
 name="system_prompt"
@@ -284,7 +143,7 @@ agent = create_agent(
 原因：这种方式能更好地融入 <code>langgraph</code> 的自定义节点和状态管理。
 </BestPractice>
 
-### ModelRouterMiddleware
+## 模型路由
 
 `ModelRouterMiddleware` 是一个用于**根据输入内容动态路由到最适配模型**的中间件。它通过一个“路由模型”分析用户请求，从预定义的模型列表中选择最适合当前任务的模型进行处理。
 
@@ -373,7 +232,7 @@ print(response)
 
 :::
 
-### ToolCallRepairMiddleware
+## 工具调用修复
 `ToolCallRepairMiddleware` 是一个**自动修复大模型无效工具调用（`invalid_tool_calls`）**的中间件。
 
 大模型在输出工具调用的 JSON Schema 时，可能因模型自身原因生成JSON格式错误的内容(错误的内容常见于`arguments` 字段)，导致 JSON 解析失败。这类调用会被存到 `invalid_tool_calls`字段中。`ToolCallRepairMiddleware` 会在模型返回结果后自动检测 `invalid_tool_calls`，并尝试调用 `json-repair` 进行修复，使工具调用得以正常执行。
@@ -398,4 +257,46 @@ agent = create_agent(
 
 ::: warning 注意
 本中间件无法保证 100% 修复所有无效工具调用，实际效果取决于 `json-repair` 的修复能力；此外，它仅作用于 `invalid_tool_calls` 字段中的无效工具调用内容。
+:::
+
+
+::: info 注意
+除此之外，本库还扩充了以下中间件通过字符串参数指定模型的功能：
+- SummarizationMiddleware
+- LLMToolSelectorMiddleware
+- ModelFallbackMiddleware
+- LLMToolEmulator
+
+你只需要导入本库中的这些中间件，即可使用字符串指定已经被`register_model_provider`注册的模型。中间件使用方法和官方中间件保持一致，例如：
+```python
+from langchain_core.messages import AIMessage
+from langchain_dev_utils.agents.middleware import SummarizationMiddleware
+from langchain_dev_utils.chat_models import register_model_provider
+
+register_model_provider(
+    provider_name="vllm",
+    chat_model="openai-compatible",
+    base_url="http://localhost:8000/v1",
+)
+agent = create_agent(
+    model="vllm:qwen3-4b",
+    middleware=[
+        SummarizationMiddleware(
+            model="vllm:qwen3-4b",
+            trigger=("tokens", 50),
+            keep=("messages", 1),
+        )
+    ],
+    system_prompt="你是一个智能的AI助手，可以解决用户的问题",
+)
+# big_text 是一个包含大量内容的文本，这里省略
+big_messages = [
+    HumanMessage(content="你好，你是谁"),
+    AIMessage(content="我是你的AI助手"),
+    HumanMessage(content="写一段优美的长文本"),
+    AIMessage(content=f"好的，我会写一段优美的长文本，内容是：{big_text}"),
+    HumanMessage(content="你为啥要写这段长文本呢？"),
+]
+response = agent.invoke({"messages": big_messages})
+print(response)
 :::

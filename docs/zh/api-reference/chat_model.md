@@ -102,12 +102,12 @@ ToolChoiceType = list[Literal["auto", "none", "required", "specific"]]
 ResponseFormatType = list[Literal["json_schema", "json_mode"]]
 ```
 
-## ReasoningContentKeepType
+## ReasoningKeepPolicy
 
-messages列表中reasoning_content字段的保留类型。
+messages列表中reasoning_content字段的保留策略。
 
 ```python
-ReasoningContentKeepType = Literal["discard", "temp", "retain"]
+ReasoningKeepPolicy = Literal["never", "current", "all"]
 ```
 
 ## CompatibilityOptions
@@ -118,7 +118,7 @@ ReasoningContentKeepType = Literal["discard", "temp", "retain"]
 class CompatibilityOptions(TypedDict):
     supported_tool_choice: NotRequired[ToolChoiceType]
     supported_response_format: NotRequired[ResponseFormatType]
-    reasoning_content_keep_type: NotRequired[ReasoningContentKeepType]
+    reasoning_keep_policy: NotRequired[ReasoningKeepPolicy]
     include_usage: NotRequired[bool]
 ```
 
@@ -126,7 +126,7 @@ class CompatibilityOptions(TypedDict):
 
 - `supported_tool_choice`：支持的 `tool_choice` 策略列表；
 - `supported_response_format`：支持的 `response_format` 方法列表；
-- `reasoning_content_keep_type`：传给模型的历史消息（messages）中 `reasoning_content` 字段的保留方式。可选值有`discard`、`temp`、`retain`。
+- `reasoning_keep_policy`：传给模型的历史消息（messages）中 `reasoning_content` 字段的保留策略。可选值有`never`、`current`、`all`。 
 - `include_usage`：是否在最后一条流式返回结果中包含 `usage` 信息。
 
 ## ChatModelProvider
